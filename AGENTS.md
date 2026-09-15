@@ -23,7 +23,7 @@ accounting, reporting, and user management from one platform.
 | Auth        | Supabase Auth via @supabase/ssr                |
 | Deployment  | Vercel (primary)                               |
 | Testing     | Vitest (unit), Playwright (e2e)                |
-| Node        | v24.21.0                                       |
+| Node        | v22.17.1 (LTS)                                |
 
 ## Architecture Decisions
 
@@ -174,6 +174,24 @@ See `.env.example` for the full list. Never echo values from `.env.local`.
 
 ## Known Issues
 
-- **Vercel CLI + Node 24:** Vercel CLI 59.x has worker timeout issues with Node v24.
-  Workaround: use Vercel dashboard for linking, or downgrade to Node 22 LTS.
-  Track: https://github.com/vercel/vercel/issues
+- **SWC native binary:** Not available for Win32 x64. Webpack mode used for builds. WASM fallback for dev.
+- **Middleware deprecation:** Next.js 16 prefers `proxy` convention. Will migrate in Phase 2.
+
+## Standing Rules
+
+1. Build ONLY what the current phase specifies. No feature code in infrastructure phases.
+2. Commit to `develop` only. Never to `main`. Human handles main.
+3. Financial arithmetic (money.ts, lib/loan/*) is Phase 3 work. Full unit test suite required.
+4. Node stays at 22 LTS. Do not upgrade without asking.
+5. Before every commit: confirm only `.env.example` is tracked (never `.env.local`).
+6. Financial figures in UI must be derived from underlying records, never manually typed.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
