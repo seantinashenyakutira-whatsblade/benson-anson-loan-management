@@ -1,26 +1,160 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* ── Colour tokens ─────────────────────────────────────── */
+  --color-bg-base: #0A1834;
+  --color-bg-elevated: #0F2454;
+  --color-bg-gradient-top: #0A1834;
+  --color-bg-gradient-bottom: #0F2454;
+
+  --color-surface-glass: rgba(255, 255, 255, 0.04);
+  --color-surface-glass-2: rgba(255, 255, 255, 0.06);
+  --color-surface-solid: #142C5E;
+
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #8B9BC4;
+  --color-text-muted: #5E6E96;
+
+  --color-accent-primary: #C8B6F0;
+  --color-accent-primary-hover: #B9A5EC;
+  --color-accent-on-primary: #0A1834;
+
+  --color-success: #34D399;
+  --color-warning: #FBBF24;
+  --color-orange: #FB923C;
+  --color-danger: #F87171;
+  --color-info: #60A5FA;
+
+  /* ── Typography ─────────────────────────────────────────── */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* ── Border radius ──────────────────────────────────────── */
+  --radius-card: 24px;
+  --radius-card-inner: 18px;
+  --radius-button: 14px;
+  --radius-pill: 999px;
+  --radius-avatar: 50%;
+
+  /* ── Shadows (subtle, glass-based) ──────────────────────── */
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.2);
+  --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  /* ── Semantic CSS vars (for non-Tailwind usage) ─────────── */
+  --bg-base: #0A1834;
+  --bg-elevated: #0F2454;
+  --bg-gradient-top: #0A1834;
+  --bg-gradient-bottom: #0F2454;
+  --surface-glass: rgba(255, 255, 255, 0.04);
+  --surface-glass-2: rgba(255, 255, 255, 0.06);
+  --surface-solid: #142C5E;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text-primary: #FFFFFF;
+  --text-secondary: #8B9BC4;
+  --text-muted: #5E6E96;
+  --accent-primary: #C8B6F0;
+  --accent-primary-hover: #B9A5EC;
+  --accent-on-primary: #0A1834;
+  --success: #34D399;
+  --warning: #FBBF24;
+  --orange: #FB923C;
+  --danger: #F87171;
+  --info: #60A5FA;
+
+  /* ── Safe area insets ───────────────────────────────────── */
+  --sat: env(safe-area-inset-top);
+  --sar: env(safe-area-inset-right);
+  --sab: env(safe-area-inset-bottom);
+  --sal: env(safe-area-inset-left);
+}
+
+/* ── Base layer ─────────────────────────────────────────── */
+html {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(180deg, var(--bg-gradient-top) 0%, var(--bg-gradient-bottom) 100%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  min-height: 100dvh;
+  padding-top: var(--sat);
+  padding-right: var(--sar);
+  padding-bottom: var(--sab);
+  padding-left: var(--sal);
+}
+
+/* ── Tabular numbers for money ──────────────────────────── */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Focus ring ─────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Scrollbar (subtle) ─────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Reduced motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Card glass utility ─────────────────────────────────── */
+.glass-card {
+  background: var(--surface-glass);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: var(--radius-card);
+}
+
+.glass-card-hover:hover {
+  background: var(--surface-glass-2);
+  border-color: var(--border-strong);
+}
+
+/* ── KPI card gradient overlay ───────────────────────────── */
+.kpi-gradient {
+  background: linear-gradient(
+    135deg,
+    rgba(200, 182, 240, 0.08) 0%,
+    rgba(200, 182, 240, 0.02) 100%
+  );
 }

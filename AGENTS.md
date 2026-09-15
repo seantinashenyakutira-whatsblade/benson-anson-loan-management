@@ -1,0 +1,179 @@
+# AGENTS.md — Benson Anson Loans System
+
+## Project Overview
+
+Mobile-first PWA for a Zambian collateral-based lending company.
+Manages customers, collateral, loans, payments, collections, penalties,
+accounting, reporting, and user management from one platform.
+
+**Repository:** https://github.com/seantinashenyakutira-whatsblade/benson-anson-loan-management
+**Supabase Project:** niheommcjshenlrzwnlj
+**Vercel Account:** seantinashenyakutira-2100
+
+## Tech Stack
+
+| Layer        | Technology                                    |
+|-------------|-----------------------------------------------|
+| Frontend    | Next.js 16 (App Router) + TypeScript (strict) |
+| Styling     | Tailwind CSS v4 + custom design tokens         |
+| UI Primitives | shadcn/ui (to be initialized)                |
+| Charts      | Recharts                                       |
+| Validation  | Zod                                            |
+| Database    | Supabase (PostgreSQL 17)                       |
+| Auth        | Supabase Auth via @supabase/ssr                |
+| Deployment  | Vercel (primary)                               |
+| Testing     | Vitest (unit), Playwright (e2e)                |
+| Node        | v24.21.0                                       |
+
+## Architecture Decisions
+
+### Money Handling (NON-NEGOTIABLE)
+- ALL financial arithmetic uses integer minor units (ngwee, K1 = 100)
+- Single source of truth: `src/lib/money.ts`
+- Database: `NUMERIC(18,2)` for all money columns
+- Rounding: half-up, final instalment absorbs residual
+- NEVER use JavaScript floating point for money
+- Every UI figure is derived from transactions, never manually typed
+
+### Security
+- RBAC enforced at DATABASE layer via Supabase RLS
+- Supabase service_role key NEVER in client bundles
+- All financial actions write immutable audit logs
+- Payments/disbursements/penalties are never hard-deleted
+
+### Business Logic in PostgreSQL
+- Push logic into DB: functions, views, RPCs, RLS
+- Keep frontend thin
+- Enables future cPanel migration
+
+## Folder Structure
+
+```
+src/
+  app/
+    (auth)/          # Login, forgot-password, reset-password
+    (app)/           # Authenticated app shell
+      dashboard/     # KPIs, collections, health, tasks
+      customers/     # Customer management
+      collateral/    # Collateral vault
+      loan-products/ # Product configuration
+      applications/  # Loan applications
+      loans/         # Active loans
+      payments/      # Payment recording
+      penalties/     # Penalty management
+      arrears/       # Arrears report
+      officers/      # Loan officer management
+      branches/      # Branch management
+      accounting/    # Cashbook, income, expenses, journal, PnL, balance sheet
+      reports/       # All 14 reports
+      users/         # User management
+      settings/      # Business settings
+      audit/         # Audit log viewer
+      profile/       # Own profile
+    pay/[loanNo]/    # Public payment page
+  components/
+    ui/              # shadcn/ui primitives
+    layout/          # TopBar, BottomNav, Sidebar
+    dashboard/       # KpiCard, ChartPanel, etc.
+    customers/       # Customer-specific components
+    loans/           # Loan-specific components
+    payments/        # Payment-specific components
+    reports/         # Report-specific components
+  lib/
+    money.ts         # Financial arithmetic (ngwee)
+    utils.ts         # cn() utility for class merging
+    loan/
+      interest.ts    # Interest calculation
+      schedule.ts    # Schedule generation
+      position.ts    # Position calculations (arrears, shortfall)
+      penalty.ts     # Penalty engine
+      allocation.ts  # Payment allocation
+      status.ts      # Loan status state machine
+    supabase/
+      client.ts      # Browser client (anon key)
+      server.ts      # Server client (cookies + service role)
+      middleware.ts   # Auth middleware
+    validations/     # Zod schemas per entity
+  hooks/             # Custom React hooks
+  types/             # Shared TypeScript types
+supabase/
+  migrations/        # Versioned SQL migrations
+  seed.sql           # Dev-only seed data
+tests/
+  unit/              # Unit tests (vitest)
+  integration/       # Integration tests
+  e2e/               # Playwright tests
+  setup.ts           # Test setup
+docs/                # Admin guide, API notes
+scripts/             # Utility scripts
+public/
+  icons/             # PWA icons
+  manifest.json      # PWA manifest
+  sw.js              # Service worker
+```
+
+## Design System
+
+Dark fintech theme. All tokens in `src/app/globals.css`.
+CSS custom properties + Tailwind v4 @theme inline.
+
+**Primary palette:** Deep navy (#0A1834) background, lavender (#C8B6F0) accent.
+**Cards:** Glass morphism with backdrop-blur.
+**Typography:** Inter (display/body), Geist Mono (code).
+**Money:** Always tabular-nums. Always "K X,XXX.XX" format.
+
+## Roles & Permissions
+
+| Role             | Scope                      | Key Permissions                    |
+|-----------------|----------------------------|------------------------------------|
+| owner           | Everything                  | Full access                        |
+| branch_manager  | Branch-scoped               | Approve loans up to limit          |
+| loan_officer    | Own portfolio only          | Register, apply, view, add notes   |
+| cashier         | Payments only               | Record payments, issue receipts    |
+
+Configurable via `permissions` + `role_permissions` tables.
+
+## Testing Commands
+
+```bash
+npm run typecheck    # tsc --noEmit
+npm run lint         # eslint
+npm run lint:fix     # eslint --fix
+npm run format       # prettier --write .
+npm run format:check # prettier --check .
+npm run test         # vitest run
+npm run test:watch   # vitest
+npm run test:e2e     # playwright test
+npm run build        # next build
+```
+
+## Build Phases
+
+| Phase | Focus                           | Status  |
+|-------|---------------------------------|---------|
+| 0     | Infrastructure                  | DONE    |
+| 1     | Database (migrations, RLS)      | PENDING |
+| 2     | Auth & RBAC                     | PENDING |
+| 3     | Lending engine (money, interest)| PENDING |
+| 4     | Customers & collateral          | PENDING |
+| 5     | Products, applications          | PENDING |
+| 6     | Disbursement & schedule         | PENDING |
+| 7     | Payments, receipts, penalties   | PENDING |
+| 8     | Dashboards                      | PENDING |
+| 9     | Accounting & reports            | PENDING |
+| 10    | PWA & mobile                    | PENDING |
+| 11    | Notifications                   | PENDING |
+| 12    | Audit & security hardening      | PENDING |
+| 13    | QA                              | PENDING |
+| 14    | Deployment                      | PENDING |
+| 15    | Handover                        | PENDING |
+
+## Environment Variables
+
+See `.env.example` for the full list. Never echo values from `.env.local`.
+
+## Known Issues
+
+- **Vercel CLI + Node 24:** Vercel CLI 59.x has worker timeout issues with Node v24.
+  Workaround: use Vercel dashboard for linking, or downgrade to Node 22 LTS.
+  Track: https://github.com/vercel/vercel/issues
