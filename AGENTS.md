@@ -152,21 +152,15 @@ npm run build        # next build
 | Phase | Focus                           | Status  |
 |-------|---------------------------------|---------|
 | 0     | Infrastructure                  | DONE    |
-| 1     | Database (migrations, RLS)      | PENDING |
-| 2     | Auth & RBAC                     | PENDING |
-| 3     | Lending engine (money, interest)| PENDING |
-| 4     | Customers & collateral          | PENDING |
-| 5     | Products, applications          | PENDING |
-| 6     | Disbursement & schedule         | PENDING |
-| 7     | Payments, receipts, penalties   | PENDING |
-| 8     | Dashboards                      | PENDING |
-| 9     | Accounting & reports            | PENDING |
-| 10    | PWA & mobile                    | PENDING |
-| 11    | Notifications                   | PENDING |
-| 12    | Audit & security hardening      | PENDING |
-| 13    | QA                              | PENDING |
-| 14    | Deployment                      | PENDING |
-| 15    | Handover                        | PENDING |
+| 1     | Database (migrations, RLS)      | DONE    |
+| 2     | Auth & RBAC                     | DONE    |
+| 3     | Lending engine (money, interest)| DONE    |
+| 4     | Customers & collateral          | DONE    |
+| 5     | Loans, applications, disburse   | DONE    |
+| 6     | Payments, collections, penalties| DONE    |
+| 7     | Accounting (COA, journal, exp)  | DONE    |
+| 8     | Dashboard, settings, reports    | DONE    |
+| 9     | PWA & deployment                | PENDING |
 
 ## Environment Variables
 
@@ -175,7 +169,6 @@ See `.env.example` for the full list. Never echo values from `.env.local`.
 ## Known Issues
 
 - **SWC native binary:** Not available for Win32 x64. Webpack mode used for builds. WASM fallback for dev.
-- **Middleware deprecation:** Next.js 16 prefers `proxy` convention. Will migrate in Phase 2.
 
 ## Standing Rules
 

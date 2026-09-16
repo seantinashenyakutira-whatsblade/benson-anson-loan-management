@@ -1,4 +1,5 @@
 import { createServerClient } from '@supabase/ssr';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 
 /**
@@ -37,8 +38,6 @@ export async function createClient() {
  * ONLY use in: API routes, server actions, scheduled jobs.
  */
 export function createServiceClient() {
-  const { createClient: createSupabaseClient } = require('@supabase/supabase-js');
-
   return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
