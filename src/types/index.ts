@@ -1,5 +1,5 @@
 /**
- * Shared TypeScript types for the Benson Anson Loans system.
+ * Shared TypeScript types for the Anson Benson Cash Solutions system.
  */
 
 /* ── Roles ──────────────────────────────────────────────── */

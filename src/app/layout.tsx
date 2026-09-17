@@ -16,15 +16,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Benson Anson Loans',
+  title: 'Anson Benson Cash Solutions — Loan Management',
   description:
-    'Collateral-based loan management system for Benson Anson Solutions Limited',
-  applicationName: 'Benson Anson Loans',
+    'Collateral-based loan management system for Anson Benson Cash Solutions Limited',
+  applicationName: 'ABC Loans',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Benson Anson Loans',
+    title: 'ABC Loans',
   },
 };
 
@@ -33,7 +33,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#0A1834',
+  themeColor: '#061633',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -2,25 +2,28 @@
 
 @theme inline {
   /* ── Colour tokens ─────────────────────────────────────── */
-  --color-bg-base: #0A1834;
-  --color-bg-elevated: #0F2454;
-  --color-bg-gradient-top: #0A1834;
-  --color-bg-gradient-bottom: #0F2454;
+  --color-bg-base: #061633;
+  --color-bg-elevated: #0A2249;
+  --color-bg-gradient-top: #061633;
+  --color-bg-gradient-bottom: #0A2249;
 
   --color-surface-glass: rgba(255, 255, 255, 0.04);
   --color-surface-glass-2: rgba(255, 255, 255, 0.06);
-  --color-surface-solid: #142C5E;
+  --color-surface-solid: #0D2755;
 
   --color-border-subtle: rgba(255, 255, 255, 0.08);
   --color-border-strong: rgba(255, 255, 255, 0.14);
 
   --color-text-primary: #FFFFFF;
-  --color-text-secondary: #8B9BC4;
-  --color-text-muted: #5E6E96;
+  --color-text-secondary: #A0B4D0;
+  --color-text-muted: #6B7F9E;
 
-  --color-accent-primary: #C8B6F0;
-  --color-accent-primary-hover: #B9A5EC;
-  --color-accent-on-primary: #0A1834;
+  --color-accent-primary: #00A6E0;
+  --color-accent-primary-hover: #38B6EE;
+  --color-accent-on-primary: #FFFFFF;
+
+  --color-brand-blue-deep: #005BAC;
+  --color-brand-blue-bright: #00A6E0;
 
   --color-success: #34D399;
   --color-warning: #FBBF24;
@@ -46,21 +49,23 @@
 
 :root {
   /* ── Semantic CSS vars (for non-Tailwind usage) ─────────── */
-  --bg-base: #0A1834;
-  --bg-elevated: #0F2454;
-  --bg-gradient-top: #0A1834;
-  --bg-gradient-bottom: #0F2454;
+  --bg-base: #061633;
+  --bg-elevated: #0A2249;
+  --bg-gradient-top: #061633;
+  --bg-gradient-bottom: #0A2249;
   --surface-glass: rgba(255, 255, 255, 0.04);
   --surface-glass-2: rgba(255, 255, 255, 0.06);
-  --surface-solid: #142C5E;
+  --surface-solid: #0D2755;
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.14);
   --text-primary: #FFFFFF;
-  --text-secondary: #8B9BC4;
-  --text-muted: #5E6E96;
-  --accent-primary: #C8B6F0;
-  --accent-primary-hover: #B9A5EC;
-  --accent-on-primary: #0A1834;
+  --text-secondary: #A0B4D0;
+  --text-muted: #6B7F9E;
+  --accent-primary: #00A6E0;
+  --accent-primary-hover: #38B6EE;
+  --accent-on-primary: #FFFFFF;
+  --brand-blue-deep: #005BAC;
+  --brand-blue-bright: #00A6E0;
   --success: #34D399;
   --warning: #FBBF24;
   --orange: #FB923C;
@@ -154,7 +159,7 @@ body {
 .kpi-gradient {
   background: linear-gradient(
     135deg,
-    rgba(200, 182, 240, 0.08) 0%,
-    rgba(200, 182, 240, 0.02) 100%
+    rgba(0, 166, 224, 0.08) 0%,
+    rgba(0, 91, 172, 0.04) 100%
   );
 }

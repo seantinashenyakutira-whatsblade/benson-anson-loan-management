@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Benson Anson Loans — Sign In',
+  title: 'Anson Benson Cash Solutions — Sign In',
 };
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -9,11 +9,14 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <div className="flex min-h-dvh items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-text-primary">
-            Benson Anson Loans
-          </h1>
-          <p className="mt-1 text-sm text-text-secondary">
-            Collateral-based loan management
+          <img
+            src="/branding/logo.png"
+            alt="Anson Benson Cash Solutions"
+            style={{ height: 64, width: 'auto' }}
+            className="mx-auto"
+          />
+          <p className="mt-3 text-sm text-text-secondary">
+            Loan Management
           </p>
         </div>
         {children}

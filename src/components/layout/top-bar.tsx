@@ -18,9 +18,11 @@ export function TopBar() {
           >
             {menuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-          <h1 className="text-lg font-bold text-text-primary lg:hidden">
-            BAL
-          </h1>
+          <img
+            src="/branding/logo.png"
+            alt="Anson Benson Cash Solutions"
+            style={{ height: 32, width: 'auto' }}
+          />
         </div>
 
         <div className="flex items-center gap-2">

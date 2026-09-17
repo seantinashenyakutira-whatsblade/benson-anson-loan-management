@@ -145,7 +145,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-text-primary">Dashboard</h1>
-        <p className="text-sm text-text-secondary">Benson Anson Loans — Overview</p>
+        <p className="text-sm text-text-secondary">Anson Benson Cash Solutions — Overview</p>
       </div>
 
       {/* KPI Cards */}

@@ -47,8 +47,11 @@ export function Sidebar() {
   return (
     <aside className="hidden w-64 flex-col border-r border-border-subtle bg-bg-base lg:flex">
       <div className="flex h-14 items-center border-b border-border-subtle px-4">
-        <h1 className="text-lg font-bold text-accent-primary">BAL</h1>
-        <span className="ml-2 text-xs text-text-muted">Benson Anson Loans</span>
+        <img
+          src="/branding/logo.png"
+          alt="Anson Benson Cash Solutions"
+          style={{ height: 32, width: 'auto' }}
+        />
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4">
