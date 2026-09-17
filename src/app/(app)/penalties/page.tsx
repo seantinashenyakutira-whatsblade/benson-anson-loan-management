@@ -4,17 +4,18 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
-import { Search } from 'lucide-react';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Search, AlertTriangle } from 'lucide-react';
 
 interface Penalty {
   id: string;
+  loan_id: string;
   penalty_type: string;
-  penalty_amount: number;
-  penalty_date: string;
-  reason: string | null;
+  amount: number;
+  paid_amount: number;
+  calculation_date: string;
+  description: string | null;
   status: string;
-  waived: boolean;
-  waived_amount: number;
   loans?: { loan_number: string; customers?: { first_name: string; last_name: string } };
 }
 
@@ -30,7 +31,7 @@ export default function PenaltiesPage() {
       let query = supabase
         .from('penalties')
         .select('*, loans(loan_number, customers(first_name, last_name))')
-        .order('penalty_date', { ascending: false });
+        .order('calculation_date', { ascending: false });
 
       if (statusFilter !== 'all') {
         query = query.eq('status', statusFilter);
@@ -50,12 +51,11 @@ export default function PenaltiesPage() {
       p.loans?.loan_number.toLowerCase().includes(q) ||
       p.loans?.customers?.first_name.toLowerCase().includes(q) ||
       p.loans?.customers?.last_name.toLowerCase().includes(q) ||
-      p.reason?.toLowerCase().includes(q)
+      p.description?.toLowerCase().includes(q)
     );
   });
 
-  const statusColor = (status: string, waived: boolean) => {
-    if (waived) return 'text-info';
+  const statusColor = (status: string) => {
     switch (status) {
       case 'active': return 'text-danger';
       case 'waived': return 'text-info';
@@ -64,7 +64,12 @@ export default function PenaltiesPage() {
     }
   };
 
-  const totalActive = penalties.filter((p) => p.status === 'active' && !p.waived).reduce((sum, p) => sum + p.penalty_amount - p.waived_amount, 0);
+  const netAmount = (p: { status: string; amount: number; paid_amount: number }) =>
+    p.status === 'paid' || p.status === 'waived' ? 0 : p.amount - p.paid_amount;
+
+  const totalActive = penalties
+    .filter((p) => p.status === 'active')
+    .reduce((sum, p) => sum + p.amount - p.paid_amount, 0);
 
   return (
     <div className="space-y-4">
@@ -102,7 +107,11 @@ export default function PenaltiesPage() {
       {loading ? (
         <div className="py-12 text-center text-text-muted">Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="py-12 text-center text-text-muted">No penalties found.</div>
+        <EmptyState
+          icon={AlertTriangle}
+          headline="No penalties"
+          message="Late-payment penalties will appear here when loans go overdue."
+        />
       ) : (
         <div className="space-y-2">
           {filtered.map((penalty) => (
@@ -110,19 +119,19 @@ export default function PenaltiesPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-medium text-text-primary capitalize">{penalty.penalty_type.replace('_', ' ')}</h3>
-                  <Link href={`/loans/${penalty.loans?.loan_number}`} className="text-xs text-accent-primary hover:underline">
+                  <Link href={`/loans/${penalty.loan_id}`} className="text-xs text-accent-primary hover:underline">
                     {penalty.loans?.loan_number} — {penalty.loans?.customers?.first_name} {penalty.loans?.customers?.last_name}
                   </Link>
-                  {penalty.reason && <p className="mt-1 text-xs text-text-muted">{penalty.reason}</p>}
+                  {penalty.description && <p className="mt-1 text-xs text-text-muted">{penalty.description}</p>}
                 </div>
                 <div className="text-right">
-                  <p className={`text-sm font-semibold ${statusColor(penalty.status, penalty.waived)}`}>
-                    {formatKwacha(penalty.penalty_amount - penalty.waived_amount)}
+                  <p className={`text-sm font-semibold ${statusColor(penalty.status)}`}>
+                    {formatKwacha(netAmount(penalty))}
                   </p>
-                  <span className={`text-xs font-medium capitalize ${statusColor(penalty.status, penalty.waived)}`}>
-                    {penalty.waived ? 'waived' : penalty.status}
+                  <span className={`text-xs font-medium capitalize ${statusColor(penalty.status)}`}>
+                    {penalty.status}
                   </span>
-                  <p className="text-xs text-text-muted">{penalty.penalty_date}</p>
+                  <p className="text-xs text-text-muted">{penalty.calculation_date}</p>
                 </div>
               </div>
             </div>

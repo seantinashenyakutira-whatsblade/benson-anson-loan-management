@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/components/auth-provider';
 import { formatKwacha } from '@/lib/money';
 import { ArrowLeft } from 'lucide-react';
 
@@ -10,15 +11,16 @@ interface LoanInfo {
   id: string;
   loan_number: string;
   outstanding_balance: number;
-  total_amount: number;
-  total_paid: number;
+  total_repayable: number;
+  amount_paid: number;
   customers?: { id: string; first_name: string; last_name: string };
   loan_schedule?: Array<{
     id: string;
     instalment_number: number;
     due_date: string;
-    total_due: number;
-    total_paid: number;
+    due_amount: number;
+    paid_amount: number;
+    remaining: number;
     status: string;
   }>;
 }
@@ -26,6 +28,7 @@ interface LoanInfo {
 export default function RecordPaymentPage() {
   const params = useParams();
   const router = useRouter();
+  const { user } = useAuth();
   const [loan, setLoan] = useState<LoanInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -45,17 +48,27 @@ export default function RecordPaymentPage() {
   }, [params.id, supabase]);
 
   const handlePayment = async (formData: FormData) => {
-    if (!loan) return;
+    if (!loan || !user) return;
     setSubmitting(true);
 
-    const amount = Math.round(Number(formData.get('amount')) * 100);
+    const amount = Number(formData.get('amount'));
+    const { data: paymentNumber, error: numError } = await supabase.rpc('rpc_generate_payment_number');
+    if (numError || !paymentNumber) {
+      setSubmitting(false);
+      alert('Error generating payment number: ' + numError?.message);
+      return;
+    }
+
     const paymentData = {
+      payment_number: paymentNumber as string,
       loan_id: loan.id,
+      customer_id: loan.customers?.id,
       amount,
       payment_method: formData.get('payment_method') as string,
-      reference_number: formData.get('reference_number') as string || null,
-      payment_date: formData.get('payment_date') as string,
-      notes: formData.get('notes') as string || null,
+      reference_number: (formData.get('reference_number') as string) || null,
+      paid_at: formData.get('payment_date') as string,
+      notes: (formData.get('notes') as string) || null,
+      recorded_by: user.id,
     };
 
     const { data: payment, error: payError } = await supabase
@@ -79,15 +92,16 @@ export default function RecordPaymentPage() {
     const allocations = [];
     for (const instalment of unpaidSchedule) {
       if (remaining <= 0) break;
-      const instalmentOwed = instalment.total_due - instalment.total_paid;
-      const allocAmount = Math.min(remaining, instalmentOwed);
+      const allocAmount = Math.min(remaining, instalment.remaining);
       if (allocAmount > 0) {
         allocations.push({
           payment_id: payment.id,
-          loan_schedule_id: instalment.id,
+          loan_id: loan.id,
+          schedule_id: instalment.id,
           amount: allocAmount,
+          component: 'principal' as const,
         });
-        remaining -= allocAmount;
+        remaining = Math.round((remaining - allocAmount) * 100) / 100;
       }
     }
 
@@ -126,7 +140,7 @@ export default function RecordPaymentPage() {
           </div>
           <div className="mt-1 flex justify-between text-sm">
             <span className="text-text-muted">Total Paid</span>
-            <span className="text-success">{formatKwacha(loan.total_paid)}</span>
+            <span className="text-success">{formatKwacha(loan.amount_paid)}</span>
           </div>
         </div>
 
@@ -139,7 +153,7 @@ export default function RecordPaymentPage() {
                 <div key={s.id} className="flex justify-between rounded-lg border border-border-subtle/50 px-3 py-2 text-xs">
                   <span className="text-text-secondary">#{s.instalment_number} — {s.due_date}</span>
                   <span className={s.status === 'overdue' ? 'text-danger' : 'text-text-primary'}>
-                    {formatKwacha(s.total_due - s.total_paid)} due
+                    {formatKwacha(s.remaining)} due
                   </span>
                 </div>
               ))}
@@ -151,7 +165,7 @@ export default function RecordPaymentPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm text-text-secondary">Amount (K) *</label>
-              <input name="amount" type="number" step="0.01" required min="0.01" max={loan.outstanding_balance / 100} className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
+              <input name="amount" type="number" step="0.01" required min="0.01" max={loan.outstanding_balance} className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
             </div>
             <div>
               <label className="mb-1 block text-sm text-text-secondary">Payment Date *</label>
@@ -163,10 +177,11 @@ export default function RecordPaymentPage() {
             <div>
               <label className="mb-1 block text-sm text-text-secondary">Method *</label>
               <select name="payment_method" required className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none">
-                <option value="mobile_money">Mobile Money</option>
-                <option value="bank_transfer">Bank Transfer</option>
                 <option value="cash">Cash</option>
-                <option value="cheque">Cheque</option>
+                <option value="airtel_money">Airtel Money</option>
+                <option value="mtn_mobile_money">MTN MoMo</option>
+                <option value="bank_transfer">Bank Transfer</option>
+                <option value="other">Other</option>
               </select>
             </div>
             <div>

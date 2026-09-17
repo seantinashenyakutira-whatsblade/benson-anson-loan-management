@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
-import { Plus, Search, Filter } from 'lucide-react';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Plus, Search, Filter, HandCoins } from 'lucide-react';
 
 interface Loan {
   id: string;
@@ -15,7 +16,7 @@ interface Loan {
   health: string;
   customers?: { first_name: string; last_name: string };
   loan_products?: { name: string };
-  disbursed_date: string | null;
+  disbursement_date: string | null;
   maturity_date: string | null;
 }
 
@@ -123,7 +124,13 @@ export default function LoansPage() {
       {loading ? (
         <div className="py-12 text-center text-text-muted">Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="py-12 text-center text-text-muted">No loans found.</div>
+        <EmptyState
+          icon={HandCoins}
+          headline="No loans yet"
+          message="Create your first loan application once a customer is registered."
+          actionLabel="New loan application"
+          actionHref="/loans/new"
+        />
       ) : (
         <div className="space-y-2">
           {filtered.map((loan) => (

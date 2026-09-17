@@ -16,8 +16,19 @@ interface Collection {
   days_overdue: number;
   overdue_amount: number;
   health: string;
-  next_due_date: string;
-  last_payment_date: string | null;
+  maturity_date: string | null;
+}
+
+interface CollectionRow {
+  id: string;
+  loan_number: string;
+  customer_id: string;
+  outstanding_balance: number;
+  days_overdue: number;
+  arrears_amount: number;
+  health: string;
+  maturity_date: string | null;
+  customers?: { first_name: string; last_name: string; phone: string } | null;
 }
 
 export default function CollectionsPage() {
@@ -29,12 +40,27 @@ export default function CollectionsPage() {
   useEffect(() => {
     const fetchCollections = async () => {
       const { data } = await supabase
-        .from('v_customer_position')
-        .select('*')
+        .from('loans')
+        .select('id, loan_number, customer_id, outstanding_balance, days_overdue, arrears_amount, health, maturity_date, customers(first_name, last_name, phone)')
         .gt('days_overdue', 0)
         .order('days_overdue', { ascending: false });
 
-      if (data) setCollections(data);
+      if (data) {
+        setCollections(
+          (data as unknown as CollectionRow[]).map((l) => ({
+            loan_id: l.id,
+            loan_number: l.loan_number,
+            customer_id: l.customer_id,
+            customer_name: `${l.customers?.first_name ?? ''} ${l.customers?.last_name ?? ''}`.trim() || 'Unknown customer',
+            customer_phone: l.customers?.phone ?? '',
+            outstanding_balance: l.outstanding_balance,
+            days_overdue: l.days_overdue,
+            overdue_amount: l.arrears_amount,
+            health: l.health,
+            maturity_date: l.maturity_date,
+          })),
+        );
+      }
       setLoading(false);
     };
 
@@ -116,7 +142,7 @@ export default function CollectionsPage() {
               </div>
               <div className="mt-2 flex items-center justify-between text-xs text-text-muted">
                 <span>Outstanding: {formatKwacha(item.outstanding_balance)}</span>
-                {item.last_payment_date && <span>Last payment: {item.last_payment_date}</span>}
+                {item.maturity_date && <span>Matures: {item.maturity_date}</span>}
               </div>
             </div>
           ))}

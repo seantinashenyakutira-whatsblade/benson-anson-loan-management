@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
-import { Plus, Search } from 'lucide-react';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Plus, Search, Users } from 'lucide-react';
 
 interface Customer {
   id: string;
@@ -26,7 +27,7 @@ export default function CustomersPage() {
     const fetchCustomers = async () => {
       const { data } = await supabase
         .from('customers')
-        .select('*, loans(count, outstanding_balance)')
+        .select('*, loans(count)')
         .order('created_at', { ascending: false });
 
       if (data) setCustomers(data);
@@ -82,7 +83,13 @@ export default function CustomersPage() {
       {loading ? (
         <div className="py-12 text-center text-text-muted">Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="py-12 text-center text-text-muted">No customers found.</div>
+        <EmptyState
+          icon={Users}
+          headline="No customers yet"
+          message="Register your first customer to start building your loan portfolio."
+          actionLabel="Register first customer"
+          actionHref="/customers/new"
+        />
       ) : (
         <div className="space-y-2">
           {filtered.map((customer) => (

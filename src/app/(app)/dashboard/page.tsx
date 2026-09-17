@@ -70,14 +70,14 @@ export default function DashboardPage() {
         supabase.from('customers').select('id', { count: 'exact', head: true }),
         supabase.from('loans').select('id', { count: 'exact', head: true }).in('status', ['disbursed', 'performing', 'at_risk', 'overdue']),
         supabase.from('loans').select('principal_amount').in('status', ['disbursed', 'performing', 'at_risk', 'overdue', 'fully_paid', 'closed']),
-        supabase.from('payments').select('amount').eq('status', 'completed'),
+        supabase.from('payments').select('amount').eq('status', 'verified'),
         supabase.from('loans').select('outstanding_balance').in('status', ['disbursed', 'performing', 'at_risk', 'overdue']),
         supabase.from('loans').select('id', { count: 'exact', head: true }).eq('health', 'overdue'),
         supabase.from('loans').select('outstanding_balance').eq('health', 'overdue'),
         supabase.from('customers').select('id', { count: 'exact', head: true }).gte('created_at', monthStart),
-        supabase.from('loans').select('id', { count: 'exact', head: true }).gte('disbursed_date', monthStart),
-        supabase.from('payments').select('amount').eq('status', 'completed').gte('payment_date', monthStart),
-        supabase.from('payments').select('id, payment_number, amount, payment_date, status, payment_method').order('payment_date', { ascending: false }).limit(10),
+        supabase.from('loans').select('id', { count: 'exact', head: true }).gte('disbursement_date', monthStart),
+        supabase.from('payments').select('amount').eq('status', 'verified').gte('paid_at', monthStart),
+        supabase.from('payments').select('id, payment_number, amount, paid_at, status, payment_method').order('paid_at', { ascending: false }).limit(10),
       ]);
 
       const totalDisbursed = totalDisbursedRes.data?.reduce((sum, l) => sum + l.principal_amount, 0) || 0;
@@ -95,7 +95,7 @@ export default function DashboardPage() {
         outstandingBalance,
         overdueLoans: overdueRes.count || 0,
         overdueAmount,
-        collectionEfficiency: expectedThisMonth > 0 ? Math.round((collectionsThisMonth / expectedThisMonth) * 100) : 100,
+        collectionEfficiency: expectedThisMonth > 0 ? Math.round((collectionsThisMonth / expectedThisMonth) * 100) : 0,
         parRatio: outstandingBalance > 0 ? Math.round((overdueAmount / outstandingBalance) * 100) : 0,
         newCustomersThisMonth: newCustomersRes.count || 0,
         loansDisbursedThisMonth: disbursedThisMonthRes.count || 0,
@@ -108,7 +108,7 @@ export default function DashboardPage() {
           type: 'payment',
           description: p.payment_number,
           amount: p.amount,
-          date: p.payment_date,
+          date: p.paid_at,
           status: p.status,
         })));
       }
@@ -202,7 +202,7 @@ export default function DashboardPage() {
               <div key={p.id} className="flex items-center justify-between rounded-xl border border-border-subtle/50 p-3">
                 <div>
                   <p className="text-sm text-text-primary">{p.description}</p>
-                  <p className="text-xs text-text-muted">{p.date}</p>
+                  <p className="text-xs text-text-muted">{p.date?.split('T')[0]}</p>
                 </div>
                 <span className="text-sm font-semibold text-success">{formatKwacha(p.amount)}</span>
               </div>

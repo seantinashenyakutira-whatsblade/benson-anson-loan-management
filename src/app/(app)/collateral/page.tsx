@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
-import { Plus, Search } from 'lucide-react';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Plus, Search, Shield } from 'lucide-react';
 
 interface CollateralItem {
   id: string;
@@ -97,7 +98,13 @@ export default function CollateralPage() {
       {loading ? (
         <div className="py-12 text-center text-text-muted">Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="py-12 text-center text-text-muted">No collateral found.</div>
+        <EmptyState
+          icon={Shield}
+          headline="Vault is empty"
+          message="Register collateral items here before pledging them to loans."
+          actionLabel="Add first collateral"
+          actionHref="/collateral/new"
+        />
       ) : (
         <div className="space-y-2">
           {filtered.map((item) => (

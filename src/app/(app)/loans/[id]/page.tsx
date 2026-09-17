@@ -11,41 +11,38 @@ interface LoanDetail {
   id: string;
   loan_number: string;
   principal_amount: number;
-  interest_amount: number;
-  total_amount: number;
-  total_paid: number;
+  total_interest: number;
+  total_repayable: number;
+  amount_paid: number;
   outstanding_balance: number;
   status: string;
   health: string;
   interest_rate: number;
-  interest_method: string;
-  term_count: number;
-  term_unit: string;
-  disbursed_date: string | null;
+  interest_type: string;
+  duration: number;
+  duration_unit: string;
+  disbursement_date: string | null;
   maturity_date: string | null;
-  first_payment_date: string | null;
+  first_due_date: string | null;
   customers?: { id: string; first_name: string; last_name: string; phone: string };
   loan_products?: { name: string };
-  collateral?: Array<{ id: string; description: string; estimated_value: number }>;
   loan_schedule?: Array<{
     id: string;
     instalment_number: number;
     due_date: string;
+    due_amount: number;
     principal_due: number;
     interest_due: number;
-    total_due: number;
-    principal_paid: number;
-    interest_paid: number;
-    total_paid: number;
-    balance_after: number;
+    paid_amount: number;
+    remaining: number;
     status: string;
   }>;
   payments?: Array<{
     id: string;
     payment_number: string;
-    payment_date: string;
+    paid_at: string;
     amount: number;
-    method: string;
+    payment_method: string;
     status: string;
   }>;
 }
@@ -62,7 +59,7 @@ export default function LoanDetailPage() {
     const fetchLoan = async () => {
       const { data } = await supabase
         .from('loans')
-        .select('*, customers(id, first_name, last_name, phone), loan_products(name), collateral(id, description, estimated_value), loan_schedule(*), payments(*)')
+        .select('*, customers(id, first_name, last_name, phone), loan_products(name), loan_schedule(*), payments(*)')
         .eq('id', params.id)
         .single();
 
@@ -76,8 +73,8 @@ export default function LoanDetailPage() {
   if (loading) return <div className="py-12 text-center text-text-muted">Loading...</div>;
   if (!loan) return <div className="py-12 text-center text-text-muted">Loan not found.</div>;
 
-  const progress = loan.total_amount > 0
-    ? Math.round((loan.total_paid / loan.total_amount) * 100)
+  const progress = loan.total_repayable > 0
+    ? Math.round((loan.amount_paid / loan.total_repayable) * 100)
     : 0;
 
   const statusColor = (status: string) => {
@@ -152,9 +149,9 @@ export default function LoanDetailPage() {
         {/* Progress bar */}
         <div className="mt-6">
           <div className="flex justify-between text-xs text-text-muted">
-            <span>{formatKwacha(loan.total_paid)} paid</span>
+            <span>{formatKwacha(loan.amount_paid)} paid</span>
             <span>{progress}%</span>
-            <span>{formatKwacha(loan.total_amount)} total</span>
+            <span>{formatKwacha(loan.total_repayable)} total</span>
           </div>
           <div className="mt-1 h-2 overflow-hidden rounded-full bg-surface-glass">
             <div
@@ -193,12 +190,12 @@ export default function LoanDetailPage() {
                 <p className="text-lg font-semibold text-text-primary">{formatKwacha(loan.principal_amount)}</p>
               </div>
               <div>
-                <p className="text-xs text-text-muted">Interest ({loan.interest_rate}% {loan.interest_method})</p>
-                <p className="text-lg font-semibold text-text-primary">{formatKwacha(loan.interest_amount)}</p>
+                <p className="text-xs text-text-muted">Interest ({loan.interest_rate}% {loan.interest_type})</p>
+                <p className="text-lg font-semibold text-text-primary">{formatKwacha(loan.total_interest)}</p>
               </div>
               <div>
                 <p className="text-xs text-text-muted">Term</p>
-                <p className="text-sm text-text-primary">{loan.term_count} {loan.term_unit}</p>
+                <p className="text-sm text-text-primary">{loan.duration} {loan.duration_unit}</p>
               </div>
               <div>
                 <p className="text-xs text-text-muted">Outstanding Balance</p>
@@ -207,12 +204,12 @@ export default function LoanDetailPage() {
             </div>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              {loan.disbursed_date && (
+              {loan.disbursement_date && (
                 <div className="flex items-center gap-2">
                   <Calendar size={14} className="text-text-muted" />
                   <div>
                     <p className="text-xs text-text-muted">Disbursed</p>
-                    <p className="text-sm text-text-primary">{loan.disbursed_date}</p>
+                    <p className="text-sm text-text-primary">{loan.disbursement_date}</p>
                   </div>
                 </div>
               )}
@@ -225,36 +222,17 @@ export default function LoanDetailPage() {
                   </div>
                 </div>
               )}
-              {loan.first_payment_date && (
+              {loan.first_due_date && (
                 <div className="flex items-center gap-2">
                   <Calendar size={14} className="text-text-muted" />
                   <div>
-                    <p className="text-xs text-text-muted">First Payment</p>
-                    <p className="text-sm text-text-primary">{loan.first_payment_date}</p>
+                    <p className="text-xs text-text-muted">First Due</p>
+                    <p className="text-sm text-text-primary">{loan.first_due_date}</p>
                   </div>
                 </div>
               )}
             </div>
           </div>
-
-          {/* Collateral */}
-          {loan.collateral && loan.collateral.length > 0 && (
-            <div className="glass-card p-6">
-              <h2 className="mb-4 text-lg font-semibold text-text-primary">Collateral</h2>
-              <div className="space-y-2">
-                {loan.collateral.map((c) => (
-                  <Link
-                    key={c.id}
-                    href={`/collateral/${c.id}`}
-                    className="flex items-center justify-between rounded-xl border border-border-subtle p-3 hover:bg-surface-glass"
-                  >
-                    <span className="text-sm text-text-primary">{c.description}</span>
-                    <span className="text-sm text-text-secondary">{formatKwacha(c.estimated_value)}</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Customer */}
           {loan.customers && (
@@ -293,9 +271,9 @@ export default function LoanDetailPage() {
                     <tr key={s.id} className="border-b border-border-subtle/50">
                       <td className="py-2 text-text-secondary">{s.instalment_number}</td>
                       <td className="py-2 text-text-primary">{s.due_date}</td>
-                      <td className="py-2 text-right text-text-primary">{formatKwacha(s.total_due)}</td>
-                      <td className="py-2 text-right text-text-secondary">{formatKwacha(s.total_paid)}</td>
-                      <td className="py-2 text-right text-text-primary">{formatKwacha(s.balance_after)}</td>
+                      <td className="py-2 text-right text-text-primary">{formatKwacha(s.due_amount)}</td>
+                      <td className="py-2 text-right text-text-secondary">{formatKwacha(s.paid_amount)}</td>
+                      <td className="py-2 text-right text-text-primary">{formatKwacha(s.remaining)}</td>
                       <td className={`py-2 font-medium capitalize ${scheduleStatusColor(s.status)}`}>{s.status}</td>
                     </tr>
                   ))}
@@ -318,7 +296,7 @@ export default function LoanDetailPage() {
                 <div key={p.id} className="flex items-center justify-between rounded-xl border border-border-subtle p-3">
                   <div>
                     <p className="text-sm font-medium text-text-primary">{p.payment_number}</p>
-                    <p className="text-xs text-text-muted">{p.payment_date} — {p.method}</p>
+                    <p className="text-xs text-text-muted">{p.paid_at?.split('T')[0]} — {p.payment_method?.replace(/_/g, ' ')}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-semibold text-success">{formatKwacha(p.amount)}</p>

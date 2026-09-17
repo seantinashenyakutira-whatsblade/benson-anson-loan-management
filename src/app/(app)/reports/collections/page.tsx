@@ -7,7 +7,7 @@ import { formatKwacha } from '@/lib/money';
 import { ArrowLeft } from 'lucide-react';
 
 interface DailyCollection {
-  payment_date: string;
+  paid_at: string;
   total: number;
   count: number;
 }
@@ -35,22 +35,22 @@ export default function CollectionsReport() {
 
       const { data } = await supabase
         .from('payments')
-        .select('payment_date, amount')
-        .eq('status', 'completed')
-        .gte('payment_date', startDate)
-        .order('payment_date', { ascending: false });
+        .select('paid_at, amount')
+        .eq('status', 'verified')
+        .gte('paid_at', startDate)
+        .order('paid_at', { ascending: false });
 
       if (data) {
         const grouped: Record<string, { total: number; count: number }> = {};
         data.forEach((p) => {
-          const key = p.payment_date;
+          const key = p.paid_at.split('T')[0]!;
           if (!grouped[key]) grouped[key] = { total: 0, count: 0 };
           grouped[key]!.total += p.amount;
           grouped[key]!.count += 1;
         });
         const result = Object.entries(grouped)
-          .map(([date, v]) => ({ payment_date: date, ...v }))
-          .sort((a, b) => b.payment_date.localeCompare(a.payment_date));
+          .map(([date, v]) => ({ paid_at: date, ...v }))
+          .sort((a, b) => b.paid_at.localeCompare(a.paid_at));
         setCollections(result);
         setTotals({ total: data.reduce((s, p) => s + p.amount, 0), count: data.length });
       }
@@ -102,9 +102,9 @@ export default function CollectionsReport() {
       ) : (
         <div className="space-y-2">
           {collections.map((c) => (
-            <div key={c.payment_date} className="glass-card flex items-center justify-between p-4">
+            <div key={c.paid_at} className="glass-card flex items-center justify-between p-4">
               <div>
-                <p className="text-sm text-text-primary">{c.payment_date}</p>
+                <p className="text-sm text-text-primary">{c.paid_at}</p>
                 <p className="text-xs text-text-muted">{c.count} payment{c.count !== 1 ? 's' : ''}</p>
               </div>
               <p className="text-sm font-semibold text-success">{formatKwacha(c.total)}</p>

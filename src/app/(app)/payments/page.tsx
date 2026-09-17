@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
-import { Search, Download } from 'lucide-react';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Search, Download, Receipt } from 'lucide-react';
 
 interface Payment {
   id: string;
   payment_number: string;
   amount: number;
-  payment_date: string;
+  paid_at: string;
   payment_method: string;
   reference_number: string | null;
   status: string;
@@ -29,7 +30,7 @@ export default function PaymentsPage() {
       let query = supabase
         .from('payments')
         .select('*, loans(loan_number, customers(first_name, last_name))')
-        .order('payment_date', { ascending: false });
+        .order('paid_at', { ascending: false });
 
       if (methodFilter !== 'all') {
         query = query.eq('payment_method', methodFilter);
@@ -56,19 +57,30 @@ export default function PaymentsPage() {
 
   const statusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'text-success';
+      case 'verified': return 'text-success';
       case 'pending': return 'text-warning';
-      case 'failed': return 'text-danger';
+      case 'rejected': return 'text-danger';
       default: return 'text-text-muted';
+    }
+  };
+
+  const methodLabel = (method: string) => {
+    switch (method) {
+      case 'mtn_mobile_money': return 'MTN MoMo';
+      case 'airtel_money': return 'Airtel Money';
+      case 'bank_transfer': return 'Bank Transfer';
+      case 'cash': return 'Cash';
+      case 'other': return 'Other';
+      default: return method.replace('_', ' ');
     }
   };
 
   const methodIcon = (method: string) => {
     switch (method) {
-      case 'mobile_money': return '📱';
+      case 'mtn_mobile_money':
+      case 'airtel_money': return '📱';
       case 'bank_transfer': return '🏦';
       case 'cash': return '💵';
-      case 'cheque': return '📄';
       default: return '💰';
     }
   };
@@ -110,17 +122,22 @@ export default function PaymentsPage() {
           className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none"
         >
           <option value="all">All Methods</option>
-          <option value="mobile_money">Mobile Money</option>
-          <option value="bank_transfer">Bank Transfer</option>
           <option value="cash">Cash</option>
-          <option value="cheque">Cheque</option>
+          <option value="airtel_money">Airtel Money</option>
+          <option value="mtn_mobile_money">MTN MoMo</option>
+          <option value="bank_transfer">Bank Transfer</option>
+          <option value="other">Other</option>
         </select>
       </div>
 
       {loading ? (
         <div className="py-12 text-center text-text-muted">Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="py-12 text-center text-text-muted">No payments found.</div>
+        <EmptyState
+          icon={Receipt}
+          headline="No payments yet"
+          message="Payments recorded against disbursed loans will appear here."
+        />
       ) : (
         <div className="space-y-2">
           {filtered.map((payment) => (
@@ -141,8 +158,8 @@ export default function PaymentsPage() {
                     </span>
                   </div>
                   <div className="mt-1 flex items-center gap-3 text-xs text-text-muted">
-                    <span>{payment.payment_date}</span>
-                    <span className="capitalize">{payment.payment_method.replace('_', ' ')}</span>
+                    <span>{payment.paid_at?.split('T')[0]}</span>
+                    <span className="capitalize">{methodLabel(payment.payment_method)}</span>
                     {payment.reference_number && <span>Ref: {payment.reference_number}</span>}
                   </div>
                 </div>
