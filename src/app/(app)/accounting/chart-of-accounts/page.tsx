@@ -17,6 +17,9 @@ export default function ChartOfAccountsPage() {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({ code: '', name: '', account_type: 'asset', description: '' });
   const supabase = createClient();
 
   useEffect(() => {
@@ -48,10 +51,38 @@ export default function ChartOfAccountsPage() {
       case 'asset': return 'text-success';
       case 'liability': return 'text-danger';
       case 'equity': return 'text-info';
+      case 'revenue':
       case 'income': return 'text-accent-primary';
       case 'expense': return 'text-warning';
       default: return 'text-text-secondary';
     }
+  };
+
+  const toggleActive = async (id: string, current: boolean) => {
+    const { error } = await supabase.from('chart_of_accounts').update({ is_active: !current }).eq('id', id);
+    if (error) {
+      alert('Error: ' + error.message);
+      return;
+    }
+    setAccounts((prev) => prev.map((a) => (a.id === id ? { ...a, is_active: !current } : a)));
+  };
+
+  const handleAdd = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    const { data, error } = await supabase
+      .from('chart_of_accounts')
+      .insert({ code: form.code.trim(), name: form.name.trim(), account_type: form.account_type, description: form.description.trim() || null })
+      .select()
+      .single();
+    setSaving(false);
+    if (error) {
+      alert('Error: ' + error.message);
+      return;
+    }
+    setAccounts((prev) => [...prev, data].sort((a, b) => a.code.localeCompare(b.code)));
+    setForm({ code: '', name: '', account_type: 'asset', description: '' });
+    setShowForm(false);
   };
 
   const groupedAccounts = filtered.reduce<Record<string, Account[]>>((acc, a) => {
@@ -65,11 +96,42 @@ export default function ChartOfAccountsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-text-primary">Chart of Accounts</h1>
-        <button className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover">
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
+        >
           <Plus size={16} />
           Add Account
         </button>
       </div>
+
+      {showForm && (
+        <form onSubmit={handleAdd} className="glass-card space-y-3 p-4">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div>
+              <label className="mb-1 block text-sm text-text-secondary">Code *</label>
+              <input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} required placeholder="5600" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm text-text-secondary">Name *</label>
+              <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required placeholder="Fuel Expense" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm text-text-secondary">Type *</label>
+              <select value={form.account_type} onChange={(e) => setForm({ ...form, account_type: e.target.value })} className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none">
+                <option value="asset">Asset</option>
+                <option value="liability">Liability</option>
+                <option value="equity">Equity</option>
+                <option value="revenue">Revenue</option>
+                <option value="expense">Expense</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" disabled={saving} className="rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover disabled:opacity-50">
+            {saving ? 'Saving...' : 'Save Account'}
+          </button>
+        </form>
+      )}
 
       <div className="flex gap-2">
         <div className="relative flex-1">
@@ -91,7 +153,7 @@ export default function ChartOfAccountsPage() {
           <option value="asset">Assets</option>
           <option value="liability">Liabilities</option>
           <option value="equity">Equity</option>
-          <option value="income">Income</option>
+          <option value="revenue">Revenue</option>
           <option value="expense">Expenses</option>
         </select>
       </div>
@@ -112,9 +174,13 @@ export default function ChartOfAccountsPage() {
                       <span className="font-mono text-xs text-text-muted">{account.code}</span>
                       <span className="text-sm text-text-primary">{account.name}</span>
                     </div>
-                    <span className={`text-xs ${account.is_active ? 'text-success' : 'text-text-muted'}`}>
+                    <button
+                      onClick={() => toggleActive(account.id, account.is_active)}
+                      className={`text-xs ${account.is_active ? 'text-success' : 'text-text-muted'} hover:underline`}
+                      title="Toggle active"
+                    >
                       {account.is_active ? 'Active' : 'Inactive'}
-                    </span>
+                    </button>
                   </div>
                 ))}
               </div>
