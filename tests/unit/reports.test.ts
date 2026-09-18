@@ -9,6 +9,7 @@ describe('parseReportParams', () => {
   it('falls back to current month on missing or malformed input', () => {
     const p = parseReportParams(new URLSearchParams('from=banana&to=13-99'));
     expect(p.from).toMatch(/^\d{4}-\d{2}-01$/);
+    expect(p.to).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(p.branchId).toBe('all');
     expect(p.status).toBe('all');
   });
