@@ -14,6 +14,10 @@ const TIER_A = [
   { name: 'Income & Expense', description: 'Operational ledger with running balance', icon: Scale, href: '/reports/income-expense' },
   { name: 'Officer Performance', description: 'Portfolio aggregates per officer', icon: Award, href: '/reports/officer-performance' },
   { name: 'Branch Performance', description: 'Portfolio aggregates per branch', icon: Building2, href: '/reports/branch-performance' },
+  { name: 'Penalties Report', description: 'Penalties with status and waived amounts', icon: AlertTriangle, href: '/reports/penalties' },
+  { name: 'P&L Report', description: 'Profit and loss for the period', icon: FileText, href: '/reports/pl' },
+  { name: 'Balance Sheet Report', description: 'Assets, liabilities and equity', icon: Scale, href: '/reports/balance-sheet' },
+  { name: 'Collection Summary', description: 'Daily collections per branch and officer', icon: DollarSign, href: '/reports/collection-summary' },
 ];
 
 const LEGACY = [

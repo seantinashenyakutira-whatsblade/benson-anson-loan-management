@@ -15,6 +15,12 @@ import {
   fetchOfficerPerformance,
   fetchBranchPerformance,
 } from './fetchers';
+import {
+  fetchPenaltiesReport,
+  fetchPlReport,
+  fetchBalanceSheetReport,
+  fetchCollectionSummary,
+} from './fetchers-tier-b';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { ReportParams, ReportUser } from './types';
 
@@ -40,6 +46,10 @@ export const REPORT_REGISTRY: Record<string, ReportDef> = {
   'income-expense': { slug: 'income-expense', title: 'Income & Expense', subtitle: 'Operational ledger with running balance', fetcher: fetchIncomeExpense },
   'officer-performance': { slug: 'officer-performance', title: 'Officer Performance', subtitle: 'Portfolio aggregates per officer', fetcher: fetchOfficerPerformance },
   'branch-performance': { slug: 'branch-performance', title: 'Branch Performance', subtitle: 'Portfolio aggregates per branch', fetcher: fetchBranchPerformance },
+  penalties: { slug: 'penalties', title: 'Penalties Report', subtitle: 'Penalties with status and waived amounts', fetcher: fetchPenaltiesReport, showStatus: ['active', 'waived', 'paid'] },
+  pl: { slug: 'pl', title: 'P&L Report', subtitle: 'Profit and loss for the period', fetcher: fetchPlReport },
+  'balance-sheet': { slug: 'balance-sheet', title: 'Balance Sheet Report', subtitle: 'Assets, liabilities and equity as at date', fetcher: fetchBalanceSheetReport },
+  'collection-summary': { slug: 'collection-summary', title: 'Collection Summary', subtitle: 'Daily collections per branch and officer', fetcher: fetchCollectionSummary },
 };
 
 export const TIER_A_SLUGS = Object.keys(REPORT_REGISTRY);
