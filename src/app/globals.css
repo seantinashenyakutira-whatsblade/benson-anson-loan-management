@@ -141,6 +141,23 @@ body {
   }
 }
 
+/* ── Print (financial statements & reports) ───────────── */
+@media print {
+  body {
+    background: #FFFFFF;
+    color: #000000;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .glass-card {
+    background: #FFFFFF;
+    border: 1px solid #DDDDDD;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
 /* ── Card glass utility ─────────────────────────────────── */
 .glass-card {
   background: var(--surface-glass);
