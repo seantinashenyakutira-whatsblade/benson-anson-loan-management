@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/components/auth-provider';
-import { LogOut, Menu, X, Bell } from 'lucide-react';
+import { LogOut, Menu, X, Bell, Search } from 'lucide-react';
 
 export function TopBar() {
   const { profile, signOut } = useAuth();
@@ -26,6 +26,13 @@ export function TopBar() {
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }))}
+            className="rounded-lg p-2 text-text-secondary hover:bg-surface-glass"
+            title="Search (Ctrl+K)"
+          >
+            <Search size={20} />
+          </button>
           <button className="relative rounded-lg p-2 text-text-secondary hover:bg-surface-glass">
             <Bell size={20} />
             <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-danger" />

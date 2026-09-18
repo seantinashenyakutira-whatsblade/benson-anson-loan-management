@@ -4,6 +4,7 @@ import { AuthProvider } from '@/components/auth-provider';
 import { TopBar } from '@/components/layout/top-bar';
 import { BottomNav } from '@/components/layout/bottom-nav';
 import { Sidebar } from '@/components/layout/sidebar';
+import { CommandPalette } from '@/components/layout/command-palette';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -17,6 +18,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </main>
         </div>
         <BottomNav />
+        <CommandPalette />
       </div>
     </AuthProvider>
   );

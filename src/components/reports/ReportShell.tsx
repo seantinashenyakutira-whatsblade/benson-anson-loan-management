@@ -17,9 +17,11 @@ interface ReportShellProps {
 }
 
 const PRESETS = [
+  { label: 'Today', get: () => { const t = iso(new Date()); return { from: t, to: t }; } },
+  { label: 'This Week', get: () => weekRange(0) },
   { label: 'This Month', get: () => monthRange(0) },
   { label: 'Last Month', get: () => monthRange(-1) },
-  { label: 'Today', get: () => { const t = iso(new Date()); return { from: t, to: t }; } },
+  { label: 'This Quarter', get: () => quarterRange() },
   { label: 'This Year', get: () => ({ from: `${new Date().getFullYear()}-01-01`, to: iso(new Date()) }) },
 ];
 
@@ -32,6 +34,20 @@ function monthRange(delta: number): { from: string; to: string } {
   const first = new Date(now.getFullYear(), now.getMonth() + delta, 1);
   const last = new Date(now.getFullYear(), now.getMonth() + delta + 1, 0);
   return { from: iso(first), to: iso(last) };
+}
+
+function weekRange(delta: number): { from: string; to: string } {
+  const now = new Date();
+  const day = (now.getDay() + 6) % 7; // Monday-first
+  const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - day + delta * 7);
+  const sunday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6);
+  return { from: iso(monday), to: iso(sunday) };
+}
+
+function quarterRange(): { from: string; to: string } {
+  const now = new Date();
+  const q = Math.floor(now.getMonth() / 3);
+  return { from: iso(new Date(now.getFullYear(), q * 3, 1)), to: iso(new Date(now.getFullYear(), q * 3 + 3, 0)) };
 }
 
 export function formatCell(col: ReportColumn, value: string | number | null | undefined): string {
