@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { usePermissions } from '@/hooks/use-permissions';
 import { Search, Plus } from 'lucide-react';
 
 interface Account {
@@ -20,6 +21,8 @@ export default function ChartOfAccountsPage() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ code: '', name: '', account_type: 'asset', description: '' });
+  const { role } = usePermissions();
+  const isOwner = role === 'owner';
   const supabase = createClient();
 
   useEffect(() => {
@@ -96,16 +99,18 @@ export default function ChartOfAccountsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-text-primary">Chart of Accounts</h1>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
-        >
-          <Plus size={16} />
-          Add Account
-        </button>
+        {isOwner && (
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
+          >
+            <Plus size={16} />
+            Add Account
+          </button>
+        )}
       </div>
 
-      {showForm && (
+      {showForm && isOwner && (
         <form onSubmit={handleAdd} className="glass-card space-y-3 p-4">
           <div className="grid gap-3 sm:grid-cols-3">
             <div>
@@ -174,13 +179,19 @@ export default function ChartOfAccountsPage() {
                       <span className="font-mono text-xs text-text-muted">{account.code}</span>
                       <span className="text-sm text-text-primary">{account.name}</span>
                     </div>
-                    <button
-                      onClick={() => toggleActive(account.id, account.is_active)}
-                      className={`text-xs ${account.is_active ? 'text-success' : 'text-text-muted'} hover:underline`}
-                      title="Toggle active"
-                    >
-                      {account.is_active ? 'Active' : 'Inactive'}
-                    </button>
+                    {isOwner ? (
+                      <button
+                        onClick={() => toggleActive(account.id, account.is_active)}
+                        className={`text-xs ${account.is_active ? 'text-success' : 'text-text-muted'} hover:underline`}
+                        title="Toggle active"
+                      >
+                        {account.is_active ? 'Active' : 'Inactive'}
+                      </button>
+                    ) : (
+                      <span className={`text-xs ${account.is_active ? 'text-success' : 'text-text-muted'}`}>
+                        {account.is_active ? 'Active' : 'Inactive'}
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>

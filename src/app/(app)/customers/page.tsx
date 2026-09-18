@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { EmptyState } from '@/components/ui/empty-state';
+import { usePermissions } from '@/hooks/use-permissions';
 import { Plus, Search, Users } from 'lucide-react';
 
 interface Customer {
@@ -21,6 +22,7 @@ export default function CustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const { can } = usePermissions();
   const supabase = createClient();
 
   useEffect(() => {
@@ -60,13 +62,15 @@ export default function CustomersPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-text-primary">Customers</h1>
-        <Link
-          href="/customers/new"
-          className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
-        >
-          <Plus size={16} />
-          New Customer
-        </Link>
+        {can('customers.create') && (
+          <Link
+            href="/customers/new"
+            className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
+          >
+            <Plus size={16} />
+            New Customer
+          </Link>
+        )}
       </div>
 
       <div className="relative">

@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Search, Plus, TrendingDown } from 'lucide-react';
+import { usePermissions } from '@/hooks/use-permissions';
 import { EXPENSE_CATEGORIES } from '@/lib/accounting/accounts';
 
 interface Expense {
@@ -33,6 +34,7 @@ export default function ExpensesPage() {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [loading, setLoading] = useState(true);
+  const { can } = usePermissions();
   const supabase = createClient();
 
   useEffect(() => {
@@ -75,13 +77,15 @@ export default function ExpensesPage() {
           <h1 className="text-2xl font-bold text-text-primary">Expenses</h1>
           <p className="text-sm text-text-secondary">Every expense auto-posts to the journal</p>
         </div>
-        <Link
-          href="/accounting/expenses/new"
-          className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
-        >
-          <Plus size={16} />
-          Record Expense
-        </Link>
+        {can('expenses.create') && (
+          <Link
+            href="/accounting/expenses/new"
+            className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
+          >
+            <Plus size={16} />
+            Record Expense
+          </Link>
+        )}
       </div>
 
       <div className="glass-card p-4">

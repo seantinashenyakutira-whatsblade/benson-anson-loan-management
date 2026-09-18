@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth-provider';
+import { usePermissions } from '@/hooks/use-permissions';
 import { formatKwacha } from '@/lib/money';
 import { ArrowLeft } from 'lucide-react';
 
@@ -22,6 +23,7 @@ export default function DisbursePage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
+  const { can } = usePermissions();
   const [loan, setLoan] = useState<LoanInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -64,6 +66,7 @@ export default function DisbursePage() {
 
   if (loading) return <div className="py-12 text-center text-text-muted">Loading...</div>;
   if (!loan) return <div className="py-12 text-center text-text-muted">Loan not found.</div>;
+  if (!can('loans.disburse')) return <div className="py-12 text-center text-text-muted">Only owners and branch managers can disburse loans.</div>;
 
   return (
     <div className="space-y-4">

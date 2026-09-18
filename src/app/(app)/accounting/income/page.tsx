@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Search, Plus, TrendingUp } from 'lucide-react';
+import { usePermissions } from '@/hooks/use-permissions';
 import { INCOME_CATEGORIES } from '@/lib/accounting/accounts';
 
 interface IncomeRecord {
@@ -30,6 +31,7 @@ export default function IncomePage() {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [loading, setLoading] = useState(true);
+  const { can } = usePermissions();
   const supabase = createClient();
 
   useEffect(() => {
@@ -72,13 +74,15 @@ export default function IncomePage() {
           <h1 className="text-2xl font-bold text-text-primary">Income</h1>
           <p className="text-sm text-text-secondary">Manual income auto-posts to the journal</p>
         </div>
-        <Link
-          href="/accounting/income/new"
-          className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
-        >
-          <Plus size={16} />
-          Record Income
-        </Link>
+        {can('expenses.create') && (
+          <Link
+            href="/accounting/income/new"
+            className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
+          >
+            <Plus size={16} />
+            Record Income
+          </Link>
+        )}
       </div>
 
       <div className="glass-card p-4">

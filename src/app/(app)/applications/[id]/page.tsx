@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth-provider';
+import { usePermissions } from '@/hooks/use-permissions';
 import { formatKwacha } from '@/lib/money';
 import { ArrowLeft } from 'lucide-react';
 
@@ -26,7 +27,7 @@ interface ApplicationDetail {
 export default function ApplicationDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const supabase = createClient();
   const [app, setApp] = useState<ApplicationDetail | null>(null);
   const [convertedLoanId, setConvertedLoanId] = useState<string | null>(null);
@@ -35,8 +36,10 @@ export default function ApplicationDetailPage() {
   const [approveAmount, setApproveAmount] = useState('');
   const [rejectReason, setRejectReason] = useState('');
 
-  const role = profile?.role || '';
-  const canManage = role === 'owner' || role === 'branch_manager';
+  const { can } = usePermissions();
+  const canSubmit = can('applications.submit');
+  const canApprove = can('applications.approve');
+  const canConvert = can('loans.create');
 
   useEffect(() => {
     const fetchApp = async () => {
@@ -168,13 +171,13 @@ export default function ApplicationDetailPage() {
         </Link>
       )}
 
-      {canManage && app.status === 'draft' && (
+      {canSubmit && app.status === 'draft' && (
         <button onClick={doSubmit} disabled={working} className="w-full rounded-[var(--radius-button)] bg-accent-primary px-4 py-3 font-medium text-accent-on-primary hover:bg-accent-primary-hover disabled:opacity-50">
           {working ? 'Working...' : 'Submit for Review'}
         </button>
       )}
 
-      {canManage && (app.status === 'submitted' || app.status === 'under_review') && (
+      {canApprove && (app.status === 'submitted' || app.status === 'under_review') && (
         <div className="glass-card space-y-3 p-6">
           <div>
             <label className="mb-1 block text-sm text-text-secondary">Approved Amount (K)</label>
@@ -193,7 +196,7 @@ export default function ApplicationDetailPage() {
         </div>
       )}
 
-      {canManage && app.status === 'approved' && !convertedLoanId && (
+      {canConvert && app.status === 'approved' && !convertedLoanId && (
         <button onClick={doConvert} disabled={working} className="w-full rounded-[var(--radius-button)] bg-accent-primary px-4 py-3 text-base font-semibold text-accent-on-primary hover:bg-accent-primary-hover disabled:opacity-50">
           {working ? 'Converting...' : 'Convert to Loan →'}
         </button>

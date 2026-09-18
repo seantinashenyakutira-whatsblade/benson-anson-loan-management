@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth-provider';
+import { visibleNav } from '@/lib/permissions';
 import {
   LayoutDashboard,
   Users,
@@ -33,18 +34,36 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/payments', label: 'Payments', icon: Receipt },
   { href: '/collections', label: 'Collections', icon: AlertTriangle },
   { href: '/penalties', label: 'Penalties', icon: AlertTriangle },
-  { href: '/accounting', label: 'Accounting', icon: BookOpen, roles: ['owner', 'branch_manager'] },
+  { href: '/accounting', label: 'Accounting', icon: BookOpen },
   { href: '/reports', label: 'Reports', icon: CircleDollarSign },
-  { href: '/settings', label: 'Settings', icon: Settings, roles: ['owner'] },
+  { href: '/settings', label: 'Settings', icon: Settings, roles: ['owner', 'branch_manager'] },
 ];
+
+const KEY_OF: Record<string, string> = {
+  '/dashboard': 'dashboard',
+  '/customers': 'customers',
+  '/collateral': 'collateral',
+  '/loans': 'loans',
+  '/applications': 'applications',
+  '/payments': 'payments',
+  '/collections': 'collections',
+  '/penalties': 'penalties',
+  '/accounting': 'accounting',
+  '/reports': 'reports',
+  '/settings': 'settings',
+};
 
 export function Sidebar() {
   const pathname = usePathname();
   const { profile } = useAuth();
 
-  const filteredItems = NAV_ITEMS.filter(
-    (item) => !item.roles || item.roles.includes(profile?.role ?? ''),
-  );
+  const allowed = visibleNav(profile?.role);
+  const showAll = allowed.includes('all');
+  const filteredItems = NAV_ITEMS.filter((item) => {
+    if (item.roles && !item.roles.includes(profile?.role ?? '')) return false;
+    const key = KEY_OF[item.href] || item.href;
+    return showAll || allowed.includes(key);
+  });
 
   return (
     <aside className="hidden w-64 flex-col border-r border-border-subtle bg-bg-base lg:flex">

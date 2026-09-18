@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { usePermissions } from '@/hooks/use-permissions';
 import { formatKwacha } from '@/lib/money';
 import { ArrowLeft, Calendar } from 'lucide-react';
 import Link from 'next/link';
@@ -53,6 +54,7 @@ export default function LoanDetailPage() {
   const [loan, setLoan] = useState<LoanDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'schedule' | 'payments'>('overview');
+  const { can } = usePermissions();
   const supabase = createClient();
 
   useEffect(() => {
@@ -99,8 +101,8 @@ export default function LoanDetailPage() {
     }
   };
 
-  const canDisburse = loan.status === 'approved';
-  const canRecordPayment = ['disbursed', 'performing', 'at_risk', 'overdue'].includes(loan.status);
+  const canDisburse = loan.status === 'approved' && can('loans.disburse');
+  const canRecordPayment = ['disbursed', 'performing', 'at_risk', 'overdue'].includes(loan.status) && can('payments.create');
 
   return (
     <div className="space-y-4">

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { usePermissions } from '@/hooks/use-permissions';
 import { Building, Shield, Bell, Database } from 'lucide-react';
 
 interface Setting {
@@ -16,6 +17,8 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<Setting[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'general' | 'lending' | 'notifications' | 'system'>('general');
+  const { role } = usePermissions();
+  const canEdit = role === 'owner';
   const supabase = createClient();
 
   useEffect(() => {
@@ -90,8 +93,11 @@ export default function SettingsPage() {
                   <input
                     type="text"
                     defaultValue={setting.value}
-                    className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-1.5 text-right text-sm text-text-primary focus:border-accent-primary focus:outline-none"
+                    disabled={!canEdit}
+                    title={canEdit ? undefined : 'Only owners can edit settings'}
+                    className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-1.5 text-right text-sm text-text-primary focus:border-accent-primary focus:outline-none disabled:opacity-60"
                     onBlur={async (e) => {
+                      if (!canEdit) return;
                       await supabase
                         .from('settings')
                         .update({ value: e.target.value })

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
 import { EmptyState } from '@/components/ui/empty-state';
+import { usePermissions } from '@/hooks/use-permissions';
 import { Plus, Search, Filter, HandCoins } from 'lucide-react';
 
 interface Loan {
@@ -47,6 +48,7 @@ export default function LoansPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [approvedCount, setApprovedCount] = useState(0);
+  const { can } = usePermissions();
   const supabase = createClient();
 
   useEffect(() => {
@@ -88,13 +90,15 @@ export default function LoansPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-text-primary">Loans</h1>
-        <Link
-          href="/applications/new"
-          className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
-        >
-          <Plus size={16} />
-          New Loan
-        </Link>
+        {can('applications.create') && (
+          <Link
+            href="/applications/new"
+            className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
+          >
+            <Plus size={16} />
+            New Loan
+          </Link>
+        )}
       </div>
 
       {approvedCount > 0 && (
