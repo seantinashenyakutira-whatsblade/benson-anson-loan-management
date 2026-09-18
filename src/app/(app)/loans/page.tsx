@@ -46,6 +46,7 @@ export default function LoansPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [approvedCount, setApprovedCount] = useState(0);
   const supabase = createClient();
 
   useEffect(() => {
@@ -61,6 +62,13 @@ export default function LoansPage() {
 
       const { data } = await query;
       if (data) setLoans(data);
+
+      const { count } = await supabase
+        .from('loan_applications')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'approved');
+      setApprovedCount(count || 0);
+
       setLoading(false);
     };
 
@@ -81,13 +89,22 @@ export default function LoansPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-text-primary">Loans</h1>
         <Link
-          href="/loans/new"
+          href="/applications/new"
           className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
         >
           <Plus size={16} />
           New Loan
         </Link>
       </div>
+
+      {approvedCount > 0 && (
+        <Link href="/applications?status=approved" className="glass-card block border-accent-primary/30 p-4 transition-all hover:bg-surface-glass-2">
+          <p className="text-sm font-medium text-accent-primary">
+            {approvedCount} approved application{approvedCount === 1 ? '' : 's'} ready to convert →
+          </p>
+          <p className="text-xs text-text-muted">Loans are created by converting approved applications.</p>
+        </Link>
+      )}
 
       <div className="flex gap-2">
         <div className="relative flex-1">
@@ -129,7 +146,7 @@ export default function LoansPage() {
           headline="No loans yet"
           message="Create your first loan application once a customer is registered."
           actionLabel="New loan application"
-          actionHref="/loans/new"
+          actionHref="/applications/new"
         />
       ) : (
         <div className="space-y-2">

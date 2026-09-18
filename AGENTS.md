@@ -122,6 +122,16 @@ CSS custom properties + Tailwind v4 @theme inline.
 **Typography:** Inter (display/body), Geist Mono (code).
 **Money:** Always tabular-nums. Always "K X,XXX.XX" format.
 
+## Lending Workflow (Stage 1.5+)
+
+Loans are ALWAYS created by converting approved applications.
+There is no direct loan-creation form:
+  1. `/applications/new` — officer creates a draft application
+  2. `/applications/[id]` — owner/BM submits, approves (amount), or rejects
+  3. Convert to Loan (owner/BM, approved only) → `rpc_convert_application_to_loan`
+  4. Redirect to `/loans/[id]/disburse` — disbursement generates the schedule
+  5. `/loans/new` redirects to `/applications/new` (route kept for old links)
+
 ## Roles & Permissions
 
 | Role             | Scope                      | Key Permissions                    |
