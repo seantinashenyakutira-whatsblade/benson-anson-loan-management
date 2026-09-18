@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth-provider';
+import { UserAvatar } from '@/components/ui/user-avatar';
 import { visibleNav } from '@/lib/permissions';
 import {
   LayoutDashboard,
@@ -100,10 +101,8 @@ export function Sidebar() {
       </nav>
 
       <div className="border-t border-border-subtle p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-primary text-xs font-bold text-accent-on-primary">
-            {profile?.full_name?.charAt(0) ?? 'U'}
-          </div>
+        <Link href="/profile" className="flex items-center gap-3 rounded-xl p-1 hover:bg-surface-glass">
+          <UserAvatar user={{ full_name: profile?.full_name, avatar_url: profile?.avatar_url, role: profile?.role }} size="sm" showRoleBadge />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-text-primary">
               {profile?.full_name}
@@ -112,7 +111,7 @@ export function Sidebar() {
               {profile?.role?.replace('_', ' ')}
             </p>
           </div>
-        </div>
+        </Link>
       </div>
     </aside>
   );

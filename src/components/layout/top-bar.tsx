@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/components/auth-provider';
+import { UserAvatar } from '@/components/ui/user-avatar';
 import { LogOut, Menu, X, Bell, Search } from 'lucide-react';
 
 export function TopBar() {
@@ -45,9 +47,9 @@ export function TopBar() {
                 {profile?.role?.replace('_', ' ')}
               </p>
             </div>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-primary text-xs font-bold text-accent-on-primary">
-              {profile?.full_name?.charAt(0) ?? 'U'}
-            </div>
+            <Link href="/profile" title="My profile">
+              <UserAvatar user={{ full_name: profile?.full_name, avatar_url: profile?.avatar_url, role: profile?.role }} size="sm" showRoleBadge />
+            </Link>
           </div>
 
           <button
