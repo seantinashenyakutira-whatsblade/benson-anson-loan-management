@@ -46,16 +46,21 @@ export interface ReportResult {
   totals?: ReportRow;
 }
 
+/** Local-date ISO formatter (no UTC shift — toISOString() breaks month boundaries in +2). */
+export function toLocalIso(d: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 /** Parse and sanitize query params with sane defaults (current month). */
 export function parseReportParams(search: URLSearchParams): ReportParams {
   const today = new Date();
-  const first = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]!;
-  const last = today.toISOString().split('T')[0]!;
+  const first = new Date(today.getFullYear(), today.getMonth(), 1);
   const iso = (v: string | null, fallback: string) =>
     v && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : fallback;
   return {
-    from: iso(search.get('from'), first),
-    to: iso(search.get('to'), last),
+    from: iso(search.get('from'), toLocalIso(first)),
+    to: iso(search.get('to'), toLocalIso(today)),
     branchId: search.get('branch') || 'all',
     officerId: search.get('officer') || 'all',
     status: search.get('status') || 'all',

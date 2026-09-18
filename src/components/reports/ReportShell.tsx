@@ -7,6 +7,7 @@ import { formatKwacha } from '@/lib/money';
 import { EmptyState } from '@/components/ui/empty-state';
 import { FileSpreadsheet, FileText, Printer, BarChart3 } from 'lucide-react';
 import type { ReportColumn, ReportResult } from '@/lib/reports/types';
+import { toLocalIso } from '@/lib/reports/types';
 
 interface ReportShellProps {
   slug: string;
@@ -23,7 +24,7 @@ const PRESETS = [
 ];
 
 function iso(d: Date): string {
-  return d.toISOString().split('T')[0]!;
+  return toLocalIso(d);
 }
 
 function monthRange(delta: number): { from: string; to: string } {
