@@ -13,8 +13,8 @@ function loadEnv(): Record<string, string> {
     const env: Record<string, string> = {};
     for (const line of readFileSync('.env.local', 'utf8').split('\n')) {
       const m = line.match(/^\s*([^#=\s]+)\s*=\s*(.*)\s*$/);
-      if (m) {
-        let v = m[2].trim();
+      if (m && m[1]) {
+        let v = (m[2] || '').trim();
         if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
         env[m[1]] = v;
       }
@@ -26,9 +26,9 @@ function loadEnv(): Record<string, string> {
 }
 
 const env = loadEnv();
-const URL = env.NEXT_PUBLIC_SUPABASE_URL || env.SUPABASE_URL;
-const ANON = env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const SERVICE = env.SUPABASE_SERVICE_ROLE_KEY;
+const URL = env.NEXT_PUBLIC_SUPABASE_URL || env.SUPABASE_URL || '';
+const ANON = env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const SERVICE = env.SUPABASE_SERVICE_ROLE_KEY || '';
 const ENABLED = Boolean(URL && ANON && SERVICE);
 
 const HO = 'b0000000-0000-0000-0000-000000000001';
