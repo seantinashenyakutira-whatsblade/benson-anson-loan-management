@@ -28,7 +28,7 @@ const URL = env.NEXT_PUBLIC_SUPABASE_URL || env.SUPABASE_URL || '';
 const ANON = env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const SERVICE = env.SUPABASE_SERVICE_ROLE_KEY || '';
 const ENABLED = Boolean(URL && ANON && SERVICE);
-const EMAIL = 'profile-test@bensonanson.loans';
+const EMAIL = `profile-test-${Date.now()}-${Math.floor(Math.random() * 1e6)}@bensonanson.loans`;
 const PASS = 'Test@12345';
 const PASS2 = 'Test@67890';
 
@@ -46,9 +46,6 @@ describe.skipIf(!ENABLED)('profile self-service', () => {
   };
 
   it('creates the throwaway user', async () => {
-    await admin!.auth.admin.deleteUser(
-      (await admin!.auth.admin.listUsers()).data.users.find((u) => u.email === EMAIL)?.id || '00000000-0000-0000-0000-000000000000',
-    ).catch(() => undefined);
     const { data, error } = await admin!.auth.admin.createUser({
       email: EMAIL,
       password: PASS,

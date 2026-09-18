@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth-provider';
 import { UserAvatar } from '@/components/ui/user-avatar';
+import { BrandMark } from '@/components/layout/brand-mark';
 import { visibleNav } from '@/lib/permissions';
 import {
   LayoutDashboard,
@@ -69,11 +70,7 @@ export function Sidebar() {
   return (
     <aside className="hidden w-64 flex-col border-r border-border-subtle bg-bg-base lg:flex">
       <div className="flex h-14 items-center border-b border-border-subtle px-4">
-        <img
-          src="/branding/logo.png"
-          alt="Anson Benson Cash Solutions"
-          style={{ height: 32, width: 'auto' }}
-        />
+        <BrandMark variant="full" height={32} />
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4">

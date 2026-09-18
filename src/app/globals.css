@@ -1,35 +1,38 @@
 @import "tailwindcss";
 
-@theme inline {
+/* ── Tailwind theme: utilities reference these vars, which in turn
+ * reference the semantic tokens below so light/dark themes work. ── */
+@theme {
   /* ── Colour tokens ─────────────────────────────────────── */
-  --color-bg-base: #061633;
-  --color-bg-elevated: #0A2249;
-  --color-bg-gradient-top: #061633;
-  --color-bg-gradient-bottom: #0A2249;
+  --color-bg-base: var(--bg-base);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-gradient-top: var(--bg-gradient-top);
+  --color-bg-gradient-bottom: var(--bg-gradient-bottom);
 
-  --color-surface-glass: rgba(255, 255, 255, 0.04);
-  --color-surface-glass-2: rgba(255, 255, 255, 0.06);
-  --color-surface-solid: #0D2755;
+  --color-surface-glass: var(--surface-glass);
+  --color-surface-glass-2: var(--surface-glass-2);
+  --color-surface-solid: var(--surface-solid);
 
-  --color-border-subtle: rgba(255, 255, 255, 0.08);
-  --color-border-strong: rgba(255, 255, 255, 0.14);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
 
-  --color-text-primary: #FFFFFF;
-  --color-text-secondary: #A0B4D0;
-  --color-text-muted: #6B7F9E;
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
 
-  --color-accent-primary: #00A6E0;
-  --color-accent-primary-hover: #38B6EE;
-  --color-accent-on-primary: #FFFFFF;
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-primary-hover: var(--accent-primary-hover);
+  --color-accent-on-primary: var(--accent-on-primary);
 
-  --color-brand-blue-deep: #005BAC;
-  --color-brand-blue-bright: #00A6E0;
+  --color-brand-blue-deep: var(--brand-blue-deep);
+  --color-brand-blue-bright: var(--brand-blue-bright);
+  --color-brand-gold: var(--brand-gold);
 
-  --color-success: #34D399;
-  --color-warning: #FBBF24;
-  --color-orange: #FB923C;
-  --color-danger: #F87171;
-  --color-info: #60A5FA;
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-orange: var(--orange);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
 
   /* ── Typography ─────────────────────────────────────────── */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -48,7 +51,40 @@
 }
 
 :root {
-  /* ── Semantic CSS vars (for non-Tailwind usage) ─────────── */
+  /* ── Light theme defaults ─────────────────────────────── */
+  --bg-base: #F8FAFC;
+  --bg-elevated: #FFFFFF;
+  --bg-gradient-top: #F8FAFC;
+  --bg-gradient-bottom: #EAF1F8;
+  --surface-glass: rgba(15, 23, 42, 0.02);
+  --surface-glass-2: rgba(15, 23, 42, 0.05);
+  --surface-solid: #FFFFFF;
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.14);
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #94A3B8;
+  --accent-primary: #00A6E0;
+  --accent-primary-hover: #005BAC;
+  --accent-on-primary: #FFFFFF;
+  --brand-blue-deep: #005BAC;
+  --brand-blue-bright: #00A6E0;
+  --brand-gold: #F5B300;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --orange: #FB923C;
+  --danger: #EF4444;
+  --info: #3B82F6;
+
+  /* ── Safe area insets ───────────────────────────────────── */
+  --sat: env(safe-area-inset-top);
+  --sar: env(safe-area-inset-right);
+  --sab: env(safe-area-inset-bottom);
+  --sal: env(safe-area-inset-left);
+}
+
+.dark {
+  /* ── Dark theme (brand default) ─────────────────────────── */
   --bg-base: #061633;
   --bg-elevated: #0A2249;
   --bg-gradient-top: #061633;
@@ -66,17 +102,12 @@
   --accent-on-primary: #FFFFFF;
   --brand-blue-deep: #005BAC;
   --brand-blue-bright: #00A6E0;
+  --brand-gold: #F5B300;
   --success: #34D399;
   --warning: #FBBF24;
   --orange: #FB923C;
   --danger: #F87171;
   --info: #60A5FA;
-
-  /* ── Safe area insets ───────────────────────────────────── */
-  --sat: env(safe-area-inset-top);
-  --sar: env(safe-area-inset-right);
-  --sab: env(safe-area-inset-bottom);
-  --sal: env(safe-area-inset-left);
 }
 
 /* ── Base layer ─────────────────────────────────────────── */
