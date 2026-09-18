@@ -63,11 +63,13 @@ export async function fetchPenaltiesReport(ctx: Ctx): Promise<{ columns: ReportR
 
 /** 12. P&L as a report (same source as /accounting/pnl, date-filtered). */
 export async function fetchPlReport(ctx: Ctx): Promise<{ columns: ReportResult['columns']; rows: ReportRow[]; totals: ReportRow }> {
-  const { data } = await ctx.sb
+  let q = ctx.sb
     .from('journal_lines')
-    .select('debit, credit, chart_of_accounts!inner(code, name, account_type), journal_entries!inner(entry_date)')
+    .select('debit, credit, chart_of_accounts!inner(code, name, account_type), journal_entries!inner(entry_date, branch_id)')
     .gte('journal_entries.entry_date', ctx.params.from)
     .lte('journal_entries.entry_date', ctx.params.to);
+  if (ctx.scope.branchId !== 'all') q = q.eq('journal_entries.branch_id', ctx.scope.branchId);
+  const { data } = await q;
   const lines = ((data || []) as Array<{
     debit: number; credit: number;
     chart_of_accounts: { code: string; name: string; account_type: 'asset' | 'liability' | 'equity' | 'revenue' | 'expense' } | Array<{ code: string; name: string; account_type: 'asset' | 'liability' | 'equity' | 'revenue' | 'expense' }>;
@@ -97,10 +99,12 @@ export async function fetchPlReport(ctx: Ctx): Promise<{ columns: ReportResult['
 
 /** 13. Balance sheet as a report (as-at `to` date). */
 export async function fetchBalanceSheetReport(ctx: Ctx): Promise<{ columns: ReportResult['columns']; rows: ReportRow[]; totals: ReportRow }> {
-  const { data } = await ctx.sb
+  let q = ctx.sb
     .from('journal_lines')
-    .select('debit, credit, chart_of_accounts!inner(code, name, account_type), journal_entries!inner(entry_date)')
+    .select('debit, credit, chart_of_accounts!inner(code, name, account_type), journal_entries!inner(entry_date, branch_id)')
     .lte('journal_entries.entry_date', ctx.params.to);
+  if (ctx.scope.branchId !== 'all') q = q.eq('journal_entries.branch_id', ctx.scope.branchId);
+  const { data } = await q;
   const lines = ((data || []) as Array<{
     debit: number; credit: number;
     chart_of_accounts: { code: string; name: string; account_type: 'asset' | 'liability' | 'equity' | 'revenue' | 'expense' } | Array<{ code: string; name: string; account_type: 'asset' | 'liability' | 'equity' | 'revenue' | 'expense' }>;

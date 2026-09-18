@@ -68,6 +68,7 @@ export default function NewIncomePage() {
         { account_code: cashAccount, debit: amount, credit: 0, description: 'Cash in' },
         { account_code: incomeAccount, debit: 0, credit: amount, description: record.description },
       ],
+      p_branch_id: record.branch_id,
     });
 
     if (journalError) {

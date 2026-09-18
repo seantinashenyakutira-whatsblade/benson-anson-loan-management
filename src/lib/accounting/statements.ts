@@ -13,6 +13,13 @@ export interface StatementLine {
   accountType: AccountType;
   debitKwacha: number;
   creditKwacha: number;
+  branchId?: string | null;
+}
+
+/** Client-side branch filter (queries already scope server-side; this is defense in depth). */
+export function filterLinesByBranch(lines: StatementLine[], branchId: string): StatementLine[] {
+  if (branchId === 'all') return lines;
+  return lines.filter((l) => l.branchId === branchId);
 }
 
 export interface CategoryTotal {

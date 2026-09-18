@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/components/auth-provider';
 import { formatKwacha } from '@/lib/money';
 import { EmptyState } from '@/components/ui/empty-state';
 import { summarizeBalanceSheet, type BalanceSheet, type StatementLine } from '@/lib/accounting/statements';
@@ -9,17 +10,32 @@ import { Scale, Printer } from 'lucide-react';
 
 export default function BalanceSheetPage() {
   const [asAt, setAsAt] = useState(() => new Date().toISOString().split('T')[0]!);
+  const [branch, setBranch] = useState('all');
+  const [branches, setBranches] = useState<Array<{ id: string; name: string }>>([]);
   const [sheet, setSheet] = useState<BalanceSheet | null>(null);
   const [loading, setLoading] = useState(true);
+  const { profile } = useAuth();
   const supabase = createClient();
+
+  const effectiveBranch = profile?.role === 'owner' ? branch : profile?.branch_id || 'all';
+
+  useEffect(() => {
+    if (profile?.role === 'owner') {
+      supabase.from('branches').select('id, name').order('name').then(({ data }) => {
+        if (data) setBranches(data);
+      });
+    }
+  }, [supabase, profile?.role]);
 
   useEffect(() => {
     const run = async () => {
       setLoading(true);
-      const { data } = await supabase
+      let query = supabase
         .from('journal_lines')
-        .select('debit, credit, chart_of_accounts!inner(code, name, account_type), journal_entries!inner(entry_date)')
+        .select('debit, credit, chart_of_accounts!inner(code, name, account_type), journal_entries!inner(entry_date, branch_id)')
         .lte('journal_entries.entry_date', asAt);
+      if (effectiveBranch !== 'all') query = query.eq('journal_entries.branch_id', effectiveBranch);
+      const { data } = await query;
       const lines: StatementLine[] = ((data || []) as Array<{
         debit: number; credit: number;
         chart_of_accounts: { code: string; name: string; account_type: StatementLine['accountType'] } | Array<{ code: string; name: string; account_type: StatementLine['accountType'] }>;
@@ -31,7 +47,7 @@ export default function BalanceSheetPage() {
       setLoading(false);
     };
     run();
-  }, [supabase, asAt]);
+  }, [supabase, asAt, effectiveBranch]);
 
   const section = (type: 'asset' | 'liability' | 'equity', title: string) =>
     (sheet?.byAccount.filter((a) => a.type === type) || []).length > 0 && (
@@ -63,6 +79,14 @@ export default function BalanceSheetPage() {
 
       <div className="no-print flex gap-2">
         <input type="date" value={asAt} onChange={(e) => setAsAt(e.target.value)} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
+        {profile?.role === 'owner' && (
+          <select value={branch} onChange={(e) => setBranch(e.target.value)} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none">
+            <option value="all">All Branches</option>
+            {branches.map((b) => (
+              <option key={b.id} value={b.id}>{b.name}</option>
+            ))}
+          </select>
+        )}
       </div>
 
       {loading ? (

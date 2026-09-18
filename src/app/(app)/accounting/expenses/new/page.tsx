@@ -69,6 +69,7 @@ export default function NewExpensePage() {
         { account_code: expenseAccount, debit: amount, credit: 0, description: expense.description },
         { account_code: cashAccount, debit: 0, credit: amount, description: 'Cash out' },
       ],
+      p_branch_id: expense.branch_id,
     });
 
     if (journalError) {

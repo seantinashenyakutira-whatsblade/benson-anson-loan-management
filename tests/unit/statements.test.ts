@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { summarizePl, summarizeBalanceSheet, type StatementLine } from '@/lib/accounting/statements';
+import { summarizePl, summarizeBalanceSheet, filterLinesByBranch, type StatementLine } from '@/lib/accounting/statements';
 
 function line(code: string, name: string, type: StatementLine['accountType'], debit: number, credit: number): StatementLine {
   return { accountCode: code, accountName: name, accountType: type, debitKwacha: debit, creditKwacha: credit };
@@ -65,5 +65,27 @@ describe('summarizeBalanceSheet', () => {
     ]);
     expect(bs.retainedNgwee).toBe(100000);
     expect(bs.balanced).toBe(true);
+  });
+});
+
+describe('filterLinesByBranch', () => {
+  const lines: StatementLine[] = [
+    { ...{ accountCode: '4000', accountName: 'Income', accountType: 'revenue', debitKwacha: 0, creditKwacha: 1000 }, branchId: 'b1' },
+    { ...{ accountCode: '4000', accountName: 'Income', accountType: 'revenue', debitKwacha: 0, creditKwacha: 2000 }, branchId: 'b2' },
+    { ...{ accountCode: '5000', accountName: 'Expense', accountType: 'expense', debitKwacha: 500, creditKwacha: 0 }, branchId: null },
+  ];
+
+  it("manager P&L sees only their branch", () => {
+    const filtered = filterLinesByBranch(lines, 'b1');
+    const s = summarizePl(filtered);
+    expect(s.incomeNgwee).toBe(100000);
+    expect(s.expenseNgwee).toBe(0);
+  });
+
+  it('owner sees all branches with correct totals', () => {
+    const filtered = filterLinesByBranch(lines, 'all');
+    const s = summarizePl(filtered);
+    expect(s.incomeNgwee).toBe(300000);
+    expect(s.expenseNgwee).toBe(50000);
   });
 });
