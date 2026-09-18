@@ -9,6 +9,26 @@ import {
   buildIncomeLines,
   cashbookRunningBalance,
 } from '@/lib/accounting/posting';
+import { DEFAULT_EXPENSE_ACCOUNT_MAP, DEFAULT_INCOME_ACCOUNT_MAP } from '@/lib/accounting/accounts';
+
+describe('category account maps', () => {
+  it('maps every expense category to a 5xxx account', () => {
+    for (const code of Object.values(DEFAULT_EXPENSE_ACCOUNT_MAP)) {
+      expect(code).toMatch(/^5\d{3}$/);
+      const lines = buildExpenseLines(100, code);
+      expect(() => validateBalanced(lines)).not.toThrow();
+    }
+    expect(Object.keys(DEFAULT_EXPENSE_ACCOUNT_MAP)).toContain('salaries');
+  });
+  it('maps every income category to a 4xxx account', () => {
+    for (const code of Object.values(DEFAULT_INCOME_ACCOUNT_MAP)) {
+      expect(code).toMatch(/^4\d{3}$/);
+      const lines = buildIncomeLines(100, code);
+      expect(() => validateBalanced(lines)).not.toThrow();
+    }
+    expect(Object.keys(DEFAULT_INCOME_ACCOUNT_MAP)).toContain('interest');
+  });
+});
 
 describe('cashAccountForMethod', () => {
   it('maps bank_transfer to 1020', () => {
