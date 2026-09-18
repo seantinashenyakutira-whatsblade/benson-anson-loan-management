@@ -3,7 +3,7 @@
  * Authenticates via cookies (RLS applies), resolves scope, runs the fetcher,
  * and attaches business context from settings.
  */
-import { createClient, createServiceClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { REPORT_REGISTRY } from '@/lib/reports/registry';
 import { parseReportParams, resolveScope, type ReportResult, type ReportUser } from '@/lib/reports/types';
 
@@ -36,8 +36,9 @@ export async function runReport(req: Request, slug: string): Promise<ReportRun> 
 
   const { columns, rows, totals } = await def.fetcher({ sb, user: reportUser, params: reportParams, scope });
 
-  const svc = createServiceClient();
-  const { data: settings } = await svc.from('settings').select('key, value').in('key', ['business_name', 'currency_symbol']);
+  // Business context from settings (publicly readable; never hardcoded).
+  // Uses the caller's own client so no service-role key is needed at runtime.
+  const { data: settings } = await sb.from('settings').select('key, value').in('key', ['business_name', 'currency_symbol']);
   const get = (k: string, fallback: string) => settings?.find((s) => s.key === k)?.value || fallback;
 
   return {
