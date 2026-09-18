@@ -71,3 +71,23 @@ describe('visibleNav', () => {
     expect(visibleNav('branch_manager')).toContain('reports');
   });
 });
+
+describe('can with DB overrides', () => {
+  const overrides = {
+    owner: ['*'] as string[],
+    branch_manager: ['customers.view'] as string[],
+    loan_officer: [] as string[],
+    cashier: ['customers.view', 'payments.create'] as string[],
+  };
+  it('uses overrides when present, even when empty', () => {
+    expect(can('branch_manager', 'loans.view', overrides)).toBe(false);
+    expect(can('branch_manager', 'customers.view', overrides)).toBe(true);
+    expect(can('loan_officer', 'customers.view', overrides)).toBe(false);
+    expect(can('cashier', 'payments.create', overrides)).toBe(true);
+    expect(can('cashier', 'payments.view', overrides)).toBe(false);
+  });
+  it('falls back to constants when overrides are absent', () => {
+    expect(can('branch_manager', 'loans.view')).toBe(true);
+    expect(can('branch_manager', 'loans.view', undefined)).toBe(true);
+  });
+});

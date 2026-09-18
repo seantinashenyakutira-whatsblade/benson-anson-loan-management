@@ -64,6 +64,7 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
 
 export function can(role: Role | string | null | undefined, permission: string, overrides?: Record<Role, string[]>): boolean {
   if (!role) return false;
+  if (role === 'owner') return true;
   const perms = overrides?.[role as Role] ?? ROLE_PERMISSIONS[role as Role];
   if (!perms) return false;
   if (perms.includes('*')) return true;
@@ -101,4 +102,52 @@ export function visibleNav(role: Role | string | null | undefined): string[] {
     default:
       return [];
   }
+}
+
+/* ── DB override layer (Phase 10.3) ─────────────────────────
+ * Overrides are loaded once per session from role_permissions via
+ * rpc_get_role_permissions. When a role has rows, they replace the
+ * constants; an empty/absent set falls back to ROLE_PERMISSIONS.
+ * RLS stays authoritative — this only drives UI affordances. */
+
+import type { SupabaseClient } from '@supabase/supabase-js';
+
+let overrideCache: Record<Role, string[]> | null = null;
+let overridePromise: Promise<Record<Role, string[]> | null> | null = null;
+
+export function getCachedOverrides(): Record<Role, string[]> | null {
+  return overrideCache;
+}
+
+async function fetchOverrides(sb: SupabaseClient): Promise<Record<Role, string[]> | null> {
+  try {
+    const roles: Role[] = ['branch_manager', 'loan_officer', 'cashier'];
+    const out = {} as Record<Role, string[]>;
+    for (const r of roles) {
+      const { data, error } = await sb.rpc('rpc_get_role_permissions', { p_role: r });
+      if (error) return null;
+      out[r] = (data as string[]) || [];
+    }
+    return out;
+  } catch {
+    return null;
+  }
+}
+
+/** Load once and cache; concurrent callers share the promise. */
+export function loadRoleOverrides(sb: SupabaseClient): Promise<Record<Role, string[]> | null> {
+  if (overrideCache) return Promise.resolve(overrideCache);
+  if (!overridePromise) {
+    overridePromise = fetchOverrides(sb).then((o) => {
+      if (o) overrideCache = o;
+      overridePromise = null;
+      return o;
+    });
+  }
+  return overridePromise;
+}
+
+/** Drop the cache (call after the matrix page saves). */
+export function clearOverrideCache(): void {
+  overrideCache = null;
 }

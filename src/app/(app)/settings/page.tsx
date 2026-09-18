@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { usePermissions } from '@/hooks/use-permissions';
 import { Building, Shield, Bell, Database } from 'lucide-react';
@@ -55,6 +56,16 @@ export default function SettingsPage() {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold text-text-primary">Settings</h1>
+
+      {role === 'owner' && (
+        <Link
+          href="/settings/permissions"
+          className="glass-card glass-card-hover block p-4 transition-all"
+        >
+          <p className="text-sm font-medium text-text-primary">Permission Matrix →</p>
+          <p className="text-xs text-text-muted">Configure what each role can see and do.</p>
+        </Link>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-1 rounded-[var(--radius-button)] bg-surface-glass p-1">
