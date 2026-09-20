@@ -15,7 +15,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
 
     let logoDataUri: string | null = null;
     try {
-      const buf = await readFile(join(process.cwd(), 'public', 'branding', 'logo-on-light.png'));
+      const buf = await readFile(join(process.cwd(), 'public', 'branding', 'logo-light.png'));
       logoDataUri = `data:image/png;base64,${buf.toString('base64')}`;
     } catch {
       logoDataUri = null;

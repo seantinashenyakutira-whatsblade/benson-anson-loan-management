@@ -6,8 +6,8 @@ import { useTheme } from 'next-themes';
 /**
  * BrandMark — theme-aware logo (Phase 10.4).
  * - variant 'full': dark → logo.png (white art), light → logo-light.png
- *   (dark art). logo-light.png is missing, so light theme falls back to
- *   monogram + "ABC" wordmark until the client supplies it.
+ *   ONLY if transparent. logo-light.png exists but is opaque (solid
+ *   background), so light theme uses monogram + "ABC" wordmark.
  * - variant 'icon': always logo-icon.png.
  * Mounted guard keeps it hydration-safe (no flash of wrong logo).
  */
@@ -17,7 +17,7 @@ interface BrandMarkProps {
   className?: string;
 }
 
-const LIGHT_LOGO_MISSING = true;
+const LIGHT_LOGO_OPAQUE = true;
 
 export function BrandMark({ variant = 'full', height = 32, className }: BrandMarkProps) {
   const { resolvedTheme } = useTheme();
@@ -36,8 +36,8 @@ export function BrandMark({ variant = 'full', height = 32, className }: BrandMar
     return <span style={{ height, width: height * 3 }} className={className} aria-hidden />;
   }
 
-  if (resolvedTheme !== 'light' || LIGHT_LOGO_MISSING) {
-    if (resolvedTheme === 'light' && LIGHT_LOGO_MISSING) {
+  if (resolvedTheme !== 'light' || LIGHT_LOGO_OPAQUE) {
+    if (resolvedTheme === 'light' && LIGHT_LOGO_OPAQUE) {
       return (
         <span className={`inline-flex items-center gap-2 ${className || ''}`} style={{ height }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
