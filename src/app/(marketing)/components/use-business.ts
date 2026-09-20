@@ -55,7 +55,7 @@ export function useBusinessInfo(): BusinessInfo {
     ]).then(([s, b]) => {
       const get = (k: string) => (s.data || []).find((r: { key: string; value: string }) => r.key === k)?.value || '';
       const phone = get('business_phone') || FALLBACK_PHONE;
-      const waNumber = get('landing_whatsapp_number') || get('business_whatsapp') || FALLBACK_WHATSAPP_NUMBER;
+      const waNumber = (get('landing_whatsapp_number') || get('business_whatsapp') || FALLBACK_WHATSAPP_NUMBER).replace(/[^\d]/g, '');
       setInfo({
         name: get('business_name') || 'Anson Benson Cash Solutions',
         phone,

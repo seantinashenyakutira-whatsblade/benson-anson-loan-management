@@ -1,8 +1,8 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Phone } from 'lucide-react';
 import { useApply } from '@/components/marketing/apply-provider';
-import { useProducts, formatK, type ProductInfo } from './use-business';
+import { useProducts, useBusinessInfo, formatK, type ProductInfo } from './use-business';
 
 function ProductCard({ p }: { p: ProductInfo }) {
   const { open } = useApply();
@@ -27,6 +27,7 @@ function ProductCard({ p }: { p: ProductInfo }) {
 
 export function ProductCards() {
   const { products, loading } = useProducts();
+  const { phone } = useBusinessInfo();
   const shown = products.slice(0, 3);
   return (
     <section id="pricing" className="border-y border-[#ffffff10] bg-[#0a2249]/40">
@@ -42,9 +43,15 @@ export function ProductCards() {
         {loading ? (
           <p className="mt-8 text-sm text-[#6b7f9e]">Products loading…</p>
         ) : shown.length === 0 ? (
-          <p className="mt-8 text-sm text-[#6b7f9e]">
-            Products coming soon. Call us to discuss your loan.
-          </p>
+          <div className="mt-8 text-sm text-[#6b7f9e]">
+            <p>Products coming soon. Call us to discuss your loan.</p>
+            <a
+              href={`tel:${phone.replace(/\s/g, '')}`}
+              className="mt-2 inline-flex items-center gap-1 font-medium text-[#00a6e0] hover:text-[#f5b300]"
+            >
+              <Phone size={14} /> Call us
+            </a>
+          </div>
         ) : (
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             {shown.map((p) => (

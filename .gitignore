@@ -37,3 +37,6 @@ Thumbs.db
 # windows shortcuts
 *.lnk
 
+# scratch
+tmp/
+
