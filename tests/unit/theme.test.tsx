@@ -28,11 +28,11 @@ describe('BrandMark', () => {
     expect(img.src).toContain('/branding/logo.png');
   });
 
-  it('light theme falls back to monogram + wordmark (logo-light.png missing)', () => {
+  it('light theme renders logo-light.png', () => {
     setTheme('light');
-    render(<BrandMark variant="full" height={32} />);
-    expect(screen.getByText('ABC')).toBeTruthy();
-    expect(document.querySelector('img[src="/branding/logo-light.png"]')).toBeNull();
+    const { container } = render(<BrandMark variant="full" height={32} />);
+    const img = container.querySelector('img') as HTMLImageElement;
+    expect(img.src).toContain('/branding/logo-light.png');
   });
 
   it('persists theme choice via next-themes (system default)', () => {

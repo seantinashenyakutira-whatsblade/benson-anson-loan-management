@@ -1,9 +1,10 @@
-const CACHE_NAME = 'bal-v2';
+const CACHE_NAME = 'bal-v3';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
+  '/branding/logo.png',
+  '/branding/logo-light.png',
   '/branding/logo-icon.png',
-  '/branding/monogram.svg',
 ];
 
 /* ── Install: precache app shell ─────────────────────────── */
