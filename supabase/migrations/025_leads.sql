@@ -1,20 +1,3 @@
--- Leads permission codes (needed by RLS policies)
-INSERT INTO permissions (code, name, description) VALUES
-  ('leads_view', 'View Leads', 'View lead records'),
-  ('leads_manage', 'Manage Leads', 'Update and assign leads')
-ON CONFLICT (code) DO NOTHING;
-
--- Seed leads permissions into existing roles
-INSERT INTO role_permissions (role, permission_id)
-SELECT 'branch_manager', p.id FROM permissions p
-WHERE p.code IN ('leads_view', 'leads_manage')
-ON CONFLICT (role, permission_id) DO NOTHING;
-
-INSERT INTO role_permissions (role, permission_id)
-SELECT 'loan_officer', p.id FROM permissions p
-WHERE p.code IN ('leads_view')
-ON CONFLICT (role, permission_id) DO NOTHING;
-
 -- Leads table for public application form (Phase 10.6)
 create table if not exists public.leads (
   id uuid primary key default gen_random_uuid(),
@@ -39,17 +22,19 @@ alter table public.leads enable row level security;
 create policy "leads_insert_public" on public.leads
   for insert with check (true);
 
--- Staff with leads_view can see all
+-- Owner / branch_manager see all; loan_officer sees own assigned
 create policy "leads_select_staff" on public.leads
   for select using (
-    public.user_has_permission(auth.uid(), 'leads_view')
-    or public.user_has_permission(auth.uid(), 'leads_manage')
+    public.user_role() = 'owner'
+    or public.user_role() = 'branch_manager'
+    or assigned_to = auth.uid()
   );
 
--- Staff with leads_manage can update
+-- Owner / branch_manager can update
 create policy "leads_manage_staff" on public.leads
   for update using (
-    public.user_has_permission(auth.uid(), 'leads_manage')
+    public.user_role() = 'owner'
+    or public.user_role() = 'branch_manager'
   );
 
 -- Indexes
