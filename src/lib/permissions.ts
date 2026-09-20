@@ -86,6 +86,7 @@ export function canAccessRoute(role: Role | string | null | undefined, pathname:
   if (pathname.startsWith('/accounting')) return role === 'branch_manager' || role === 'cashier';
   if (pathname.startsWith('/reports')) return role === 'branch_manager';
   if (pathname.startsWith('/applications')) return role !== 'cashier'; // officers create/view own; RLS scopes rows
+  if (pathname.startsWith('/leads')) return role !== 'cashier';
   return true;
 }
 
@@ -94,9 +95,9 @@ export function visibleNav(role: Role | string | null | undefined): string[] {
   if (role === 'owner') return ['all'];
   switch (role) {
     case 'branch_manager':
-      return ['dashboard', 'customers', 'collateral', 'loans', 'applications', 'payments', 'collections', 'penalties', 'accounting', 'reports', 'settings'];
+      return ['dashboard', 'customers', 'collateral', 'loans', 'applications', 'leads', 'payments', 'collections', 'penalties', 'accounting', 'reports', 'settings'];
     case 'loan_officer':
-      return ['dashboard', 'customers', 'collateral', 'loans', 'applications', 'collections'];
+      return ['dashboard', 'customers', 'collateral', 'loans', 'applications', 'leads', 'collections'];
     case 'cashier':
       return ['dashboard', 'customers', 'loans', 'payments', 'accounting'];
     default:

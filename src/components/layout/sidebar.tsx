@@ -18,6 +18,7 @@ import {
   Settings,
   AlertTriangle,
   BookOpen,
+  Megaphone,
 } from 'lucide-react';
 
 interface NavItem {
@@ -33,6 +34,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/collateral', label: 'Collateral', icon: Shield },
   { href: '/loans', label: 'Loans', icon: HandCoins },
   { href: '/applications', label: 'Applications', icon: FileText },
+  { href: '/leads', label: 'Leads', icon: Megaphone },
   { href: '/payments', label: 'Payments', icon: Receipt },
   { href: '/collections', label: 'Collections', icon: AlertTriangle },
   { href: '/penalties', label: 'Penalties', icon: AlertTriangle },
@@ -47,6 +49,7 @@ const KEY_OF: Record<string, string> = {
   '/collateral': 'collateral',
   '/loans': 'loans',
   '/applications': 'applications',
+  '/leads': 'leads',
   '/payments': 'payments',
   '/collections': 'collections',
   '/penalties': 'penalties',
