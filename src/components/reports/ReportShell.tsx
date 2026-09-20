@@ -91,7 +91,7 @@ export default function ReportShell({ slug, title, subtitle, statusOptions }: Re
   }, [slug, from, to, branch, officer, status]);
 
   useEffect(() => {
-    setLoading(true);
+    queueMicrotask(() => setLoading(true));
     fetch(query())
       .then((r) => r.json())
       .then((j) => {

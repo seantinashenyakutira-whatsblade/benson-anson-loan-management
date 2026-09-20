@@ -31,21 +31,18 @@ export function CommandPalette() {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
+        if (!open) {
+          setQuery('');
+          setHits([]);
+          setTimeout(() => inputRef.current?.focus(), 50);
+        }
         setOpen((o) => !o);
       }
       if (e.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
-  useEffect(() => {
-    if (open) {
-      setQuery('');
-      setHits([]);
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
-  }, [open ]);
+  }, [open]);
 
   const search = useCallback(
     (q: string) => {

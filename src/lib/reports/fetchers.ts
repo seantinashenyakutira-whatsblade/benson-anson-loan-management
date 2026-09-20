@@ -332,7 +332,7 @@ export async function fetchActiveLoans(ctx: Ctx): Promise<{ columns: ReportResul
 
 /** 6. Disbursements in range. */
 export async function fetchDisbursements(ctx: Ctx): Promise<{ columns: ReportResult['columns']; rows: ReportRow[]; totals: ReportRow }> {
-  let q = ctx.sb
+  const q = ctx.sb
     .from('loans')
     .select('*, customers(first_name, last_name, branch_id)')
     .gte('disbursement_date', ctx.params.from)

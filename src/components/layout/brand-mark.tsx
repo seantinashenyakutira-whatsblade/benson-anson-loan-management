@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { useTheme } from 'next-themes';
 
 /**
@@ -21,11 +21,11 @@ const LIGHT_LOGO_OPAQUE = true;
 
 export function BrandMark({ variant = 'full', height = 32, className }: BrandMarkProps) {
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   if (variant === 'icon') {
     // eslint-disable-next-line @next/next/no-img-element

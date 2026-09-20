@@ -51,7 +51,10 @@ export function ReportDoc({ result, logoDataUri, systemName }: ReportDocProps) {
     <Document>
       <Page size="A4" orientation="landscape" style={styles.page}>
         <View style={styles.header} fixed>
-          {logoDataUri ? <Image src={logoDataUri} style={styles.logo} /> : null}
+          {logoDataUri ? (
+            // eslint-disable-next-line jsx-a11y/alt-text
+            <Image src={logoDataUri} style={styles.logo} />
+          ) : null}
           <View style={styles.headerText}>
             <Text style={styles.business}>{meta.businessName}</Text>
             <Text style={styles.title}>{meta.title}</Text>

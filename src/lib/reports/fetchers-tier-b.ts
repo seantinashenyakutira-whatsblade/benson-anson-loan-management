@@ -21,7 +21,7 @@ export async function fetchPenaltiesReport(ctx: Ctx): Promise<{ columns: ReportR
     description: string | null; status: string;
     loans?: { loan_number: string; branch_id: string | null; customers?: { first_name: string; last_name: string } | null } | null;
   };
-  let list = ((data || []) as unknown as PRow[]).filter(
+  const list = ((data || []) as unknown as PRow[]).filter(
     (p) => (ctx.scope.branchId === 'all' || p.loans?.branch_id === ctx.scope.branchId) &&
       (ctx.params.status === 'all' || p.status === ctx.params.status),
   );

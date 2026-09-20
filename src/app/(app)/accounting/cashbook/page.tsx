@@ -76,11 +76,14 @@ export default function CashbookPage() {
     fetchBook();
   }, [supabase, account, from, to]);
 
-  let running = toNgwee(opening);
-  const withBalance = rows.map((r) => {
-    running = running + toNgwee(r.inKwacha) - toNgwee(r.outKwacha);
-    return { ...r, balance: running / 100 };
-  });
+  const withBalance: Array<CashRow & { balance: number }> = rows.reduce<Array<CashRow & { balance: number }>>(
+    (acc, r) => {
+      const running = (acc.length > 0 ? acc[acc.length - 1]!.balance : opening) * 100 + toNgwee(r.inKwacha) - toNgwee(r.outKwacha);
+      acc.push({ ...r, balance: running / 100 });
+      return acc;
+    },
+    [],
+  );
   const closing = withBalance.length > 0 ? withBalance[withBalance.length - 1]!.balance : opening;
 
   return (
