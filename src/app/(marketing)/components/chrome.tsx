@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { BrandMark } from '@/components/layout/brand-mark';
 import { useApply } from '@/components/marketing/apply-provider';
 import { Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
 import type { BusinessInfo } from './use-business';
@@ -13,7 +12,8 @@ export function LandingHeader() {
     <header className="lp-header">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/" className="flex shrink-0 items-center gap-2">
-          <BrandMark variant="full" height={34} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/branding/logo.png" alt="Anson Benson Cash Solutions" style={{ height: 34, width: 'auto' }} />
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">
@@ -41,7 +41,8 @@ export function LandingFooter({ info }: { info: BusinessInfo }) {
     <footer id="contact" className="lp-footer">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
         <div>
-          <BrandMark variant="full" height={38} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/branding/logo.png" alt="Anson Benson Cash Solutions" style={{ height: 38, width: 'auto' }} />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-[#a0b4d0]">
             Turn your needs into reality with Anson Benson Cash Solutions Limited — your
             trusted partner for fair, collateral-backed loans.
