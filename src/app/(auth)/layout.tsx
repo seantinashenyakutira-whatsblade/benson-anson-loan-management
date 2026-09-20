@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <div className="flex min-h-dvh items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
-          <BrandMark variant="full" height={64} />
+          <BrandMark variant="full" height={64} lightImage />
           <p className="mt-3 text-sm text-text-secondary">
             Loan Management
           </p>
