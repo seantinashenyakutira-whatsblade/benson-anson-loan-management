@@ -64,9 +64,10 @@ describe.skipIf(!ENABLED)('rls with live data', () => {
   let loanB = '';
 
   beforeAll(async () => {
-    const a = await admin!.from('customers').insert({ first_name: 'Rls', last_name: 'FixA', nrc_number: 'RLSFIX4-A', phone: '0971111111', status: 'active', branch_id: HO }).select('id').single();
-    const b = await admin!.from('customers').insert({ first_name: 'Rls', last_name: 'FixB', nrc_number: 'RLSFIX4-B', phone: '0972222222', status: 'active', branch_id: KB }).select('id').single();
-    if (a.error || b.error) throw new Error('seed customers failed');
+    const tag = 'RLSFIX4-' + Date.now().toString(36);
+    const a = await admin!.from('customers').insert({ first_name: 'Rls', last_name: 'FixA', nrc_number: tag + '-A', phone: '097' + String(Math.floor(Math.random() * 1e7)).padStart(7, '0'), status: 'active', branch_id: HO }).select('id').single();
+    const b = await admin!.from('customers').insert({ first_name: 'Rls', last_name: 'FixB', nrc_number: tag + '-B', phone: '097' + String(Math.floor(Math.random() * 1e7)).padStart(7, '0'), status: 'active', branch_id: KB }).select('id').single();
+    if (a.error || b.error) throw new Error('seed customers failed: ' + a.error?.message + ' / ' + b.error?.message);
     custA = a.data.id;
     custB = b.data.id;
 
@@ -106,14 +107,14 @@ describe.skipIf(!ENABLED)('rls with live data', () => {
     expect(await idsIn(c, 'loans')).toContain(loanA);
     expect(await idsIn(c, 'loans')).not.toContain(loanB);
     await c.auth.signOut();
-  });
+  }, 30000);
 
   it('owner sees both branches', async () => {
     const c = await loginAs('owner@bensonanson.loans');
     expect(await idsIn(c, 'customers')).toEqual(expect.arrayContaining([custA, custB]));
     expect(await idsIn(c, 'loans')).toEqual(expect.arrayContaining([loanA, loanB]));
     await c.auth.signOut();
-  });
+  }, 30000);
 
   it('loan officer sees own branch loans only', async () => {
     const c = await loginAs('officer@bensonanson.loans');
@@ -122,7 +123,7 @@ describe.skipIf(!ENABLED)('rls with live data', () => {
     expect(await idsIn(c, 'loans')).toContain(loanA);
     expect(await idsIn(c, 'loans')).not.toContain(loanB);
     await c.auth.signOut();
-  });
+  }, 30000);
 
   it('cashier sees own branch customers and no loans by design', async () => {
     const c = await loginAs('cashier@bensonanson.loans');
@@ -131,5 +132,5 @@ describe.skipIf(!ENABLED)('rls with live data', () => {
     // cashiers have no loans SELECT grant (payments-only role)
     expect(await idsIn(c, 'loans')).toHaveLength(0);
     await c.auth.signOut();
-  });
+  }, 30000);
 });

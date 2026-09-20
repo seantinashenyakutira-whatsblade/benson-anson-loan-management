@@ -2,7 +2,7 @@
   "name": "Anson Benson Cash Solutions — Loan Management",
   "short_name": "ABC Loans",
   "description": "Collateral-based loan management system for Anson Benson Cash Solutions Limited",
-  "start_url": "/dashboard",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#061633",
   "theme_color": "#061633",
@@ -16,19 +16,19 @@
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-192.png",
+      "src": "/branding/logo-icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/branding/logo-icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-maskable.png",
+      "src": "/branding/logo-icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

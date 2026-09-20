@@ -1,9 +1,9 @@
-const CACHE_NAME = 'bal-v1';
+const CACHE_NAME = 'bal-v2';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
+  '/branding/logo-icon.png',
+  '/branding/monogram.svg',
 ];
 
 /* ── Install: precache app shell ─────────────────────────── */
@@ -33,7 +33,6 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests
   if (request.method !== 'GET') return;
 
   // Skip Supabase API calls (authenticated data)
@@ -70,7 +69,16 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
           return response;
         })
-        .catch(() => caches.match('/offline') || caches.match('/')),
+        .catch(() => {
+          // Offline fallback: try cache, then show a basic offline page
+          return caches.match(request).then((cached) => {
+            if (cached) return cached;
+            return new Response(
+              '<html><body style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:system-ui;background:#061633;color:#fff;text-align:center"><div><h1>Offline</h1><p>Please check your connection and try again.</p></div></body></html>',
+              { headers: { 'Content-Type': 'text/html' } },
+            );
+          });
+        }),
     );
     return;
   }

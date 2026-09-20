@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Geist_Mono } from 'next/font/google';
 import { ServiceWorkerRegistration } from '@/components/layout/service-worker-registration';
 import { AppThemeProvider } from '@/components/layout/theme-provider';
+import { ThemeColorSync } from '@/components/layout/theme-color-sync';
 import './globals.css';
 
 const inter = Inter({
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${geistMono.variable}`}>
       <body>
         <AppThemeProvider>
+          <ThemeColorSync />
           <ServiceWorkerRegistration />
           {children}
         </AppThemeProvider>
