@@ -70,8 +70,11 @@ export function useBusinessInfo(): BusinessInfo {
   return info;
 }
 
-export function useProducts(): ProductInfo[] {
-  const [products, setProducts] = useState<ProductInfo[]>([]);
+export function useProducts(): { products: ProductInfo[]; loading: boolean } {
+  const [state, setState] = useState<{ products: ProductInfo[]; loading: boolean }>({
+    products: [],
+    loading: true,
+  });
 
   useEffect(() => {
     createClient()
@@ -80,11 +83,11 @@ export function useProducts(): ProductInfo[] {
       .eq('is_active', true)
       .order('min_amount')
       .then(({ data }) => {
-        if (data) setProducts(data as unknown as ProductInfo[]);
+        setState({ products: (data as unknown as ProductInfo[]) || [], loading: false });
       });
   }, []);
 
-  return products;
+  return state;
 }
 
 export function formatK(n: number): string {

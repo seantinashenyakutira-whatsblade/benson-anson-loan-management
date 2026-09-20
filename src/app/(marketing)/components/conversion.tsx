@@ -26,7 +26,7 @@ function ProductCard({ p }: { p: ProductInfo }) {
 }
 
 export function ProductCards() {
-  const products = useProducts();
+  const { products, loading } = useProducts();
   const shown = products.slice(0, 3);
   return (
     <section id="pricing" className="border-y border-[#ffffff10] bg-[#0a2249]/40">
@@ -39,8 +39,12 @@ export function ProductCards() {
           <p className="lp-sub mt-3">Rates from 15%. Terms available up to 1 month.</p>
         </div>
 
-        {shown.length === 0 ? (
+        {loading ? (
           <p className="mt-8 text-sm text-[#6b7f9e]">Products loading…</p>
+        ) : shown.length === 0 ? (
+          <p className="mt-8 text-sm text-[#6b7f9e]">
+            Products coming soon. Call us to discuss your loan.
+          </p>
         ) : (
           <div className="mt-8 grid gap-5 md:grid-cols-3">
             {shown.map((p) => (

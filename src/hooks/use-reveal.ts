@@ -12,30 +12,74 @@ export function useReveal() {
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!rootRef.current) return;
-    const els = Array.from(
-      rootRef.current.querySelectorAll<HTMLElement>('[data-reveal], [data-keyword]'),
-    );
+    const root = rootRef.current;
+    if (!root) return;
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      els.forEach((el) => el.classList.add('is-revealed'));
-      return;
-    }
+    const matches = (el: Element) =>
+      el.matches('[data-reveal], [data-keyword]') ||
+      Boolean(el.querySelector?.('[data-reveal], [data-keyword]'));
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            (e.target as HTMLElement).classList.add('is-revealed');
-            io.unobserve(e.target);
+    const reducedMotion = () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let io: IntersectionObserver | null = null;
+
+    const reveal = (el: Element) => el.classList.add('is-revealed');
+
+    const { observe, unobserveTree } = (() => {
+      if (reducedMotion()) {
+        return {
+          observe(el: Element) {
+            reveal(el);
+          },
+          unobserveTree() {},
+        };
+      }
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              (e.target as Element).classList.add('is-revealed');
+              io?.unobserve(e.target);
+            }
           }
-        }
-      },
-      { threshold: 0.18 },
-    );
+        },
+        { threshold: 0.18 },
+      );
+      return {
+        observe(el: Element) {
+          io?.observe(el);
+        },
+        unobserveTree() {
+          io?.disconnect();
+        },
+      };
+    })();
 
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    const scan = (rootNode: ParentNode) => {
+      rootNode
+        .querySelectorAll('[data-reveal], [data-keyword]')
+        .forEach((el) => observe(el));
+    };
+
+    scan(root);
+
+    const mo = new MutationObserver((records) => {
+      for (const r of records) {
+        for (const node of Array.from(r.addedNodes)) {
+          if (!(node instanceof Element)) continue;
+          if (matches(node)) observe(node);
+          scan(node);
+        }
+      }
+    });
+    mo.observe(root, { childList: true, subtree: true });
+
+    return () => {
+      mo.disconnect();
+      unobserveTree();
+    };
   }, []);
 
   return rootRef;
