@@ -4,11 +4,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { BrandMark } from '@/components/layout/brand-mark';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, MessageCircle } from 'lucide-react';
+import { useBusinessInfo, buildWhatsAppUrl } from '@/app/(marketing)/components/use-business';
 
 const COLLATERAL_TYPES = ['Vehicle', 'Phone', 'Laptop', 'TV / Monitor', 'Fridge / Freezer', 'Washing Machine', 'Sound System', 'Business Equipment', 'Other'];
 
 export default function ApplyPage() {
+  const info = useBusinessInfo();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -168,6 +170,16 @@ export default function ApplyPage() {
           Already a client? <Link href="/login" className="text-[#005BAC] underline">Sign in here</Link>
         </p>
       </main>
+
+      <a
+        href={buildWhatsAppUrl(info.whatsappNumber)}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat with us on WhatsApp"
+        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25d366] text-white shadow-[0_10px_28px_-8px_rgba(37,211,102,0.6)] transition-transform hover:-translate-y-0.5 hover:scale-105"
+      >
+        <MessageCircle size={26} />
+      </a>
     </div>
   );
 }

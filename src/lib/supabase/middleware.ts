@@ -39,7 +39,13 @@ export async function updateSession(request: NextRequest) {
     (path) => request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith('/pay/'),
   );
 
-  if (!user && !isPublicPath) {
+  // Routes reachable by both signed-in and unsigned visitors (no redirect either way)
+  const publicForAllPaths = ['/apply'];
+  const isPublicForAll = publicForAllPaths.some(
+    (path) => request.nextUrl.pathname === path,
+  );
+
+  if (!user && !isPublicPath && !isPublicForAll) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     return NextResponse.redirect(url);

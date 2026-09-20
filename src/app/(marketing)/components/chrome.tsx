@@ -1,62 +1,112 @@
+'use client';
+
 import Link from 'next/link';
 import { BrandMark } from '@/components/layout/brand-mark';
+import { useApply } from '@/components/marketing/apply-provider';
+import { Phone, Mail, MapPin, ArrowRight } from 'lucide-react';
+import type { BusinessInfo } from './use-business';
 
 export function LandingHeader() {
+  const { open } = useApply();
+
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2">
-          <BrandMark variant="full" height={32} />
-          <span className="hidden text-sm font-bold text-[#005BAC] sm:block">Anson Benson Cash Solutions</span>
+    <header className="lp-header">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <Link href="/" className="flex shrink-0 items-center gap-2">
+          <BrandMark variant="full" height={34} />
         </Link>
-        <nav className="hidden items-center gap-6 text-sm text-slate-600 md:flex">
-          <a href="#products" className="hover:text-[#005BAC]">Products</a>
-          <a href="#how" className="hover:text-[#005BAC]">How it works</a>
-          <a href="#locations" className="hover:text-[#005BAC]">Locations</a>
-          <a href="#contact" className="hover:text-[#005BAC]">Contact</a>
+
+        <nav className="hidden items-center gap-7 md:flex">
+          <a href="#products" className="lp-nav-link">Products</a>
+          <a href="#how" className="lp-nav-link">How it works</a>
+          <a href="#locations" className="lp-nav-link">Locations</a>
+          <a href="#contact" className="lp-nav-link">Contact</a>
         </nav>
+
         <div className="flex items-center gap-3">
-          <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-[#005BAC]">
+          <Link href="/login" className="text-sm font-medium text-[#a0b4d0] transition-colors hover:text-white">
             Sign in
           </Link>
-          <Link href="/apply" className="rounded-xl bg-[#F5B300] px-4 py-2 text-sm font-bold text-[#061633] hover:brightness-95">
+          <button onClick={open} className="lp-btn-gold text-sm">
             Apply Now
-          </Link>
+          </button>
         </div>
       </div>
     </header>
   );
 }
 
-export function LandingFooter({ info }: { info: { name: string; phone: string; email: string; whatsapp: string; locations: string[] } }) {
+export function LandingFooter({ info }: { info: BusinessInfo }) {
   return (
-    <footer id="contact" className="bg-[#061633] text-white">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
+    <footer id="contact" className="lp-footer">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
         <div>
-          <BrandMark variant="full" height={36} />
-          <p className="mt-3 text-sm text-slate-300">Fast, fair loans against the assets you already own.</p>
+          <BrandMark variant="full" height={38} />
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-[#a0b4d0]">
+            Turn your needs into reality with Anson Benson Cash Solutions Limited — your
+            trusted partner for fair, collateral-backed loans.
+          </p>
         </div>
+
         <div>
-          <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-slate-400">Contact</h3>
-          {info.phone && <p className="text-sm text-slate-200">📞 {info.phone}</p>}
-          {info.email && <p className="mt-1 text-sm text-slate-200">✉️ {info.email}</p>}
-          {info.whatsapp && <p className="mt-1 text-sm text-slate-200">💬 WhatsApp: {info.whatsapp}</p>}
+          <h3 className="lp-eyebrow pb-1">Contact</h3>
+          <div className="mt-3 space-y-2 text-sm text-[#a0b4d0]">
+            {info.phone && (
+              <p className="flex items-center gap-2">
+                <Phone size={15} className="text-[#f5b300]" />
+                <a href={`tel:${info.phone.replace(/\s/g, '')}`}>{info.phone}</a>
+              </p>
+            )}
+            {info.email && (
+              <p className="flex items-center gap-2">
+                <Mail size={15} className="text-[#f5b300]" />
+                <a href={`mailto:${info.email}`}>{info.email}</a>
+              </p>
+            )}
+          </div>
         </div>
+
         <div id="locations">
-          <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-slate-400">Locations</h3>
-          {info.locations.map((l) => (
-            <p key={l} className="text-sm text-slate-200">📍 {l}</p>
-          ))}
+          <h3 className="lp-eyebrow pb-1">Locations</h3>
+          <div className="mt-3 space-y-2 text-sm text-[#a0b4d0]">
+            {info.locations.length > 0 ? (
+              info.locations.map((l) => (
+                <p key={l} className="flex items-center gap-2">
+                  <MapPin size={15} className="text-[#f5b300]" />
+                  {l}
+                </p>
+              ))
+            ) : (
+              <p className="text-[#6b7f9e]">Find us at any of our offices across Zambia.</p>
+            )}
+          </div>
         </div>
+
         <div>
-          <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-slate-400">Quick Links</h3>
-          <p><Link href="/apply" className="text-sm text-slate-200 hover:text-white">Apply for a loan</Link></p>
-          <p className="mt-1"><a href="#how" className="text-sm text-slate-200 hover:text-white">How it works</a></p>
-          <p className="mt-1"><Link href="/login" className="text-sm text-slate-200 hover:text-white">Staff sign in</Link></p>
+          <h3 className="lp-eyebrow pb-1">Quick links</h3>
+          <div className="mt-3 space-y-2 text-sm">
+            <p>
+              <Link href="/apply" className="inline-flex items-center gap-1.5">
+                Apply for a loan <ArrowRight size={14} />
+              </Link>
+            </p>
+            <p>
+              <a href="#how" className="inline-flex items-center gap-1.5">
+                How it works <ArrowRight size={14} />
+              </a>
+            </p>
+            <p>
+              <Link href="/login" className="inline-flex items-center gap-1.5">
+                Staff sign in <ArrowRight size={14} />
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
-      <div className="border-t border-white/10">
-        <p className="mx-auto max-w-6xl px-4 py-4 text-xs text-slate-400">© 2026 Anson Benson Cash Solutions Limited. All rights reserved.</p>
+      <div className="border-t border-[#ffffff10]">
+        <p className="mx-auto max-w-6xl px-4 py-5 text-xs text-[#6b7f9e] sm:px-6">
+          © 2026 Anson Benson Cash Solutions Limited. All rights reserved.
+        </p>
       </div>
     </footer>
   );
