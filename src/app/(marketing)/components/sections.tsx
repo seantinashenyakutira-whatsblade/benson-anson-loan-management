@@ -78,7 +78,7 @@ export function StatsBar({ locations }: { locations: string[] }) {
 }
 
 const TILES: Array<{ title: string; desc: string; img?: string }> = [
-  { title: 'Vehicles', desc: 'Cars, minibuses and motorbikes with papers.' },
+  { title: 'Vehicles', desc: 'Cars, minibuses and motorbikes with papers.', img: '/marketing/collateral/car.jpeg' },
   { title: 'Electronics', desc: 'Smartphones, tablets and cameras.', img: '/marketing/collateral/phone.webp' },
   { title: 'Appliances', desc: 'Refrigerators, freezers and washing machines.', img: '/marketing/collateral/fridge.webp' },
   { title: 'TV & Audio', desc: 'Flat-screen TVs and sound systems.', img: '/marketing/collateral/tv.webp' },
