@@ -2,7 +2,7 @@
 
 import { ArrowRight, Phone } from 'lucide-react';
 import { useApply } from '@/components/marketing/apply-provider';
-import { useProducts, useBusinessInfo, formatK, type ProductInfo } from './use-business';
+import { useBusinessInfo, formatK, type ProductInfo } from './use-business';
 
 function ProductCard({ p }: { p: ProductInfo }) {
   const { open } = useApply();
@@ -25,10 +25,9 @@ function ProductCard({ p }: { p: ProductInfo }) {
   );
 }
 
-export function ProductCards() {
-  const { products, loading } = useProducts();
+export function ProductCards({ initial }: { initial: ProductInfo[] }) {
   const { phone } = useBusinessInfo();
-  const shown = products.slice(0, 3);
+  const shown = initial.slice(0, 3);
   return (
     <section id="pricing" className="border-y border-[#ffffff10] bg-[#0a2249]/40">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
@@ -40,9 +39,7 @@ export function ProductCards() {
           <p className="lp-sub mt-3">Rates from 15%. Terms available up to 1 month.</p>
         </div>
 
-        {loading ? (
-          <p className="mt-8 text-sm text-[#6b7f9e]">Products loading…</p>
-        ) : shown.length === 0 ? (
+        {shown.length === 0 ? (
           <div className="mt-8 text-sm text-[#6b7f9e]">
             <p>Products coming soon. Call us to discuss your loan.</p>
             <a

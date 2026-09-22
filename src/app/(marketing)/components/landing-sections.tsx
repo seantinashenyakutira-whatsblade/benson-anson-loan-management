@@ -11,11 +11,11 @@ import {
   FinalCta,
 } from './sections';
 import { ProductCards } from './conversion';
-import { useBusinessInfo } from './use-business';
+import { useBusinessInfo, type ProductInfo } from './use-business';
 import { useReveal } from '@/hooks/use-reveal';
 import { ApplyProvider } from '@/components/marketing/apply-provider';
 
-export function LandingSections() {
+export function LandingSections({ products }: { products: ProductInfo[] }) {
   const info = useBusinessInfo();
   const rootRef = useReveal();
 
@@ -28,7 +28,7 @@ export function LandingSections() {
           <StatsBar locations={info.locations} />
           <CollateralGrid />
           <HowItWorks />
-          <ProductCards />
+          <ProductCards initial={products} />
           <TrustStrip />
           <Testimonial />
           <FinalCta info={info} />

@@ -70,26 +70,6 @@ export function useBusinessInfo(): BusinessInfo {
   return info;
 }
 
-export function useProducts(): { products: ProductInfo[]; loading: boolean } {
-  const [state, setState] = useState<{ products: ProductInfo[]; loading: boolean }>({
-    products: [],
-    loading: true,
-  });
-
-  useEffect(() => {
-    createClient()
-      .from('loan_products')
-      .select('id, name, description, min_amount, max_amount, interest_rate, interest_type, default_duration, duration_unit')
-      .eq('is_active', true)
-      .order('min_amount')
-      .then(({ data }) => {
-        setState({ products: (data as unknown as ProductInfo[]) || [], loading: false });
-      });
-  }, []);
-
-  return state;
-}
-
 export function formatK(n: number): string {
   return 'K ' + Number(n).toLocaleString('en-ZM', { maximumFractionDigits: 0 });
 }

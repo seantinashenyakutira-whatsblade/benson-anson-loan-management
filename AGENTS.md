@@ -180,6 +180,14 @@ See `.env.example` for the full list. Never echo values from `.env.local`.
 
 - **SWC native binary:** Not available for Win32 x64. Webpack mode used for builds. WASM fallback for dev.
 
+## Environment invariants
+
+- Node 22 LTS (do not upgrade without explicit permission)
+- Vercel Cron uses CRON_SECRET header (added Stage 3.4)
+- Landing products are server-cached with 1h TTL
+- Settings table columns: (key, value, category, description)
+  NOT value_type
+
 ## Standing Rules
 
 1. Build ONLY what the current phase specifies. No feature code in infrastructure phases.
