@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -9,7 +9,8 @@ import { AccessDenied } from '@/components/layout/access-denied';
 import { ProductForm } from '../../product-form';
 import type { LoanProductInput } from '@/lib/validations/loan-product';
 
-export default function EditLoanProductPage({ params }: { params: { id: string } }) {
+export default function EditLoanProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const { profile, loading: authLoading } = useAuth();
   const [initial, setInitial] = useState<(LoanProductInput & { id: string }) | null>(null);
   const [loading, setLoading] = useState(true);
@@ -20,7 +21,7 @@ export default function EditLoanProductPage({ params }: { params: { id: string }
     supabase
       .from('loan_products')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .maybeSingle()
       .then(({ data }) => {
         if (!data) {
@@ -52,7 +53,7 @@ export default function EditLoanProductPage({ params }: { params: { id: string }
         }
         setLoading(false);
       });
-  }, [supabase, params.id]);
+  }, [supabase, id]);
 
   if (authLoading || loading) {
     return <div className="py-12 text-center text-text-muted">Loading...</div>;
