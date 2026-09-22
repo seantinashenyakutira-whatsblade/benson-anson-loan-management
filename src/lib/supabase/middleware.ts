@@ -34,10 +34,11 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Public routes that don't require auth
-  const publicPaths = ['/', '/login', '/forgot-password', '/reset-password', '/pay'];
-  const isPublicPath = publicPaths.some(
-    (path) => request.nextUrl.pathname === path || request.nextUrl.pathname.startsWith('/pay/'),
-  );
+  const publicPaths = ['/', '/login', '/forgot-password', '/reset-password', '/pay', '/terms', '/onboard'];
+  const publicPrefixes = ['/pay/', '/onboard/'];
+  const isPublicPath =
+    publicPaths.some((path) => request.nextUrl.pathname === path) ||
+    publicPrefixes.some((prefix) => request.nextUrl.pathname.startsWith(prefix));
 
   // Routes reachable by both signed-in and unsigned visitors (no redirect either way)
   const publicForAllPaths = ['/apply'];
