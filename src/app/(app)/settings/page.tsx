@@ -67,6 +67,16 @@ export default function SettingsPage() {
         </Link>
       )}
 
+      {(role === 'owner' || role === 'branch_manager') && (
+        <Link
+          href="/settings/loan-products"
+          className="glass-card glass-card-hover block p-4 transition-all"
+        >
+          <p className="text-sm font-medium text-text-primary">Loan Products →</p>
+          <p className="text-xs text-text-muted">Create and manage loan products for applications and the landing page.</p>
+        </Link>
+      )}
+
       {/* Tabs */}
       <div className="flex gap-1 rounded-[var(--radius-button)] bg-surface-glass p-1">
         {tabs.map((tab) => (

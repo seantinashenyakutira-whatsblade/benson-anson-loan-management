@@ -22,7 +22,7 @@ const getLandingProducts = unstable_cache(
     return (data as unknown as ProductInfo[]) ?? [];
   },
   ['landing-products'],
-  { revalidate: 3600 },
+  { revalidate: 3600, tags: ['landing-products'] },
 );
 
 export default async function LandingPage() {
