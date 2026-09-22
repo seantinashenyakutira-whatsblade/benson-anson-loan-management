@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { useAuth } from '@/components/auth-provider';
 import { formatKwacha } from '@/lib/money';
-import { Users, DollarSign, TrendingUp, AlertTriangle, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, AlertTriangle, ArrowUpRight, ArrowDownRight, Inbox } from 'lucide-react';
 
 interface DashboardKPIs {
   totalCustomers: number;
@@ -46,7 +47,9 @@ export default function DashboardPage() {
     collectionsThisMonth: 0,
   });
   const [recentPayments, setRecentPayments] = useState<RecentActivity[]>([]);
+  const [pendingVerification, setPendingVerification] = useState(0);
   const [loading, setLoading] = useState(true);
+  const { profile } = useAuth();
   const supabase = createClient();
 
   useEffect(() => {
@@ -66,6 +69,7 @@ export default function DashboardPage() {
         disbursedThisMonthRes,
         collectionsThisMonthRes,
         recentPaymentsRes,
+        verificationRes,
       ] = await Promise.all([
         supabase.from('customers').select('id', { count: 'exact', head: true }),
         supabase.from('loans').select('id', { count: 'exact', head: true }).in('status', ['disbursed', 'performing', 'at_risk', 'overdue']),
@@ -78,6 +82,7 @@ export default function DashboardPage() {
         supabase.from('loans').select('id', { count: 'exact', head: true }).gte('disbursement_date', monthStart),
         supabase.from('payments').select('amount').eq('status', 'verified').gte('paid_at', monthStart),
         supabase.from('payments').select('id, payment_number, amount, paid_at, status, payment_method').order('paid_at', { ascending: false }).limit(10),
+        supabase.from('customer_invitations').select('id', { count: 'exact', head: true }).eq('status', 'submitted'),
       ]);
 
       const totalDisbursed = totalDisbursedRes.data?.reduce((sum, l) => sum + l.principal_amount, 0) || 0;
@@ -102,8 +107,9 @@ export default function DashboardPage() {
         collectionsThisMonth,
       });
 
-      if (recentPaymentsRes.data) {
-        setRecentPayments(recentPaymentsRes.data.map((p) => ({
+      setPendingVerification(verificationRes.count || 0);
+
+      if (recentPaymentsRes.data) {        setRecentPayments(recentPaymentsRes.data.map((p) => ({
           id: p.id,
           type: 'payment',
           description: p.payment_number,
@@ -141,12 +147,24 @@ export default function DashboardPage() {
     { label: 'Overdue', value: formatKwacha(kpis.overdueAmount), icon: AlertTriangle, color: 'text-danger', link: '/collections' },
   ];
 
+  const showVerification =
+    profile?.role === 'owner' || profile?.role === 'branch_manager' || profile?.role === 'loan_officer';
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-text-primary">Dashboard</h1>
         <p className="text-sm text-text-secondary">Anson Benson Cash Solutions — Overview</p>
       </div>
+
+      {showVerification && pendingVerification > 0 && (
+        <Link href="/invitations?status=submitted" className="glass-card glass-card-hover flex items-center gap-3 p-4 transition-all">
+          <Inbox size={20} className="text-warning" />
+          <p className="text-sm text-text-primary">
+            <strong>{pendingVerification}</strong> application{pendingVerification === 1 ? '' : 's'} awaiting verification
+          </p>
+        </Link>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 gap-3">

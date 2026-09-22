@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   BookOpen,
   Megaphone,
+  Send,
 } from 'lucide-react';
 
 interface NavItem {
@@ -35,6 +36,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/loans', label: 'Loans', icon: HandCoins },
   { href: '/applications', label: 'Applications', icon: FileText },
   { href: '/leads', label: 'Leads', icon: Megaphone },
+  { href: '/invitations', label: 'Invitations', icon: Send, roles: ['owner', 'branch_manager', 'loan_officer'] },
   { href: '/payments', label: 'Payments', icon: Receipt },
   { href: '/collections', label: 'Collections', icon: AlertTriangle },
   { href: '/penalties', label: 'Penalties', icon: AlertTriangle },
@@ -50,6 +52,7 @@ const KEY_OF: Record<string, string> = {
   '/loans': 'loans',
   '/applications': 'applications',
   '/leads': 'leads',
+  '/invitations': 'invitations',
   '/payments': 'payments',
   '/collections': 'collections',
   '/penalties': 'penalties',
