@@ -439,7 +439,7 @@ async function main(){
   console.log('Generating collateral...');
   const collaterals: any[] = [];
   const collateralMedia: any[] = [];
-  const collateralTypes = [...Array(12).fill('vehicle'), ...Array(18).fill('electronics'), ...Array(10).fill('appliances'), ...Array(5).fill('other')];
+  const collateralTypes = [...Array(12).fill('vehicle'), ...Array(18).fill('electronics'), ...Array(10).fill('household_goods'), ...Array(5).fill('other')];
   shuffle(collateralTypes);
   for(let i=0;i<loans.length;i++){
     const loan = loans[i];
@@ -457,7 +457,7 @@ async function main(){
       estVal = rand(3000,25000);
       serial = `SN${String(rand(10000000,99999999))}`;
       makeModel = e;
-    } else if(type==='appliances'){
+    } else if(type==='household_goods'){
       const a = choice(collateralAppliances);
       desc = a + ' - loan ' + loan.loan_number;
       estVal = rand(4000,15000);
@@ -481,7 +481,7 @@ async function main(){
     for(let m=0;m<numMedia;m++){
       collateralMedia.push({
         id:randomUUID(), collateral_id:collId, media_type:'photo',
-        file_name:`photo_${m+1}.webp`, file_path:`/marketing/collateral/${type==='vehicle'?'car.jpeg':type==='electronics'?'phone.webp':type==='appliances'?'fridge.webp':'other.webp'}`,
+        file_name:`photo_${m+1}.webp`, file_path:`/marketing/collateral/${type==='vehicle'?'car.jpeg':type==='electronics'?'phone.webp':type==='household_goods'?'fridge.webp':'other.webp'}`,
         file_size: rand(50000,200000), is_primary: m===0, uploaded_by:officerId,
       });
     }
