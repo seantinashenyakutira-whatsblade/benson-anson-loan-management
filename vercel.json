@@ -3,6 +3,14 @@
     {
       "path": "/api/cron/expire-invitations",
       "schedule": "0 22 * * *"
+    },
+    {
+      "path": "/api/cron/dispatch-notifications",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/check-overdue",
+      "schedule": "0 6 * * *"
     }
   ]
 }

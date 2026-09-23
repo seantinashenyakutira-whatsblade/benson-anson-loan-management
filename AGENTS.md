@@ -188,6 +188,17 @@ See `.env.example` for the full list. Never echo values from `.env.local`.
 - Settings table columns: (key, value, category, description)
   NOT value_type
 
+## Custom domain rollout
+When client's domain is verified in Resend:
+  1. Add domain at resend.com → Domains → Add Domain
+  2. Add the 3 DNS records (SPF, DKIM, MX) at domain registrar
+  3. Wait 5–30 min for verification
+  4. Update Vercel Production env var:
+     RESEND_FROM_EMAIL = noreply@<client-domain>
+  5. Redeploy: vercel --prod
+  6. Send test email to confirm deliverability
+The only change required is the FROM email. All infrastructure (queue, dispatcher, templates, triggers) is domain-agnostic.
+
 ## Standing Rules
 
 1. Build ONLY what the current phase specifies. No feature code in infrastructure phases.

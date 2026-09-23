@@ -8,6 +8,7 @@ import { BottomNav } from '@/components/layout/bottom-nav';
 import { Sidebar } from '@/components/layout/sidebar';
 import { AccessDenied } from '@/components/layout/access-denied';
 import { CommandPalette } from '@/components/layout/command-palette';
+import { ChatFab } from '@/components/chat/chat-fab';
 import { canAccessRoute } from '@/lib/permissions';
 
 function Shell({ children }: { children: React.ReactNode }) {
@@ -43,6 +44,7 @@ function Shell({ children }: { children: React.ReactNode }) {
       </div>
       <BottomNav />
       <CommandPalette />
+      <ChatFab />
     </div>
   );
 }

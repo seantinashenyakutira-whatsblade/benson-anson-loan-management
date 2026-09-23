@@ -6,7 +6,8 @@ import { useAuth } from '@/components/auth-provider';
 import { UserAvatar } from '@/components/ui/user-avatar';
 import { BrandMark } from '@/components/layout/brand-mark';
 import { ThemeMenu } from '@/components/layout/theme-menu';
-import { LogOut, Menu, X, Bell, Search } from 'lucide-react';
+import { NotificationBell } from '@/components/layout/notification-bell';
+import { LogOut, Menu, X, Search } from 'lucide-react';
 
 export function TopBar() {
   const { profile, signOut } = useAuth();
@@ -34,10 +35,7 @@ export function TopBar() {
             <Search size={20} />
           </button>
           <ThemeMenu />
-          <button className="relative rounded-lg p-2 text-text-secondary hover:bg-surface-glass">
-            <Bell size={20} />
-            <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-danger" />
-          </button>
+          <NotificationBell />
 
           <div className="flex items-center gap-2">
             <div className="hidden text-right text-sm sm:block">
