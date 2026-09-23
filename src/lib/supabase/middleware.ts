@@ -33,9 +33,9 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Public routes that don't require auth
+  // Public routes that don't require auth (cron routes carry their own Bearer auth)
   const publicPaths = ['/', '/login', '/forgot-password', '/reset-password', '/pay', '/terms', '/onboard'];
-  const publicPrefixes = ['/pay/', '/onboard/'];
+  const publicPrefixes = ['/pay/', '/onboard/', '/api/cron/'];
   const isPublicPath =
     publicPaths.some((path) => request.nextUrl.pathname === path) ||
     publicPrefixes.some((prefix) => request.nextUrl.pathname.startsWith(prefix));
