@@ -26,6 +26,7 @@ export const ROLE_PERMISSIONS: Record<Role, string[]> = {
     'invitations.approve',
     'staff.view',
     'leads.*',
+    'audit.view',
     'chat.*',
     'profile.self',
   ],
@@ -81,7 +82,8 @@ export function canAny(role: Role | string | null | undefined, permissions: stri
 export function canAccessRoute(role: Role | string | null | undefined, pathname: string): boolean {
   if (!role) return false;
   if (role === 'owner') return true;
-  if (pathname.startsWith('/users') || pathname.startsWith('/audit')) return false;
+  if (pathname.startsWith('/users')) return false;
+  if (pathname.startsWith('/audit')) return role === 'branch_manager';
   if (pathname.startsWith('/settings')) return role === 'branch_manager';
   if (pathname.startsWith('/accounting')) return role === 'branch_manager' || role === 'cashier';
   if (pathname.startsWith('/reports')) return role === 'branch_manager';
@@ -96,7 +98,7 @@ export function visibleNav(role: Role | string | null | undefined): string[] {
   if (role === 'owner') return ['all'];
   switch (role) {
     case 'branch_manager':
-      return ['dashboard', 'customers', 'collateral', 'loans', 'applications', 'leads', 'invitations', 'payments', 'collections', 'penalties', 'accounting', 'reports', 'settings'];
+      return ['dashboard', 'customers', 'collateral', 'loans', 'applications', 'leads', 'invitations', 'payments', 'collections', 'penalties', 'accounting', 'reports', 'settings', 'audit'];
     case 'loan_officer':
       return ['dashboard', 'customers', 'collateral', 'loans', 'applications', 'leads', 'invitations', 'collections'];
     case 'cashier':

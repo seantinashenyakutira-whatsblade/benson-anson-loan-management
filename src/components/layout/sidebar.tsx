@@ -42,6 +42,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/penalties', label: 'Penalties', icon: AlertTriangle },
   { href: '/accounting', label: 'Accounting', icon: BookOpen },
   { href: '/reports', label: 'Reports', icon: CircleDollarSign },
+  { href: '/audit', label: 'Audit Log', icon: Shield, roles: ['owner', 'branch_manager'] },
   { href: '/settings', label: 'Settings', icon: Settings, roles: ['owner', 'branch_manager'] },
 ];
 
@@ -58,6 +59,7 @@ const KEY_OF: Record<string, string> = {
   '/penalties': 'penalties',
   '/accounting': 'accounting',
   '/reports': 'reports',
+  '/audit': 'audit',
   '/settings': 'settings',
 };
 
