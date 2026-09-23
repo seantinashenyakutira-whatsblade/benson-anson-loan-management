@@ -203,10 +203,10 @@ function DashboardContent() {
         { label: `Collected (${bounds.label})`, value: formatKwacha(kpis.collected), icon: ArrowDownRight, color: 'text-success', link: `/payments?range=${range}` },
         { label: 'Loans Created', value: kpis.loansCreated.toLocaleString(), icon: TrendingUp, color: 'text-accent-primary', link: `/loans?range=${range}` },
         { label: 'Payments Received', value: kpis.paymentsReceived.toLocaleString(), icon: Receipt, color: 'text-success', link: `/payments?range=${range}` },
-        { label: 'Expected to Date', value: formatKwacha(kpis.expected), icon: DollarSign, color: 'text-warning', link: `/collections?range=${range}` },
-        { label: 'Collection Shortfall', value: formatKwacha(kpis.shortfall), icon: AlertTriangle, color: 'text-danger', link: `/collections?range=${range}` },
-        { label: 'Collection Rate', value: `${kpis.collectionRate}%`, icon: Percent, color: kpis.collectionRate >= 90 ? 'text-success' : kpis.collectionRate >= 70 ? 'text-warning' : 'text-danger', link: `/collections?range=${range}` },
-        { label: 'Portfolio at Risk', value: `${kpis.par}%`, icon: Activity, color: kpis.par <= 5 ? 'text-success' : kpis.par <= 15 ? 'text-warning' : 'text-danger', link: `/reports?range=${range}` },
+        { label: 'Expected to Date', value: formatKwacha(kpis.expected), icon: DollarSign, color: 'text-warning', link: `/dashboard/collections?range=${range}` },
+        { label: 'Collection Shortfall', value: formatKwacha(kpis.shortfall), icon: AlertTriangle, color: 'text-danger', link: `/dashboard/collections?range=${range}` },
+        { label: 'Collection Rate', value: `${kpis.collectionRate}%`, icon: Percent, color: kpis.collectionRate >= 90 ? 'text-success' : kpis.collectionRate >= 70 ? 'text-warning' : 'text-danger', link: `/dashboard/collections?range=${range}` },
+        { label: 'Portfolio at Risk', value: `${kpis.par}%`, icon: Activity, color: kpis.par <= 5 ? 'text-success' : kpis.par <= 15 ? 'text-warning' : 'text-danger', link: `/dashboard/health?range=${range}` },
       ]
     : [];
 
