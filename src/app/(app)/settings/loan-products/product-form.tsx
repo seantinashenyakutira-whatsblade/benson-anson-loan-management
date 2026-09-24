@@ -108,7 +108,7 @@ export function ProductForm({ initial }: Props) {
           <textarea name="description" defaultValue={v.description ?? ''} rows={2} maxLength={500} className={inputCls} />
         </Field>
         <label className="flex items-center gap-2 text-sm text-text-primary">
-          <input type="checkbox" name="is_active" defaultChecked={v.is_active} className="h-5 w-5 accent-[#f5b300]" />
+          <input type="checkbox" name="is_active" defaultChecked={v.is_active} className="h-5 w-5 accent-accent-primary" />
           Active
         </label>
       </div>
@@ -201,7 +201,7 @@ export function ProductForm({ initial }: Props) {
           </div>
         </div>
         <label className="flex items-center gap-2 text-sm text-text-primary">
-          <input type="checkbox" name="penalty_compounds" defaultChecked={v.penalty_compounds} className="h-5 w-5 accent-[#f5b300]" />
+          <input type="checkbox" name="penalty_compounds" defaultChecked={v.penalty_compounds} className="h-5 w-5 accent-accent-primary" />
           Penalty Compounds
         </label>
       </div>

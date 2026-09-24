@@ -60,9 +60,9 @@ export default function ApplyPage() {
       <div className="flex min-h-dvh items-center justify-center bg-white p-4">
         <div className="w-full max-w-md text-center">
           <CheckCircle size={48} className="mx-auto text-green-500" />
-          <h1 className="mt-4 text-2xl font-extrabold text-[#005BAC]">Application received!</h1>
+          <h1 className="mt-4 text-2xl font-extrabold text-brand-deep">Application received!</h1>
           <p className="mt-2 text-slate-600">Our team will reach out within 24 hours to guide you through the next steps.</p>
-          <Link href="/" className="mt-6 inline-block rounded-xl bg-[#00A6E0] px-6 py-3 font-bold text-white hover:brightness-95">
+          <Link href="/" className="mt-6 inline-block rounded-xl bg-accent-primary px-6 py-3 font-bold text-white hover:brightness-95">
             Back to Home
           </Link>
         </div>
@@ -71,7 +71,7 @@ export default function ApplyPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#F2F7FB]">
+    <div className="min-h-dvh bg-bg-base">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex h-16 max-w-2xl items-center px-4">
           <Link href="/"><BrandMark variant="full" height={28} /></Link>
@@ -79,7 +79,7 @@ export default function ApplyPage() {
       </header>
 
       <main className="mx-auto max-w-2xl px-4 py-10">
-        <h1 className="text-2xl font-extrabold text-[#005BAC]">Apply for a loan</h1>
+        <h1 className="text-2xl font-extrabold text-brand-deep">Apply for a loan</h1>
         <p className="mt-1 text-sm text-slate-600">Fill in the details below and we will get back to you within 24 hours.</p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-5 rounded-2xl bg-white p-6 shadow-sm">
@@ -89,7 +89,7 @@ export default function ApplyPage() {
               required
               value={form.full_name}
               onChange={(e) => set('full_name', e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 focus:border-[#00A6E0] focus:outline-none focus:ring-1 focus:ring-[#00A6E0]"
+              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
               placeholder="e.g. Grace Mwanza"
             />
           </div>
@@ -101,7 +101,7 @@ export default function ApplyPage() {
                 required
                 value={form.phone}
                 onChange={(e) => set('phone', e.target.value)}
-                className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 focus:border-[#00A6E0] focus:outline-none focus:ring-1 focus:ring-[#00A6E0]"
+                className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
                 placeholder="09XX XXX XXX"
               />
             </div>
@@ -111,7 +111,7 @@ export default function ApplyPage() {
                 type="email"
                 value={form.email}
                 onChange={(e) => set('email', e.target.value)}
-                className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 focus:border-[#00A6E0] focus:outline-none focus:ring-1 focus:ring-[#00A6E0]"
+                className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
                 placeholder="you@example.com"
               />
             </div>
@@ -125,7 +125,7 @@ export default function ApplyPage() {
                 min={0}
                 value={form.amount_requested}
                 onChange={(e) => set('amount_requested', e.target.value)}
-                className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 focus:border-[#00A6E0] focus:outline-none focus:ring-1 focus:ring-[#00A6E0]"
+                className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
                 placeholder="5000"
               />
             </div>
@@ -134,7 +134,7 @@ export default function ApplyPage() {
               <select
                 value={form.collateral_type}
                 onChange={(e) => set('collateral_type', e.target.value)}
-                className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 focus:border-[#00A6E0] focus:outline-none focus:ring-1 focus:ring-[#00A6E0]"
+                className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
               >
                 <option value="">Select…</option>
                 {COLLATERAL_TYPES.map((t) => (
@@ -150,7 +150,7 @@ export default function ApplyPage() {
               rows={3}
               value={form.notes}
               onChange={(e) => set('notes', e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 focus:border-[#00A6E0] focus:outline-none focus:ring-1 focus:ring-[#00A6E0]"
+              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-900 focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
               placeholder="Anything we should know? (model, year, condition, etc.)"
             />
           </div>
@@ -160,14 +160,14 @@ export default function ApplyPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-[#00A6E0] py-3 text-sm font-bold text-white hover:brightness-95 disabled:opacity-60"
+            className="w-full rounded-xl bg-accent-primary py-3 text-sm font-bold text-white hover:brightness-95 disabled:opacity-60"
           >
             {loading ? 'Submitting…' : 'Submit Application'}
           </button>
         </form>
 
         <p className="mt-4 text-center text-xs text-slate-500">
-          Already a client? <Link href="/login" className="text-[#005BAC] underline">Sign in here</Link>
+          Already a client? <Link href="/login" className="text-brand-deep underline">Sign in here</Link>
         </p>
       </main>
 

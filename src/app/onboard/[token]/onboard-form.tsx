@@ -48,7 +48,7 @@ interface UploadState {
 const EMPTY_UPLOADS: UploadState = { selfie: null, bank: [], photos: [], ownership: [], extra: [] };
 
 const inputCls =
-  'w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base text-white placeholder:text-slate-500 focus:border-[#f5b300] focus:outline-none';
+  'w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-base text-white placeholder:text-slate-500 focus:border-accent-primary focus:outline-none';
 const labelCls = 'mb-1.5 block text-sm font-medium text-slate-200';
 const errCls = 'mt-1 text-sm text-red-400';
 
@@ -308,7 +308,7 @@ export function OnboardForm({ token, invitation, products }: { token: string; in
 
   if (done) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#0A1834] p-4">
+      <div className="flex min-h-dvh items-center justify-center bg-bg-base p-4">
         <div className="glass-card w-full max-w-md p-8 text-center">
           <CheckCircle2 size={56} className="mx-auto text-green-400" />
           <h1 className="mt-4 text-2xl font-bold text-white">Application submitted</h1>
@@ -319,7 +319,7 @@ export function OnboardForm({ token, invitation, products }: { token: string; in
           <p className="mt-3 font-mono text-xs text-slate-400">Reference: {token}</p>
           <Link
             href="/"
-            className="mt-6 inline-block rounded-xl bg-[#f5b300] px-6 py-3 text-sm font-bold text-[#0A1834]"
+            className="mt-6 inline-block rounded-xl bg-accent-primary px-6 py-3 text-sm font-bold text-accent-on-primary"
           >
             Return to website
           </Link>
@@ -331,9 +331,9 @@ export function OnboardForm({ token, invitation, products }: { token: string; in
   const pct = progressPercent(step);
 
   return (
-    <div className="min-h-dvh bg-[#0A1834] px-4 py-6 sm:py-10">
+    <div className="min-h-dvh bg-bg-base px-4 py-6 sm:py-10">
       <div className="mx-auto w-full max-w-2xl">
-        <p className="text-center text-xs font-semibold uppercase tracking-widest text-[#f5b300]">Anson Benson Cash Solutions</p>
+        <p className="text-center text-xs font-semibold uppercase tracking-widest text-accent-primary">Anson Benson Cash Solutions</p>
         <h1 className="mt-1 text-center text-xl font-bold text-white sm:text-2xl">Loan Application</h1>
 
         <div className="mt-5">
@@ -348,7 +348,7 @@ export function OnboardForm({ token, invitation, products }: { token: string; in
                 <div
                   key={n}
                   className={`h-2 flex-1 rounded-full transition-all duration-500 ${
-                    n < step ? 'bg-[#f5b300]' : n === step ? 'animate-pulse border border-[#f5b300] bg-[#f5b300]/60' : 'bg-white/10'
+                    n < step ? 'bg-accent-primary' : n === step ? 'animate-pulse border border-accent-primary bg-accent-primary/60' : 'bg-white/10'
                   }`}
                 />
               );
@@ -567,7 +567,7 @@ export function OnboardForm({ token, invitation, products }: { token: string; in
                 <input type="number" min={500} step="0.01" value={get('loan_amount_requested')} onChange={(e) => set('loan_amount_requested', e.target.value)} className={inputCls} />
               </Field>
               {estimate && selectedProduct && (
-                <div className="rounded-xl border border-[#f5b300]/40 bg-[#f5b300]/10 p-4 text-sm text-slate-100">
+                <div className="rounded-xl border border-accent-primary/40 bg-accent-primary/10 p-4 text-sm text-slate-100">
                   You will repay: <strong>{fmtK(estimate.total)}</strong> total.
                   <br />
                   Expected {selectedProduct.repayment_frequency} payment: <strong>{fmtK(estimate.perPeriod)}</strong> × {estimate.periods}.
@@ -613,7 +613,7 @@ export function OnboardForm({ token, invitation, products }: { token: string; in
                   type="checkbox"
                   checked={values.consent_credit_check === true}
                   onChange={(e) => set('consent_credit_check', e.target.checked)}
-                  className="mt-0.5 h-5 w-5 shrink-0 accent-[#f5b300]"
+                  className="mt-0.5 h-5 w-5 shrink-0 accent-accent-primary"
                 />
                 I consent to credit and background checks. *
               </label>
@@ -623,7 +623,7 @@ export function OnboardForm({ token, invitation, products }: { token: string; in
                   type="checkbox"
                   checked={values.consent_accuracy === true}
                   onChange={(e) => set('consent_accuracy', e.target.checked)}
-                  className="mt-0.5 h-5 w-5 shrink-0 accent-[#f5b300]"
+                  className="mt-0.5 h-5 w-5 shrink-0 accent-accent-primary"
                 />
                 I declare all information provided is accurate. *
               </label>
@@ -633,10 +633,10 @@ export function OnboardForm({ token, invitation, products }: { token: string; in
                   type="checkbox"
                   checked={values.consent_terms === true}
                   onChange={(e) => set('consent_terms', e.target.checked)}
-                  className="mt-0.5 h-5 w-5 shrink-0 accent-[#f5b300]"
+                  className="mt-0.5 h-5 w-5 shrink-0 accent-accent-primary"
                 />
                 <span>
-                  I agree to the <Link href="/terms" target="_blank" className="text-[#f5b300] underline">Terms and Conditions</Link>. *
+                  I agree to the <Link href="/terms" target="_blank" className="text-accent-primary underline">Terms and Conditions</Link>. *
                 </span>
               </label>
               {errors.consent_terms && <p className={errCls}>{errors.consent_terms}</p>}
@@ -658,7 +658,7 @@ export function OnboardForm({ token, invitation, products }: { token: string; in
             {step < 6 && (
               <button
                 onClick={next}
-                className="flex min-h-12 flex-1 items-center justify-center gap-1 rounded-xl bg-[#f5b300] px-5 text-sm font-bold text-[#0A1834]"
+                className="flex min-h-12 flex-1 items-center justify-center gap-1 rounded-xl bg-accent-primary px-5 text-sm font-bold text-accent-on-primary"
               >
                 Next <ArrowRight size={16} />
               </button>
@@ -666,7 +666,7 @@ export function OnboardForm({ token, invitation, products }: { token: string; in
             {step === 6 && (
               <button
                 onClick={next}
-                className="flex min-h-12 flex-1 items-center justify-center gap-1 rounded-xl bg-[#f5b300] px-5 text-sm font-bold text-[#0A1834]"
+                className="flex min-h-12 flex-1 items-center justify-center gap-1 rounded-xl bg-accent-primary px-5 text-sm font-bold text-accent-on-primary"
               >
                 Continue <ArrowRight size={16} />
               </button>
@@ -675,7 +675,7 @@ export function OnboardForm({ token, invitation, products }: { token: string; in
               <button
                 onClick={submit}
                 disabled={submitting || uploading}
-                className="min-h-12 flex-1 rounded-xl bg-[#f5b300] px-5 text-sm font-bold text-[#0A1834] disabled:opacity-50"
+                className="min-h-12 flex-1 rounded-xl bg-accent-primary px-5 text-sm font-bold text-accent-on-primary disabled:opacity-50"
               >
                 {submitting ? 'Submitting…' : 'Submit Application'}
               </button>
@@ -690,7 +690,7 @@ export function OnboardForm({ token, invitation, products }: { token: string; in
 function UploadedRow({ file, onRemove }: { file: StoredUpload; onRemove: () => void }) {
   return (
     <div className="flex items-center gap-2 rounded-xl border border-white/10 px-3 py-2.5 text-sm text-slate-200">
-      <FileUp size={16} className="shrink-0 text-[#f5b300]" />
+      <FileUp size={16} className="shrink-0 text-brand-bright" />
       <span className="min-w-0 flex-1 truncate">{file.name}</span>
       <button onClick={onRemove} aria-label={`Remove ${file.name}`} className="shrink-0 p-1 text-slate-400 hover:text-white">
         <X size={16} />

@@ -13,7 +13,7 @@ function anonClient() {
 
 function ExpiredPage() {
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-[#0A1834] p-4">
+    <div className="flex min-h-dvh items-center justify-center bg-bg-base p-4">
       <div className="glass-card w-full max-w-md p-8 text-center">
         <p className="lp-eyebrow">Anson Benson Cash Solutions</p>
         <h1 className="mt-3 text-2xl font-bold text-text-primary">This link is no longer valid</h1>

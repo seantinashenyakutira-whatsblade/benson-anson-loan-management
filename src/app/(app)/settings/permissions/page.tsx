@@ -177,7 +177,7 @@ export default function PermissionsMatrixPage() {
                         type="checkbox"
                         checked={granted[r].includes(code)}
                         onChange={() => toggle(r, code)}
-                        className="h-4 w-4 accent-[#00A6E0]"
+                        className="h-4 w-4 accent-accent-primary"
                       />
                     </td>
                   ))}

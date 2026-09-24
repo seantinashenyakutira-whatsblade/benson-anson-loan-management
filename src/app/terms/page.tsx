@@ -16,16 +16,16 @@ const POINTS = [
 
 export default function TermsPage() {
   return (
-    <div className="min-h-dvh bg-[#0A1834] px-4 py-10">
+    <div className="min-h-dvh bg-bg-base px-4 py-10">
       <div className="glass-card mx-auto w-full max-w-2xl space-y-4 p-6 sm:p-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#f5b300]">Anson Benson Cash Solutions</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-accent-primary">Anson Benson Cash Solutions</p>
         <h1 className="text-2xl font-bold text-white">Terms and Conditions</h1>
         <ol className="list-decimal space-y-2 pl-5 text-sm leading-relaxed text-slate-200">
           {POINTS.map((p) => (
             <li key={p}>{p}</li>
           ))}
         </ol>
-        <Link href="/" className="inline-block rounded-xl bg-[#f5b300] px-6 py-3 text-sm font-bold text-[#0A1834]">
+        <Link href="/" className="inline-block rounded-xl bg-accent-primary px-6 py-3 text-sm font-bold text-accent-on-primary">
           Return to website
         </Link>
       </div>
