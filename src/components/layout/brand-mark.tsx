@@ -7,6 +7,7 @@ import { useTheme } from 'next-themes';
  * BrandMark — theme-aware logo.
  * Rule: dark → /branding/logo.png, light → /branding/logo-light.png,
  * icon → /branding/logo-icon.png (also used for favicon and PWA icons).
+ * Full lockup shows on md+ screens; icon-only below md (mobile TopBar).
  * Mounted guard keeps it hydration-safe (no flash of wrong logo).
  */
 interface BrandMarkProps {
@@ -33,5 +34,12 @@ export function BrandMark({ variant = 'full', height = 32, className }: BrandMar
   }
 
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={resolvedTheme === 'light' ? '/branding/logo-light.png' : '/branding/logo.png'} alt="Anson Benson Cash Solutions" style={{ height, width: 'auto' }} className={className} />;
+  const full = <img src={resolvedTheme === 'light' ? '/branding/logo-light.png' : '/branding/logo.png'} alt="Anson Benson Cash Solutions" style={{ height, width: 'auto' }} className={`hidden md:block ${className || ''}`} />;
+  return (
+    <>
+      {full}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/branding/logo-icon.png" alt="ABC" style={{ height: 32, width: 'auto' }} className="md:hidden" />
+    </>
+  );
 }
