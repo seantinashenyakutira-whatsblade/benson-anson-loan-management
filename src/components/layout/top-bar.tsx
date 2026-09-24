@@ -9,6 +9,7 @@ import { UserAvatar } from '@/components/ui/user-avatar';
 import { BrandMark } from '@/components/layout/brand-mark';
 import { ThemeMenu } from '@/components/layout/theme-menu';
 import { NotificationBell } from '@/components/layout/notification-bell';
+import { Surface } from '@/components/ui/surface';
 import { visibleNav } from '@/lib/permissions';
 import {
   LogOut,
@@ -46,7 +47,7 @@ export function TopBar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-border-subtle bg-bg-base/80 backdrop-blur-xl">
+      <Surface as="header" variant="bar" borderSide="bottom" className="sticky top-0 z-40">
         <div className="flex h-14 items-center justify-between px-4">
           <div className="flex min-w-0 items-center gap-2">
             <button
@@ -102,7 +103,7 @@ export function TopBar() {
             </button>
           </div>
         </div>
-      </header>
+      </Surface>
 
       {menuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">

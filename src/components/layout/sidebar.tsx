@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth-provider';
 import { UserAvatar } from '@/components/ui/user-avatar';
 import { BrandMark } from '@/components/layout/brand-mark';
+import { Surface } from '@/components/ui/surface';
 import { visibleNav } from '@/lib/permissions';
 import {
   LayoutDashboard,
@@ -76,7 +77,7 @@ export function Sidebar() {
   });
 
   return (
-    <aside className="hidden w-64 flex-col border-r border-border-subtle bg-bg-base lg:flex">
+    <Surface as="aside" variant="bar" borderSide="right" className="hidden w-64 flex-col lg:flex">
       <div className="flex h-14 items-center border-b border-border-subtle px-4">
         <BrandMark variant="full" height={32} />
       </div>
@@ -118,6 +119,6 @@ export function Sidebar() {
           </div>
         </Link>
       </div>
-    </aside>
+    </Surface>
   );
 }

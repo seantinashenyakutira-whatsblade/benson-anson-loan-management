@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/components/auth-provider';
 import { visibleNav } from '@/lib/permissions';
+import { Surface } from '@/components/ui/surface';
 import {
   LayoutDashboard,
   Users,
@@ -29,7 +30,7 @@ export function BottomNav() {
   const items = NAV_ITEMS.filter((i) => showAll || allowed.includes(i.key));
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border-subtle bg-bg-base/90 backdrop-blur-xl lg:hidden">
+    <Surface as="nav" variant="bar" borderSide="top" className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
       <div className="flex items-center justify-around px-2 pb-[env(safe-area-inset-bottom)]">
         {items.map((item) => {
           const isActive =
@@ -51,6 +52,6 @@ export function BottomNav() {
           );
         })}
       </div>
-    </nav>
+    </Surface>
   );
 }
