@@ -22,7 +22,7 @@ export default function ForgotPasswordPage() {
   }, [cooldown]);
 
   useEffect(() => {
-    if (state.success) setCooldown(60);
+    if (state.success) queueMicrotask(() => setCooldown(60));
   }, [state.success]);
 
   return (

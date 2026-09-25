@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth-provider';
 import { CATEGORIES, routedRole } from '@/lib/chat/routing';
 import { RoleBadge } from './role-badge';
+import { Surface } from '@/components/ui/surface';
 
 interface Thread {
   id: string;
@@ -125,7 +126,7 @@ export function ChatFab() {
       </button>
 
       {open && (
-        <div className="fixed bottom-20 right-4 z-50 flex h-[70vh] w-[360px] flex-col overflow-hidden rounded-2xl border border-border-subtle bg-bg-base shadow-2xl max-sm:inset-x-2 max-sm:w-auto">
+        <Surface variant="overlay" className="fixed bottom-20 right-4 z-50 flex h-[70vh] w-[360px] flex-col overflow-hidden rounded-2xl max-sm:inset-x-2 max-sm:w-auto">
           <div className="flex items-center justify-between border-b border-border-subtle p-3">
             <h3 className="text-sm font-semibold text-text-primary">Messages</h3>
             <button onClick={() => setShowNew((v) => !v)} className="flex items-center gap-1 rounded-lg bg-accent-primary px-2 py-1 text-xs font-medium text-accent-on-primary">
@@ -206,7 +207,7 @@ export function ChatFab() {
               </div>
             </>
           )}
-        </div>
+        </Surface>
       )}
     </>
   );

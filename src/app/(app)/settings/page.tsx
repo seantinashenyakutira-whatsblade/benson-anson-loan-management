@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { usePermissions } from '@/hooks/use-permissions';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Building, Shield, Bell, Database } from 'lucide-react';
 
 interface Setting {
@@ -58,40 +61,36 @@ export default function SettingsPage() {
       <h1 className="text-2xl font-bold text-text-primary">Settings</h1>
 
       {role === 'owner' && (
-        <Link
-          href="/settings/permissions"
-          className="glass-card glass-card-hover block p-4 transition-all"
-        >
-          <p className="text-sm font-medium text-text-primary">Permission Matrix →</p>
-          <p className="text-xs text-text-muted">Configure what each role can see and do.</p>
+        <Link href="/settings/permissions" className="block">
+          <Surface variant="glass-raised" className="p-4">
+            <p className="text-sm font-medium text-text-primary">Permission Matrix →</p>
+            <p className="text-xs text-text-muted">Configure what each role can see and do.</p>
+          </Surface>
         </Link>
       )}
 
       {(role === 'owner' || role === 'branch_manager') && (
-        <Link
-          href="/settings/loan-products"
-          className="glass-card glass-card-hover block p-4 transition-all"
-        >
-          <p className="text-sm font-medium text-text-primary">Loan Products →</p>
-          <p className="text-xs text-text-muted">Create and manage loan products for applications and the landing page.</p>
+        <Link href="/settings/loan-products" className="block">
+          <Surface variant="glass-raised" className="p-4">
+            <p className="text-sm font-medium text-text-primary">Loan Products →</p>
+            <p className="text-xs text-text-muted">Create and manage loan products for applications and the landing page.</p>
+          </Surface>
         </Link>
       )}
 
       {/* Tabs */}
       <div className="flex gap-1 rounded-[var(--radius-button)] bg-surface-glass p-1">
         {tabs.map((tab) => (
-          <button
+          <Button
             key={tab.id}
+            variant={activeTab === tab.id ? 'secondary' : 'ghost'}
+            size="sm"
             onClick={() => setActiveTab(tab.id)}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-[var(--radius-button)] px-3 py-2 text-sm font-medium transition-all ${
-              activeTab === tab.id
-                ? 'bg-surface-glass-2 text-text-primary shadow-sm'
-                : 'text-text-muted hover:text-text-secondary'
-            }`}
+            className={`flex-1 gap-1.5 ${activeTab === tab.id ? 'font-medium shadow-sm' : ''}`}
           >
             <tab.icon size={14} />
             {tab.label}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -100,7 +99,7 @@ export default function SettingsPage() {
       ) : filteredSettings.length === 0 ? (
         <div className="py-12 text-center text-text-muted">No settings found for this category.</div>
       ) : (
-        <div className="glass-card divide-y divide-border-subtle">
+        <Surface className="divide-y divide-border-subtle">
           {filteredSettings.map((setting) => (
             <div key={setting.id} className="p-4">
               <div className="flex items-start justify-between">
@@ -111,12 +110,13 @@ export default function SettingsPage() {
                   )}
                 </div>
                 <div className="ml-4 max-w-[200px]">
-                  <input
+                  <Input
                     type="text"
                     defaultValue={setting.value}
                     disabled={!canEdit}
                     title={canEdit ? undefined : 'Only owners can edit settings'}
-                    className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-1.5 text-right text-sm text-text-primary focus:border-accent-primary focus:outline-none disabled:opacity-60"
+                    className="px-3 py-1.5 text-right"
+                    aria-label={setting.key.replace(/_/g, ' ')}
                     onBlur={async (e) => {
                       if (!canEdit) return;
                       await supabase
@@ -129,7 +129,7 @@ export default function SettingsPage() {
               </div>
             </div>
           ))}
-        </div>
+        </Surface>
       )}
     </div>
   );

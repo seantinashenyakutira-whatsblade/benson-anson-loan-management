@@ -8,6 +8,11 @@ import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth-provider';
 import { AccessDenied } from '@/components/layout/access-denied';
 import { EmptyState } from '@/components/ui/empty-state';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Input, Select } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Dialog } from '@/components/ui/dialog';
 import { shortToken, statusLabel } from '@/lib/invitations/share';
 import { ShareBox } from './share-box';
 import { createInvitation } from './actions';
@@ -31,6 +36,14 @@ const EXPIRY_OPTIONS = [
 ];
 
 const STATUS_FILTERS = ['all', 'pending', 'submitted', 'approved', 'rejected', 'expired'] as const;
+
+const STATUS_VARIANTS: Record<string, 'success' | 'warning' | 'info' | 'danger' | 'neutral'> = {
+  pending: 'warning',
+  submitted: 'info',
+  approved: 'success',
+  rejected: 'danger',
+  expired: 'neutral',
+};
 
 export default function InvitationsPage() {
   const { profile, loading: authLoading } = useAuth();
@@ -88,34 +101,35 @@ export default function InvitationsPage() {
           <h1 className="text-2xl font-bold text-text-primary">Invitations</h1>
           <p className="text-sm text-text-secondary">Customer self-onboarding links</p>
         </div>
-        <button
+        <Button
+          variant="primary"
           onClick={() => setShowNew(true)}
-          className="flex items-center gap-1 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2.5 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
+          className="flex items-center gap-1 px-4 py-2.5"
         >
           <Plus size={16} /> New Invitation
-        </button>
+        </Button>
       </div>
 
-      <div className="glass-card flex flex-wrap gap-2 p-3">
-        <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2 text-sm text-text-primary" aria-label="Filter by status">
+      <Surface className="flex flex-wrap gap-2 p-3">
+        <Select value={status} onChange={(e) => setStatus(e.target.value)} className="px-3 py-2" aria-label="Filter by status">
           {STATUS_FILTERS.map((s) => (
             <option key={s} value={s} className="capitalize">{s === 'all' ? 'All statuses' : statusLabel(s)}</option>
           ))}
-        </select>
-        <select value={officer} onChange={(e) => setOfficer(e.target.value)} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2 text-sm text-text-primary" aria-label="Filter by officer">
+        </Select>
+        <Select value={officer} onChange={(e) => setOfficer(e.target.value)} className="px-3 py-2" aria-label="Filter by officer">
           <option value="all">All officers</option>
           {Object.entries(officers).map(([id, name]) => (
             <option key={id} value={id}>{name}</option>
           ))}
-        </select>
-        <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2 text-sm text-text-primary" aria-label="From date" />
-        <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2 text-sm text-text-primary" aria-label="To date" />
-      </div>
+        </Select>
+        <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="px-3 py-2" aria-label="From date" />
+        <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="px-3 py-2" aria-label="To date" />
+      </Surface>
 
       {shown.length === 0 ? (
         <EmptyState icon={MailPlus} headline="No invitations" message="Create an invitation to onboard a customer remotely." />
       ) : (
-        <div className="glass-card overflow-x-auto p-4">
+        <Surface className="overflow-x-auto p-4">
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-border-subtle text-text-muted">
@@ -138,7 +152,7 @@ export default function InvitationsPage() {
                   <td className="py-2 text-text-primary">{r.customer_name || '—'}</td>
                   <td className="py-2 text-text-secondary">{officers[r.officer_id] || '—'}</td>
                   <td className="py-2">
-                    <span className="rounded-full bg-surface-glass px-2 py-0.5 text-xs text-text-secondary">{statusLabel(r.status)}</span>
+                    <Badge variant={STATUS_VARIANTS[r.status] ?? 'neutral'}>{statusLabel(r.status)}</Badge>
                   </td>
                   <td className="py-2 text-text-secondary">{r.expires_at.slice(0, 16).replace('T', ' ')}</td>
                   <td className="py-2 text-text-secondary">{r.created_at.slice(0, 10)}</td>
@@ -146,7 +160,7 @@ export default function InvitationsPage() {
               ))}
             </tbody>
           </table>
-        </div>
+        </Surface>
       )}
 
       {showNew && (
@@ -197,52 +211,38 @@ function NewInvitationModal({ onClose, onCreated }: {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
-      <div className="glass-card max-h-[85vh] w-full max-w-md overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
-        {!created ? (
-          <>
-            <h2 className="text-lg font-bold text-text-primary">New Invitation</h2>
-            <div className="mt-4 space-y-3">
-              <div>
-                <label className="mb-1 block text-xs font-medium text-text-secondary">Customer name (optional)</label>
-                <input value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2.5 text-sm text-text-primary focus:outline-none" placeholder="e.g. Mutinta Phiri" />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-medium text-text-secondary">Customer phone (optional)</label>
-                <input value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2.5 text-sm text-text-primary focus:outline-none" placeholder="+2609XXXXXXXX" />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-medium text-text-secondary">Link expires in</label>
-                <select value={hours} onChange={(e) => setHours(Number(e.target.value))} className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2.5 text-sm text-text-primary">
-                  {EXPIRY_OPTIONS.map((o) => (
-                    <option key={o.hours} value={o.hours}>{o.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            {error && <p className="mt-3 text-sm text-danger">{error}</p>}
-            <div className="mt-5 flex gap-2">
-              <button onClick={onClose} className="flex-1 rounded-[var(--radius-button)] border border-border-subtle px-4 py-2.5 text-sm text-text-secondary">Cancel</button>
-              <button onClick={submit} disabled={saving} className="flex-1 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2.5 text-sm font-medium text-accent-on-primary disabled:opacity-50">
-                {saving ? 'Creating…' : 'Create Link'}
-              </button>
-            </div>
-          </>
-        ) : (
-          <>
-            <h2 className="text-lg font-bold text-text-primary">Share Invitation</h2>
-            <div className="mt-3">
-              <ShareBox token={created.token} path={created.url} customerName={name} />
-            </div>
-            <button
-              onClick={() => onCreated({ ...created, customer_name: name, customer_phone: phone })}
-              className="mt-4 w-full py-2 text-center text-sm text-text-muted hover:text-text-primary"
-            >
-              Done
-            </button>
-          </>
-        )}
-      </div>
-    </div>
+    <Dialog open onClose={onClose} title={created ? 'Share Invitation' : 'New Invitation'}>
+      {!created ? (
+        <>
+          <div className="space-y-3">
+            <Input label="Customer name (optional)" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Mutinta Phiri" />
+            <Input label="Customer phone (optional)" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+2609XXXXXXXX" />
+            <Select label="Link expires in" value={hours} onChange={(e) => setHours(Number(e.target.value))}>
+              {EXPIRY_OPTIONS.map((o) => (
+                <option key={o.hours} value={o.hours}>{o.label}</option>
+              ))}
+            </Select>
+          </div>
+          {error && <p className="mt-3 text-sm text-danger">{error}</p>}
+          <div className="mt-5 flex gap-2">
+            <Button variant="secondary" onClick={onClose} className="flex-1 px-4 py-2.5">Cancel</Button>
+            <Button variant="primary" onClick={submit} disabled={saving} className="flex-1 px-4 py-2.5">
+              {saving ? 'Creating…' : 'Create Link'}
+            </Button>
+          </div>
+        </>
+      ) : (
+        <>
+          <ShareBox token={created.token} path={created.url} customerName={name} />
+          <Button
+            variant="ghost"
+            onClick={() => onCreated({ ...created, customer_name: name, customer_phone: phone })}
+            className="mt-4 w-full py-2 text-sm"
+          >
+            Done
+          </Button>
+        </>
+      )}
+    </Dialog>
   );
 }

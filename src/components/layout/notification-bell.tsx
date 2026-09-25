@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Bell } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth-provider';
+import { Surface } from '@/components/ui/surface';
 
 interface Notification {
   id: string;
@@ -92,7 +93,7 @@ export function NotificationBell() {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />
-          <div className="absolute right-0 top-10 z-50 w-80 rounded-xl border border-border-subtle bg-bg-base shadow-xl">
+          <Surface variant="overlay" className="absolute right-0 top-10 z-50 w-80">
             <div className="flex items-center justify-between border-b border-border-subtle p-3">
               <h3 className="text-sm font-semibold text-text-primary">Notifications</h3>
               {unread > 0 && (
@@ -126,7 +127,7 @@ export function NotificationBell() {
                 View all
               </Link>
             </div>
-          </div>
+          </Surface>
         </>
       )}
     </div>

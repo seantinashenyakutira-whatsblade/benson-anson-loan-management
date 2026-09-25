@@ -6,6 +6,9 @@ import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth-provider';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatKwacha } from '@/lib/money';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Input, Select } from '@/components/ui/input';
 import { ArrowLeft } from 'lucide-react';
 
 interface LoanInfo {
@@ -70,12 +73,12 @@ export default function DisbursePage() {
 
   return (
     <div className="space-y-4">
-      <button onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
+      <Button variant="ghost" size="sm" onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
         <ArrowLeft size={18} />
         Back
-      </button>
+      </Button>
 
-      <div className="glass-card p-6">
+      <Surface className="p-6">
         <h1 className="mb-2 text-2xl font-bold text-text-primary">Disburse Loan</h1>
         <p className="text-sm text-text-secondary">
           {loan.loan_number} — {loan.customers?.first_name} {loan.customers?.last_name}
@@ -98,30 +101,25 @@ export default function DisbursePage() {
 
         <form action={handleDisburse} className="mt-6 space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Disbursement Date *</label>
-              <input name="disbursed_date" type="date" required defaultValue={new Date().toISOString().split('T')[0]} className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Method *</label>
-              <select name="disbursement_method" required className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none">
-                <option value="cash">Cash</option>
-                <option value="bank_transfer">Bank Transfer</option>
-                <option value="airtel_money">Airtel Money</option>
-                <option value="mtn_mobile_money">MTN MoMo</option>
-              </select>
-            </div>
+            <Input label="Disbursement Date *" name="disbursed_date" type="date" required defaultValue={new Date().toISOString().split('T')[0]} />
+            <Select label="Method *" name="disbursement_method" required>
+              <option value="cash">Cash</option>
+              <option value="bank_transfer">Bank Transfer</option>
+              <option value="airtel_money">Airtel Money</option>
+              <option value="mtn_mobile_money">MTN MoMo</option>
+            </Select>
           </div>
 
-          <button
+          <Button
             type="submit"
+            variant="primary"
             disabled={submitting}
-            className="w-full rounded-[var(--radius-button)] bg-accent-primary px-4 py-3 font-medium text-accent-on-primary hover:bg-accent-primary-hover disabled:opacity-50"
+            className="w-full px-4 py-3 font-medium"
           >
             {submitting ? 'Disbursing...' : 'Confirm Disbursement'}
-          </button>
+          </Button>
         </form>
-      </div>
+      </Surface>
     </div>
   );
 }

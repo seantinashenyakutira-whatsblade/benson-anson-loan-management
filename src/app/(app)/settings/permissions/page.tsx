@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth-provider';
 import { ROLE_PERMISSIONS, clearOverrideCache, type Role } from '@/lib/permissions';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
 const EDITABLE_ROLES: Role[] = ['branch_manager', 'loan_officer', 'cashier'];
@@ -46,17 +48,17 @@ export default function PermissionsMatrixPage() {
   if (profile && !isOwner) {
     return (
       <div className="space-y-4">
-        <button onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
+        <Button variant="ghost" size="sm" onClick={() => router.back()} className="gap-2">
           <ArrowLeft size={18} />
           Back
-        </button>
-        <div className="glass-card p-8 text-center">
+        </Button>
+        <Surface className="p-8 text-center">
           <h1 className="text-xl font-bold text-text-primary">Owner Only</h1>
           <p className="mt-1 text-sm text-text-secondary">Only owners can manage role permissions.</p>
           <Link href="/settings" className="mt-4 inline-block text-sm text-accent-primary hover:underline">
             Back to Settings
           </Link>
-        </div>
+        </Surface>
       </div>
     );
   }
@@ -125,26 +127,26 @@ export default function PermissionsMatrixPage() {
 
   return (
     <div className="space-y-4">
-      <button onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
+      <Button variant="ghost" size="sm" onClick={() => router.back()} className="gap-2">
         <ArrowLeft size={18} />
         Back
-      </button>
+      </Button>
 
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Permission Matrix</h1>
           <p className="text-sm text-text-secondary">Owner column is locked — you cannot lock yourself out.</p>
         </div>
-        <button
+        <Button
+          variant="primary"
           onClick={handleSave}
           disabled={saving}
-          className="rounded-[var(--radius-button)] bg-accent-primary px-6 py-2.5 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover disabled:opacity-50"
         >
           {saving ? 'Saving...' : 'Save Changes'}
-        </button>
+        </Button>
       </div>
 
-      <div className="glass-card overflow-x-auto p-4">
+      <Surface variant="solid" className="overflow-x-auto p-4">
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-border-subtle text-text-muted">
@@ -153,9 +155,9 @@ export default function PermissionsMatrixPage() {
               {EDITABLE_ROLES.map((r) => (
                 <th key={r} className="pb-2 text-center font-medium capitalize">
                   {r.replace('_', ' ')}
-                  <button onClick={() => resetRole(r)} className="ml-2 text-[10px] font-normal text-accent-primary hover:underline" title="Restore defaults">
+                  <Button variant="link" size="sm" onClick={() => resetRole(r)} className="h-auto p-0 text-[10px] font-normal" title="Restore defaults">
                     reset
-                  </button>
+                  </Button>
                 </th>
               ))}
             </tr>
@@ -186,7 +188,7 @@ export default function PermissionsMatrixPage() {
             </tbody>
           ))}
         </table>
-      </div>
+      </Surface>
     </div>
   );
 }

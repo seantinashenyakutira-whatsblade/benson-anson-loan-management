@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { Surface } from '@/components/ui/surface';
 import { TrendingUp, AlertTriangle, Wallet, Users, Activity, Banknote, Receipt, Scale, Award, Building2, FileText, DollarSign } from 'lucide-react';
 
 const TIER_A = [
@@ -34,15 +35,17 @@ function Section({ title, items }: { title: string; items: typeof TIER_A }) {
           <Link
             key={report.name}
             href={report.href}
-            className="glass-card glass-card-hover flex items-center gap-4 p-4 transition-all"
+            className="block"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-primary/10">
-              <report.icon size={20} className="text-accent-primary" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-medium text-text-primary">{report.name}</h3>
-              <p className="text-xs text-text-muted">{report.description}</p>
-            </div>
+            <Surface variant="glass-raised" className="flex items-center gap-4 p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent-primary/10">
+                <report.icon size={20} className="text-accent-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-medium text-text-primary">{report.name}</h3>
+                <p className="text-xs text-text-muted">{report.description}</p>
+              </div>
+            </Surface>
           </Link>
         ))}
       </div>

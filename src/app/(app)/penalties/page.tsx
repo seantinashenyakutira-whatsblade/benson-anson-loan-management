@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
 import { EmptyState } from '@/components/ui/empty-state';
+import { Surface } from '@/components/ui/surface';
+import { Input, Select } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { Search, AlertTriangle } from 'lucide-react';
 
 interface Penalty {
@@ -55,12 +58,12 @@ export default function PenaltiesPage() {
     );
   });
 
-  const statusColor = (status: string) => {
+  const statusVariant = (status: string): 'danger' | 'info' | 'success' | 'neutral' => {
     switch (status) {
-      case 'active': return 'text-danger';
-      case 'waived': return 'text-info';
-      case 'paid': return 'text-success';
-      default: return 'text-text-muted';
+      case 'active': return 'danger';
+      case 'waived': return 'info';
+      case 'paid': return 'success';
+      default: return 'neutral';
     }
   };
 
@@ -84,24 +87,25 @@ export default function PenaltiesPage() {
       <div className="flex gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={18} />
-          <input
+          <Input
             type="text"
             placeholder="Search penalties..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass py-2.5 pl-10 pr-4 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
+            className="py-2.5 pl-10 pr-4"
           />
         </div>
-        <select
+        <Select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none"
+          className="w-auto px-4 py-2.5"
+          aria-label="Status filter"
         >
           <option value="all">All</option>
           <option value="active">Active</option>
           <option value="waived">Waived</option>
           <option value="paid">Paid</option>
-        </select>
+        </Select>
       </div>
 
       {loading ? (
@@ -115,7 +119,7 @@ export default function PenaltiesPage() {
       ) : (
         <div className="space-y-2">
           {filtered.map((penalty) => (
-            <div key={penalty.id} className="glass-card p-4">
+            <Surface key={penalty.id} className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-medium text-text-primary capitalize">{penalty.penalty_type.replace('_', ' ')}</h3>
@@ -125,16 +129,16 @@ export default function PenaltiesPage() {
                   {penalty.description && <p className="mt-1 text-xs text-text-muted">{penalty.description}</p>}
                 </div>
                 <div className="text-right">
-                  <p className={`text-sm font-semibold ${statusColor(penalty.status)}`}>
+                  <p className="text-sm font-semibold tabular-nums text-text-primary">
                     {formatKwacha(netAmount(penalty))}
                   </p>
-                  <span className={`text-xs font-medium capitalize ${statusColor(penalty.status)}`}>
+                  <Badge variant={statusVariant(penalty.status)} className="mt-1 capitalize">
                     {penalty.status}
-                  </span>
-                  <p className="text-xs text-text-muted">{penalty.calculation_date}</p>
+                  </Badge>
+                  <p className="mt-1 text-xs text-text-muted">{penalty.calculation_date}</p>
                 </div>
               </div>
-            </div>
+            </Surface>
           ))}
         </div>
       )}

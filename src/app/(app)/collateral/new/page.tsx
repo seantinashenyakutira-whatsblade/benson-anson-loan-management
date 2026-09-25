@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Input, Textarea, Select } from '@/components/ui/input';
 import { ArrowLeft } from 'lucide-react';
 
 interface CustomerOption {
@@ -64,123 +67,76 @@ export default function NewCollateralPage() {
 
   return (
     <div className="space-y-4">
-      <button onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
+      <Button variant="ghost" size="sm" onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
         <ArrowLeft size={18} />
         Back
-      </button>
+      </Button>
 
-      <div className="glass-card p-6">
+      <Surface className="p-6">
         <h1 className="mb-6 text-2xl font-bold text-text-primary">Add Collateral</h1>
 
         <form action={handleSubmit} className="space-y-4">
-          <div>
-            <label className="mb-1 block text-sm text-text-secondary">Customer *</label>
-            <select name="customer_id" required className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none">
-              <option value="">Select customer</option>
-              {customers.map((c) => (
-                <option key={c.id} value={c.id}>{c.first_name} {c.last_name}</option>
-              ))}
-            </select>
-          </div>
+          <Select label="Customer *" name="customer_id" required>
+            <option value="">Select customer</option>
+            {customers.map((c) => (
+              <option key={c.id} value={c.id}>{c.first_name} {c.last_name}</option>
+            ))}
+          </Select>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Type *</label>
-              <select name="collateral_type" required className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none">
-                <option value="vehicle">Vehicle</option>
-                <option value="property">Property</option>
-                <option value="electronics">Electronics</option>
-                <option value="equipment">Equipment</option>
-                <option value="household_goods">Household Goods</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Condition *</label>
-              <select name="condition" required className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none">
-                <option value="excellent">Excellent</option>
-                <option value="good">Good</option>
-                <option value="fair">Fair</option>
-                <option value="poor">Poor</option>
-              </select>
-            </div>
+            <Select label="Type *" name="collateral_type" required>
+              <option value="vehicle">Vehicle</option>
+              <option value="property">Property</option>
+              <option value="electronics">Electronics</option>
+              <option value="equipment">Equipment</option>
+              <option value="household_goods">Household Goods</option>
+              <option value="other">Other</option>
+            </Select>
+            <Select label="Condition *" name="condition" required>
+              <option value="excellent">Excellent</option>
+              <option value="good">Good</option>
+              <option value="fair">Fair</option>
+              <option value="poor">Poor</option>
+            </Select>
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm text-text-secondary">Description *</label>
-            <input name="description" required placeholder="e.g. Toyota Corolla 2018" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
+          <Input label="Description *" name="description" required placeholder="e.g. Toyota Corolla 2018" />
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Input label="Make/Model" name="make_model" />
+            <Input label="Year" name="year" type="number" min="1900" max="2030" />
+            <Input label="Color" name="color" />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Make/Model</label>
-              <input name="make_model" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Year</label>
-              <input name="year" type="number" min="1900" max="2030" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Color</label>
-              <input name="color" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Registration No.</label>
-              <input name="registration_number" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Chassis No.</label>
-              <input name="chassis_number" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Engine No.</label>
-              <input name="engine_number" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
+            <Input label="Registration No." name="registration_number" />
+            <Input label="Chassis No." name="chassis_number" />
+            <Input label="Engine No." name="engine_number" />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Estimated Value (K) *</label>
-              <input name="estimated_value" type="number" step="0.01" required className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Market Value (K)</label>
-              <input name="market_value" type="number" step="0.01" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
+            <Input label="Estimated Value (K) *" name="estimated_value" type="number" step="0.01" required />
+            <Input label="Market Value (K)" name="market_value" type="number" step="0.01" />
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm text-text-secondary">Address</label>
-            <input name="address" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-          </div>
+          <Input label="Address" name="address" />
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">City</label>
-              <input name="city" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Province</label>
-              <input name="province" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
+            <Input label="City" name="city" />
+            <Input label="Province" name="province" />
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm text-text-secondary">Notes</label>
-            <textarea name="notes" rows={3} className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-          </div>
+          <Textarea label="Notes" name="notes" rows={3} />
 
-          <button
+          <Button
             type="submit"
-            className="w-full rounded-[var(--radius-button)] bg-accent-primary px-4 py-3 font-medium text-accent-on-primary hover:bg-accent-primary-hover"
+            variant="primary"
+            className="w-full px-4 py-3 font-medium"
           >
             Add Collateral
-          </button>
+          </Button>
         </form>
-      </div>
+      </Surface>
     </div>
   );
 }

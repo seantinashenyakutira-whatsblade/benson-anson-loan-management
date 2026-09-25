@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Phone, Mail, MapPin, Briefcase } from 'lucide-react';
 import Link from 'next/link';
 
@@ -72,12 +75,11 @@ export default function CustomerDetailPage() {
     return <div className="py-12 text-center text-text-muted">Customer not found.</div>;
   }
 
-  const statusColor = (status: string) => {
+  const statusVariant = (status: string): 'success' | 'neutral' | 'danger' => {
     switch (status) {
-      case 'active': return 'bg-success/10 text-success';
-      case 'inactive': return 'bg-text-muted/10 text-text-muted';
-      case 'blacklisted': return 'bg-danger/10 text-danger';
-      default: return 'bg-text-secondary/10 text-text-secondary';
+      case 'active': return 'success';
+      case 'blacklisted': return 'danger';
+      default: return 'neutral';
     }
   };
 
@@ -93,20 +95,20 @@ export default function CustomerDetailPage() {
 
   return (
     <div className="space-y-4">
-      <button onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
+      <Button variant="ghost" size="sm" onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
         <ArrowLeft size={18} />
         Back
-      </button>
+      </Button>
 
-      <div className="glass-card p-6">
+      <Surface className="p-6">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold text-text-primary">
               {customer.first_name} {customer.last_name}
             </h1>
-            <span className={`mt-1 inline-block rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColor(customer.status)}`}>
+            <Badge variant={statusVariant(customer.status)} className="mt-1 capitalize">
               {customer.status}
-            </span>
+            </Badge>
           </div>
           <Link
             href={`/customers/${customer.id}/edit`}
@@ -155,10 +157,10 @@ export default function CustomerDetailPage() {
             <p className="text-xs text-text-secondary">{customer.next_of_kin_relationship} — {customer.next_of_kin_phone}</p>
           </div>
         )}
-      </div>
+      </Surface>
 
       {/* Loans */}
-      <div className="glass-card p-6">
+      <Surface className="p-6">
         <h2 className="mb-4 text-lg font-semibold text-text-primary">Loans</h2>
         {!customer.loans || customer.loans.length === 0 ? (
           <p className="text-sm text-text-muted">No loans found.</p>
@@ -186,10 +188,10 @@ export default function CustomerDetailPage() {
             ))}
           </div>
         )}
-      </div>
+      </Surface>
 
       {/* Collateral */}
-      <div className="glass-card p-6">
+      <Surface className="p-6">
         <h2 className="mb-4 text-lg font-semibold text-text-primary">Collateral</h2>
         {!customer.collateral || customer.collateral.length === 0 ? (
           <p className="text-sm text-text-muted">No collateral found.</p>
@@ -212,7 +214,7 @@ export default function CustomerDetailPage() {
             ))}
           </div>
         )}
-      </div>
+      </Surface>
     </div>
   );
 }

@@ -5,6 +5,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatKwacha } from '@/lib/money';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Calendar } from 'lucide-react';
 import Link from 'next/link';
 
@@ -79,15 +82,15 @@ export default function LoanDetailPage() {
     ? Math.round((loan.amount_paid / loan.total_repayable) * 100)
     : 0;
 
-  const statusColor = (status: string) => {
+  const statusVariant = (status: string): 'success' | 'warning' | 'orange' | 'danger' | 'neutral' | 'brand' => {
     switch (status) {
-      case 'performing': return 'bg-success/10 text-success';
-      case 'at_risk': return 'bg-warning/10 text-warning';
-      case 'overdue': return 'bg-orange/10 text-orange';
-      case 'defaulted': return 'bg-danger/10 text-danger';
-      case 'fully_paid': return 'bg-success/10 text-success';
-      case 'disbursed': return 'bg-accent-primary/10 text-accent-primary';
-      default: return 'bg-text-muted/10 text-text-muted';
+      case 'performing': return 'success';
+      case 'at_risk': return 'warning';
+      case 'overdue': return 'orange';
+      case 'defaulted': return 'danger';
+      case 'fully_paid': return 'success';
+      case 'disbursed': return 'brand';
+      default: return 'neutral';
     }
   };
 
@@ -106,13 +109,13 @@ export default function LoanDetailPage() {
 
   return (
     <div className="space-y-4">
-      <button onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
+      <Button variant="ghost" size="sm" onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
         <ArrowLeft size={18} />
         Back
-      </button>
+      </Button>
 
       {/* Header */}
-      <div className="glass-card p-6">
+      <Surface className="p-6">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold text-text-primary">{loan.loan_number}</h1>
@@ -120,9 +123,9 @@ export default function LoanDetailPage() {
               {loan.customers?.first_name} {loan.customers?.last_name}
             </p>
             <div className="mt-2 flex items-center gap-2">
-              <span className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColor(loan.status)}`}>
+              <Badge variant={statusVariant(loan.status)} className="capitalize">
                 {loan.status.replace('_', ' ')}
-              </span>
+              </Badge>
               {loan.loan_products && (
                 <span className="text-xs text-text-muted">{loan.loan_products.name}</span>
               )}
@@ -162,29 +165,31 @@ export default function LoanDetailPage() {
             />
           </div>
         </div>
-      </div>
+      </Surface>
 
       {/* Tabs */}
       <div className="flex gap-1 rounded-[var(--radius-button)] bg-surface-glass p-1">
         {(['overview', 'schedule', 'payments'] as const).map((tab) => (
-          <button
+          <Button
             key={tab}
+            variant="ghost"
+            size="sm"
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 rounded-[var(--radius-button)] px-4 py-2 text-sm font-medium transition-all ${
+            className={`flex-1 px-4 py-2 text-sm font-medium transition-all ${
               activeTab === tab
                 ? 'bg-surface-glass-2 text-text-primary shadow-sm'
                 : 'text-text-muted hover:text-text-secondary'
             }`}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </button>
+          </Button>
         ))}
       </div>
 
       {/* Overview Tab */}
       {activeTab === 'overview' && (
         <div className="space-y-4">
-          <div className="glass-card p-6">
+          <Surface className="p-6">
             <h2 className="mb-4 text-lg font-semibold text-text-primary">Loan Details</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
@@ -234,24 +239,24 @@ export default function LoanDetailPage() {
                 </div>
               )}
             </div>
-          </div>
+          </Surface>
 
           {/* Customer */}
           {loan.customers && (
-            <div className="glass-card p-6">
+            <Surface className="p-6">
               <h2 className="mb-4 text-lg font-semibold text-text-primary">Customer</h2>
               <Link href={`/customers/${loan.customers.id}`} className="text-sm text-accent-primary hover:underline">
                 {loan.customers.first_name} {loan.customers.last_name}
               </Link>
               <p className="text-xs text-text-secondary">{loan.customers.phone}</p>
-            </div>
+            </Surface>
           )}
         </div>
       )}
 
       {/* Schedule Tab */}
       {activeTab === 'schedule' && (
-        <div className="glass-card p-6">
+        <Surface className="p-6">
           <h2 className="mb-4 text-lg font-semibold text-text-primary">Payment Schedule</h2>
           {!loan.loan_schedule || loan.loan_schedule.length === 0 ? (
             <p className="text-sm text-text-muted">No schedule generated.</p>
@@ -283,12 +288,12 @@ export default function LoanDetailPage() {
               </table>
             </div>
           )}
-        </div>
+        </Surface>
       )}
 
       {/* Payments Tab */}
       {activeTab === 'payments' && (
-        <div className="glass-card p-6">
+        <Surface className="p-6">
           <h2 className="mb-4 text-lg font-semibold text-text-primary">Payment History</h2>
           {!loan.payments || loan.payments.length === 0 ? (
             <p className="text-sm text-text-muted">No payments recorded.</p>
@@ -308,7 +313,7 @@ export default function LoanDetailPage() {
               ))}
             </div>
           )}
-        </div>
+        </Surface>
       )}
     </div>
   );

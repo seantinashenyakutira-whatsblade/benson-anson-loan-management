@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
 import { EmptyState } from '@/components/ui/empty-state';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { usePermissions } from '@/hooks/use-permissions';
 import { Plus, Search, Shield } from 'lucide-react';
 
@@ -52,13 +54,12 @@ export default function CollateralPage() {
     );
   });
 
-  const statusColor = (status: string) => {
+  const statusVariant = (status: string): 'success' | 'info' | 'warning' | 'neutral' => {
     switch (status) {
-      case 'available': return 'text-success';
-      case 'pledged': return 'text-info';
-      case 'repossessed': return 'text-warning';
-      case 'released': return 'text-text-muted';
-      default: return 'text-text-secondary';
+      case 'available': return 'success';
+      case 'pledged': return 'info';
+      case 'repossessed': return 'warning';
+      default: return 'neutral';
     }
   };
 
@@ -90,12 +91,12 @@ export default function CollateralPage() {
 
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={18} />
-        <input
+        <Input
           type="text"
           placeholder="Search collateral..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass py-2.5 pl-10 pr-4 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
+          className="py-2.5 pl-10 pr-4"
         />
       </div>
 
@@ -129,9 +130,9 @@ export default function CollateralPage() {
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium text-text-primary">{formatKwacha(item.estimated_value)}</p>
-                  <span className={`text-xs font-medium capitalize ${statusColor(item.status)}`}>
+                  <Badge variant={statusVariant(item.status)} className="capitalize">
                     {item.status}
-                  </span>
+                  </Badge>
                 </div>
               </div>
             </Link>

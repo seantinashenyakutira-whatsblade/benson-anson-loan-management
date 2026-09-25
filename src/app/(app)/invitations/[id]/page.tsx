@@ -7,6 +7,11 @@ import { ArrowLeft, Check, Download, FileText, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth-provider';
 import { AccessDenied } from '@/components/layout/access-denied';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Dialog } from '@/components/ui/dialog';
 import { shortToken, statusLabel } from '@/lib/invitations/share';
 import { ShareBox } from '../share-box';
 import { approveSubmission, cancelInvitation, createInvitation, rejectSubmission } from '../actions';
@@ -68,6 +73,14 @@ interface Doc {
 }
 
 const TABS = ['Personal', 'Employment', 'Financial', 'Collateral', 'Loan Request', 'Documents', 'Consent'] as const;
+
+const STATUS_VARIANTS: Record<string, 'success' | 'warning' | 'info' | 'danger' | 'neutral'> = {
+  pending: 'warning',
+  submitted: 'info',
+  approved: 'success',
+  rejected: 'danger',
+  expired: 'neutral',
+};
 
 function Row({ k, v }: { k: string; v: React.ReactNode }) {
   if (v === null || v === undefined || v === '') return null;
@@ -237,7 +250,7 @@ export default function InvitationDetailPage({ params }: { params: Promise<{ id:
         <ArrowLeft size={16} /> Back to invitations
       </Link>
 
-      <div className="glass-card p-4">
+      <Surface className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h1 className="text-xl font-bold text-text-primary">{inv.customer_name || 'Unnamed application'}</h1>
@@ -246,40 +259,42 @@ export default function InvitationDetailPage({ params }: { params: Promise<{ id:
               {officerName} · {branchName} · Expires {inv.expires_at.slice(0, 16).replace('T', ' ')}
             </p>
           </div>
-          <span className="rounded-full bg-surface-glass px-3 py-1 text-xs text-text-secondary">{statusLabel(inv.status)}</span>
+          <Badge variant={STATUS_VARIANTS[inv.status] ?? 'neutral'}>{statusLabel(inv.status)}</Badge>
         </div>
         {error && <p className="mt-3 text-sm text-danger">{error}</p>}
-      </div>
+      </Surface>
 
       {inv.status === 'pending' && (
-        <div className="glass-card space-y-3 p-4">
+        <Surface className="space-y-3 p-4">
           <p className="text-sm text-text-secondary">Waiting for the customer to fill the form. Share the link again or cancel it.</p>
           <div className="flex flex-wrap gap-2">
-            <button onClick={() => setShowShare({ token: inv.token, url: `/onboard/${inv.token}` })} className="rounded-[var(--radius-button)] bg-accent-primary px-4 py-2.5 text-sm font-medium text-accent-on-primary">
+            <Button variant="primary" onClick={() => setShowShare({ token: inv.token, url: `/onboard/${inv.token}` })} className="px-4 py-2.5">
               Resend Link
-            </button>
-            <button onClick={onCancel} disabled={busy} className="rounded-[var(--radius-button)] border border-border-subtle px-4 py-2.5 text-sm text-text-secondary disabled:opacity-50">
+            </Button>
+            <Button variant="secondary" onClick={onCancel} disabled={busy} className="px-4 py-2.5">
               Cancel
-            </button>
+            </Button>
           </div>
-        </div>
+        </Surface>
       )}
 
       {sub && (inv.status === 'submitted' || inv.status === 'approved' || inv.status === 'rejected') && (
         <>
           <div className="flex gap-1 overflow-x-auto rounded-[var(--radius-button)] bg-surface-glass p-1">
             {TABS.map((t) => (
-              <button
+              <Button
                 key={t}
+                variant="ghost"
+                size="sm"
                 onClick={() => setTab(t)}
-                className={`whitespace-nowrap rounded-[var(--radius-button)] px-3 py-2 text-xs font-medium ${tab === t ? 'bg-surface-glass-2 text-text-primary shadow-sm' : 'text-text-muted'}`}
+                className={`whitespace-nowrap px-3 py-2 text-xs font-medium ${tab === t ? 'bg-surface-glass-2 text-text-primary shadow-sm' : 'text-text-muted'}`}
               >
                 {t}
-              </button>
+              </Button>
             ))}
           </div>
 
-          <div className="glass-card p-4">
+          <Surface className="p-4">
             {tab === 'Personal' && (
               <dl>
                 <Row k="Full name" v={sub.full_name} />
@@ -371,40 +386,36 @@ export default function InvitationDetailPage({ params }: { params: Promise<{ id:
                 <Row k="Submitted" v={sub.submitted_at.slice(0, 16).replace('T', ' ')} />
               </dl>
             )}
-          </div>
+          </Surface>
 
           {inv.status === 'submitted' && canApprove && (
-            <div className="glass-card space-y-3 p-4">
-              <div>
-                <label className="mb-1 block text-xs font-medium text-text-secondary">Officer notes (stored with verification)</label>
-                <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2.5 text-sm text-text-primary focus:outline-none" placeholder="Verification findings…" />
-              </div>
+            <Surface className="space-y-3 p-4">
+              <Textarea label="Officer notes (stored with verification)" value={note} onChange={(e) => setNote(e.target.value)} rows={2} placeholder="Verification findings…" />
               {!showReject ? (
                 <div className="flex gap-2">
-                  <button onClick={onApprove} disabled={busy} className="flex flex-1 items-center justify-center gap-1 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2.5 text-sm font-medium text-accent-on-primary disabled:opacity-50">
+                  <Button variant="primary" onClick={onApprove} disabled={busy} className="flex flex-1 items-center justify-center gap-1 px-4 py-2.5">
                     <Check size={16} /> {busy ? 'Working…' : 'Approve'}
-                  </button>
-                  <button onClick={() => setShowReject(true)} className="flex-1 rounded-[var(--radius-button)] border border-danger/40 px-4 py-2.5 text-sm text-danger">
+                  </Button>
+                  <Button variant="danger" onClick={() => setShowReject(true)} className="flex-1 px-4 py-2.5">
                     Reject
-                  </button>
+                  </Button>
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <label className="mb-1 block text-xs font-medium text-text-secondary">Rejection reason *</label>
-                  <textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={2} className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2.5 text-sm text-text-primary focus:outline-none" />
+                  <Textarea label="Rejection reason *" value={reason} onChange={(e) => setReason(e.target.value)} rows={2} />
                   <div className="flex gap-2">
-                    <button onClick={() => setShowReject(false)} className="flex-1 rounded-[var(--radius-button)] border border-border-subtle px-4 py-2.5 text-sm text-text-secondary">Back</button>
-                    <button onClick={onReject} disabled={busy} className="flex-1 rounded-[var(--radius-button)] bg-danger px-4 py-2.5 text-sm font-medium text-white disabled:opacity-50">
+                    <Button variant="secondary" onClick={() => setShowReject(false)} className="flex-1 px-4 py-2.5">Back</Button>
+                    <Button variant="danger" onClick={onReject} disabled={busy} className="flex-1 px-4 py-2.5">
                       {busy ? 'Working…' : 'Confirm Reject'}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
-            </div>
+            </Surface>
           )}
 
           {inv.status === 'approved' && (
-            <div className="glass-card p-4 text-sm">
+            <Surface className="p-4 text-sm">
               <p className="text-text-secondary">
                 Approved{sub.verified_at ? ` on ${sub.verified_at.slice(0, 16).replace('T', ' ')}` : ''}{verifierName ? ` by ${verifierName}` : ''}.
               </p>
@@ -414,42 +425,37 @@ export default function InvitationDetailPage({ params }: { params: Promise<{ id:
                 </Link>
               )}
               {sub.verification_note && <p className="mt-2 text-text-secondary">Note: {sub.verification_note}</p>}
-            </div>
+            </Surface>
           )}
 
           {inv.status === 'rejected' && (
-            <div className="glass-card space-y-3 p-4 text-sm">
+            <Surface className="space-y-3 p-4 text-sm">
               <p className="text-text-secondary">Rejected{sub.verified_at ? ` on ${sub.verified_at.slice(0, 16).replace('T', ' ')}` : ''}{verifierName ? ` by ${verifierName}` : ''}.</p>
               {sub.rejection_reason && <p className="text-text-primary">Reason: {sub.rejection_reason}</p>}
-              <button onClick={onRegenerate} disabled={busy} className="rounded-[var(--radius-button)] bg-accent-primary px-4 py-2.5 font-medium text-accent-on-primary disabled:opacity-50">
+              <Button variant="primary" onClick={onRegenerate} disabled={busy} className="px-4 py-2.5 font-medium">
                 Regenerate invitation
-              </button>
-            </div>
+              </Button>
+            </Surface>
           )}
         </>
       )}
 
       {inv.status === 'expired' && !sub && (
-        <div className="glass-card space-y-3 p-4 text-sm">
+        <Surface className="space-y-3 p-4 text-sm">
           <p className="text-text-secondary">This invitation expired before it was used.</p>
-          <button onClick={onRegenerate} disabled={busy} className="rounded-[var(--radius-button)] bg-accent-primary px-4 py-2.5 font-medium text-accent-on-primary disabled:opacity-50">
+          <Button variant="primary" onClick={onRegenerate} disabled={busy} className="px-4 py-2.5 font-medium">
             Regenerate invitation
-          </button>
-        </div>
+          </Button>
+        </Surface>
       )}
 
       {showShare && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setShowShare(null)}>
-          <div className="glass-card max-h-[85vh] w-full max-w-md overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-lg font-bold text-text-primary">Share Invitation</h2>
-            <div className="mt-3">
-              <ShareBox token={showShare.token} path={showShare.url} customerName={inv.customer_name} />
-            </div>
-            <button onClick={() => { setShowShare(null); router.push('/invitations'); router.refresh(); }} className="mt-4 w-full py-2 text-center text-sm text-text-muted hover:text-text-primary">
-              Done
-            </button>
-          </div>
-        </div>
+        <Dialog open onClose={() => setShowShare(null)} title="Share Invitation">
+          <ShareBox token={showShare.token} path={showShare.url} customerName={inv.customer_name} />
+          <Button variant="ghost" onClick={() => { setShowShare(null); router.push('/invitations'); router.refresh(); }} className="mt-4 w-full py-2 text-sm">
+            Done
+          </Button>
+        </Dialog>
       )}
 
       {lightbox && (

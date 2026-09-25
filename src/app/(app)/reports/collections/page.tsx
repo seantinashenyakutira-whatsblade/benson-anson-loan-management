@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
 interface DailyCollection {
@@ -70,19 +72,19 @@ export default function CollectionsReport() {
 
       <div className="flex gap-1 rounded-[var(--radius-button)] bg-surface-glass p-1">
         {['week', 'month', 'year'].map((p) => (
-          <button
+          <Button
             key={p}
+            variant={period === p ? 'secondary' : 'ghost'}
+            size="sm"
             onClick={() => { setPeriod(p); setLoading(true); }}
-            className={`flex-1 rounded-[var(--radius-button)] px-4 py-2 text-sm font-medium transition-all ${
-              period === p ? 'bg-surface-glass-2 text-text-primary shadow-sm' : 'text-text-muted hover:text-text-secondary'
-            }`}
+            className={`flex-1 ${period === p ? 'font-medium shadow-sm' : ''}`}
           >
             {p.charAt(0).toUpperCase() + p.slice(1)}
-          </button>
+          </Button>
         ))}
       </div>
 
-      <div className="glass-card p-4">
+      <Surface className="p-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs text-text-muted">Total Collected</p>
@@ -93,7 +95,7 @@ export default function CollectionsReport() {
             <p className="text-2xl font-bold text-text-primary">{totals.count}</p>
           </div>
         </div>
-      </div>
+      </Surface>
 
       {loading ? (
         <div className="py-12 text-center text-text-muted">Loading...</div>
@@ -102,13 +104,13 @@ export default function CollectionsReport() {
       ) : (
         <div className="space-y-2">
           {collections.map((c) => (
-            <div key={c.paid_at} className="glass-card flex items-center justify-between p-4">
+            <Surface key={c.paid_at} className="flex items-center justify-between p-4">
               <div>
                 <p className="text-sm text-text-primary">{c.paid_at}</p>
                 <p className="text-xs text-text-muted">{c.count} payment{c.count !== 1 ? 's' : ''}</p>
               </div>
               <p className="text-sm font-semibold text-success">{formatKwacha(c.total)}</p>
-            </div>
+            </Surface>
           ))}
         </div>
       )}

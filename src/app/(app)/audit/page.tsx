@@ -4,6 +4,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth-provider';
 import { AccessDenied } from '@/components/layout/access-denied';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Input, Select } from '@/components/ui/input';
 import { Download, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface AuditRow {
@@ -132,43 +135,44 @@ export default function AuditPage() {
           <h1 className="text-2xl font-bold text-text-primary">Audit Log</h1>
           <p className="text-sm text-text-secondary">Append-only log of important changes</p>
         </div>
-        <button
+        <Button
+          variant="secondary"
           onClick={exportCsv}
-          className="flex items-center gap-1 rounded-[var(--radius-button)] border border-border-subtle px-4 py-2.5 text-sm text-text-secondary hover:bg-surface-glass"
+          className="gap-1"
         >
           <Download size={16} /> Export CSV
-        </button>
+        </Button>
       </div>
 
-      <div className="glass-card flex flex-wrap gap-2 p-3">
-        <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2 text-sm text-text-primary" aria-label="From date" />
-        <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2 text-sm text-text-primary" aria-label="To date" />
-        <select value={user} onChange={(e) => setUser(e.target.value)} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2 text-sm text-text-primary" aria-label="User filter">
+      <Surface className="flex flex-wrap gap-2 p-3">
+        <Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="w-auto px-3 py-2" aria-label="From date" />
+        <Input type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-auto px-3 py-2" aria-label="To date" />
+        <Select value={user} onChange={(e) => setUser(e.target.value)} className="w-auto px-3 py-2" aria-label="User filter">
           <option value="all">All users</option>
           {profiles.map((p) => (
             <option key={p.id} value={p.id}>{p.full_name} ({p.email})</option>
           ))}
-        </select>
-        <select value={action} onChange={(e) => setAction(e.target.value)} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2 text-sm text-text-primary" aria-label="Action filter">
+        </Select>
+        <Select value={action} onChange={(e) => setAction(e.target.value)} className="w-auto px-3 py-2" aria-label="Action filter">
           <option value="all">All actions</option>
           {ACTION_OPTIONS.map((a) => (
             <option key={a} value={a}>{a}</option>
           ))}
-        </select>
-        <select value={entity} onChange={(e) => setEntity(e.target.value)} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2 text-sm text-text-primary" aria-label="Entity filter">
+        </Select>
+        <Select value={entity} onChange={(e) => setEntity(e.target.value)} className="w-auto px-3 py-2" aria-label="Entity filter">
           <option value="all">All entities</option>
           {ENTITY_OPTIONS.map((e) => (
             <option key={e} value={e}>{e}</option>
           ))}
-        </select>
-      </div>
+        </Select>
+      </Surface>
 
       {loading ? (
         <div className="py-12 text-center text-text-muted">Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="glass-card p-8 text-center text-text-muted">No audit entries for this filter.</div>
+        <Surface className="p-8 text-center text-text-muted">No audit entries for this filter.</Surface>
       ) : (
-        <div className="glass-card overflow-x-auto p-4">
+        <Surface variant="solid" className="overflow-x-auto p-4">
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-border-subtle text-text-muted">
@@ -212,23 +216,25 @@ export default function AuditPage() {
             </tbody>
           </table>
           <div className="mt-4 flex items-center justify-between">
-            <button
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
-              className="rounded-[var(--radius-button)] border border-border-subtle px-3 py-2 text-sm text-text-secondary disabled:opacity-50"
             >
               Previous
-            </button>
+            </Button>
             <span className="text-sm text-text-muted">Page {page + 1}</span>
-            <button
+            <Button
+              variant="secondary"
+              size="sm"
               onClick={() => setPage((p) => p + 1)}
               disabled={filtered.length < 50}
-              className="rounded-[var(--radius-button)] border border-border-subtle px-3 py-2 text-sm text-text-secondary disabled:opacity-50"
             >
               Next
-            </button>
+            </Button>
           </div>
-        </div>
+        </Surface>
       )}
     </div>
   );

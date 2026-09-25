@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
 import { EmptyState } from '@/components/ui/empty-state';
+import { Input, Select } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { usePermissions } from '@/hooks/use-permissions';
 import { Plus, Search, Filter, HandCoins } from 'lucide-react';
 
@@ -28,18 +30,18 @@ const HEALTH_COLORS: Record<string, string> = {
   defaulted: 'text-danger',
 };
 
-const STATUS_COLORS: Record<string, string> = {
-  draft: 'bg-text-muted/10 text-text-muted',
-  submitted: 'bg-info/10 text-info',
-  approved: 'bg-success/10 text-success',
-  disbursed: 'bg-accent-primary/10 text-accent-primary',
-  performing: 'bg-success/10 text-success',
-  at_risk: 'bg-warning/10 text-warning',
-  overdue: 'bg-orange/10 text-orange',
-  defaulted: 'bg-danger/10 text-danger',
-  fully_paid: 'bg-success/10 text-success',
-  closed: 'bg-text-muted/10 text-text-muted',
-  rejected: 'bg-danger/10 text-danger',
+const STATUS_VARIANTS: Record<string, 'success' | 'warning' | 'orange' | 'danger' | 'info' | 'neutral' | 'brand'> = {
+  draft: 'neutral',
+  submitted: 'info',
+  approved: 'success',
+  disbursed: 'brand',
+  performing: 'success',
+  at_risk: 'warning',
+  overdue: 'orange',
+  defaulted: 'danger',
+  fully_paid: 'success',
+  closed: 'neutral',
+  rejected: 'danger',
 };
 
 export default function LoansPage() {
@@ -113,20 +115,20 @@ export default function LoansPage() {
       <div className="flex gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={18} />
-          <input
+          <Input
             type="text"
             placeholder="Search loans..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass py-2.5 pl-10 pr-4 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
+            className="py-2.5 pl-10 pr-4"
           />
         </div>
         <div className="relative">
           <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={16} />
-          <select
+          <Select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass py-2.5 pl-9 pr-4 text-sm text-text-primary focus:border-accent-primary focus:outline-none"
+            className="py-2.5 pl-9 pr-4"
           >
             <option value="all">All Status</option>
             <option value="draft">Draft</option>
@@ -138,7 +140,7 @@ export default function LoansPage() {
             <option value="defaulted">Defaulted</option>
             <option value="fully_paid">Fully Paid</option>
             <option value="closed">Closed</option>
-          </select>
+          </Select>
         </div>
       </div>
 
@@ -170,9 +172,9 @@ export default function LoansPage() {
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-semibold text-text-primary">{formatKwacha(loan.principal_amount)}</p>
-                  <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium capitalize ${STATUS_COLORS[loan.status] || 'bg-text-muted/10 text-text-muted'}`}>
+                  <Badge variant={STATUS_VARIANTS[loan.status] ?? 'neutral'} className="capitalize">
                     {loan.status.replace('_', ' ')}
-                  </span>
+                  </Badge>
                   {loan.health && loan.health !== 'performing' && (
                     <p className={`mt-1 text-xs font-medium capitalize ${HEALTH_COLORS[loan.health] || ''}`}>
                       {loan.health.replace('_', ' ')}

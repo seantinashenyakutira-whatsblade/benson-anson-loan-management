@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
+import { Surface } from '@/components/ui/surface';
 import { ArrowLeft } from 'lucide-react';
 
 interface PortfolioSummary {
@@ -69,27 +70,27 @@ export default function LoanPortfolioReport() {
       <h1 className="text-2xl font-bold text-text-primary">Loan Portfolio Report</h1>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="glass-card p-4">
+        <Surface className="p-4">
           <p className="text-xs text-text-muted">Total Loans</p>
-          <p className="text-2xl font-bold text-text-primary">{summary.totalLoans}</p>
-        </div>
-        <div className="glass-card p-4">
+          <p className="text-2xl font-bold tabular-nums text-text-primary">{summary.totalLoans}</p>
+        </Surface>
+        <Surface className="p-4">
           <p className="text-xs text-text-muted">Total Principal</p>
-          <p className="text-2xl font-bold text-text-primary">{formatKwacha(summary.totalPrincipal)}</p>
-        </div>
-        <div className="glass-card p-4">
+          <p className="text-2xl font-bold tabular-nums text-text-primary">{formatKwacha(summary.totalPrincipal)}</p>
+        </Surface>
+        <Surface className="p-4">
           <p className="text-xs text-text-muted">Outstanding Balance</p>
-          <p className="text-2xl font-bold text-warning">{formatKwacha(summary.totalOutstanding)}</p>
-        </div>
-        <div className="glass-card p-4">
+          <p className="text-2xl font-bold tabular-nums text-warning">{formatKwacha(summary.totalOutstanding)}</p>
+        </Surface>
+        <Surface className="p-4">
           <p className="text-xs text-text-muted">Collection Rate</p>
-          <p className="text-2xl font-bold text-success">
+          <p className="text-2xl font-bold tabular-nums text-success">
             {summary.totalPrincipal > 0 ? Math.round(((summary.totalPrincipal - summary.totalOutstanding) / summary.totalPrincipal) * 100) : 0}%
           </p>
-        </div>
+        </Surface>
       </div>
 
-      <div className="glass-card p-4">
+      <Surface className="p-4">
         <h2 className="mb-3 text-sm font-semibold text-text-secondary">Portfolio Health</h2>
         {/* Stacked bar */}
         <div className="mb-3 flex h-4 overflow-hidden rounded-full bg-surface-glass">
@@ -115,7 +116,7 @@ export default function LoanPortfolioReport() {
             </div>
           ))}
         </div>
-      </div>
+      </Surface>
     </div>
   );
 }

@@ -8,6 +8,10 @@ import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth-provider';
 import { AccessDenied } from '@/components/layout/access-denied';
 import { EmptyState } from '@/components/ui/empty-state';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Dialog } from '@/components/ui/dialog';
 import { formatKwacha } from '@/lib/money';
 import { ALLOCATION_PRESETS } from '@/lib/validations/loan-product';
 import { setProductActive, deleteProduct } from './actions';
@@ -108,28 +112,25 @@ export default function LoanProductsPage() {
           <p className="text-sm text-text-secondary">Products available for applications and the landing page</p>
         </div>
         {isOwner && (
-          <Link
-            href="/settings/loan-products/new"
-            className="flex items-center gap-1 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2.5 text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
-          >
-            <Plus size={16} /> New Product
+          <Link href="/settings/loan-products/new">
+            <Button variant="primary" className="gap-1">
+              <Plus size={16} /> New Product
+            </Button>
           </Link>
         )}
       </div>
 
       <div className="flex gap-2">
         {(['all', 'active', 'inactive'] as const).map((f) => (
-          <button
+          <Button
             key={f}
+            variant={filter === f ? 'primary' : 'secondary'}
+            size="sm"
             onClick={() => setFilter(f)}
-            className={`rounded-[var(--radius-button)] px-3 py-2 text-sm capitalize ${
-              filter === f
-                ? 'bg-accent-primary font-medium text-accent-on-primary'
-                : 'border border-border-subtle text-text-secondary hover:bg-surface-glass'
-            }`}
+            className="capitalize"
           >
             {f}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -138,7 +139,7 @@ export default function LoanProductsPage() {
       {shown.length === 0 ? (
         <EmptyState icon={Package} headline="No loan products" message="Create a product to offer it on applications and the landing page." />
       ) : (
-        <div className="glass-card overflow-x-auto p-4">
+        <Surface variant="solid" className="overflow-x-auto p-4">
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-border-subtle text-text-muted">
@@ -170,9 +171,9 @@ export default function LoanProductsPage() {
                   <td className="py-2 text-text-secondary">{p.default_duration} {p.duration_unit}</td>
                   <td className="py-2 text-text-secondary">{freqLabel[p.repayment_frequency] ?? p.repayment_frequency}</td>
                   <td className="py-2">
-                    <span className={`rounded-full px-2 py-0.5 text-xs ${p.is_active ? 'bg-success/10 text-success' : 'bg-text-muted/10 text-text-muted'}`}>
+                    <Badge variant={p.is_active ? 'success' : 'neutral'}>
                       {p.is_active ? 'Yes' : 'No'}
-                    </span>
+                    </Badge>
                   </td>
                   {isOwner && (
                     <td className="py-2">
@@ -180,12 +181,12 @@ export default function LoanProductsPage() {
                         <Link href={`/settings/loan-products/${p.id}/edit`} className="text-accent-primary hover:underline">
                           Edit
                         </Link>
-                        <button onClick={() => onToggle(p)} className="text-text-secondary hover:underline">
+                        <Button variant="link" size="sm" onClick={() => onToggle(p)} className="h-auto p-0 text-xs text-text-secondary">
                           {p.is_active ? 'Deactivate' : 'Activate'}
-                        </button>
-                        <button onClick={() => onDelete(p)} className="text-danger hover:underline">
+                        </Button>
+                        <Button variant="link" size="sm" onClick={() => onDelete(p)} className="h-auto p-0 text-xs text-danger">
                           Delete
-                        </button>
+                        </Button>
                       </div>
                     </td>
                   )}
@@ -193,20 +194,47 @@ export default function LoanProductsPage() {
               ))}
             </tbody>
           </table>
-        </div>
+        </Surface>
       )}
 
-      {viewing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setViewId(null)}>
-          <div className="glass-card max-h-[85vh] w-full max-w-lg overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
+      <Dialog
+        open={!!viewing}
+        onClose={() => setViewId(null)}
+        title={viewing?.name}
+        size="lg"
+        footer={viewing && isOwner ? (
+          <>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => router.push(`/settings/loan-products/${viewing.id}/edit`)}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => { onToggle(viewing); setViewId(null); }}
+            >
+              {viewing.is_active ? 'Deactivate' : 'Activate'}
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => onDelete(viewing)}
+            >
+              Delete
+            </Button>
+          </>
+        ) : undefined}
+      >
+        {viewing && (
+          <div>
             <div className="flex items-start justify-between">
-              <div>
-                <h2 className="text-xl font-bold text-text-primary">{viewing.name}</h2>
-                <p className="font-mono text-xs text-text-muted">{viewing.code}</p>
-              </div>
-              <span className={`rounded-full px-2 py-0.5 text-xs ${viewing.is_active ? 'bg-success/10 text-success' : 'bg-text-muted/10 text-text-muted'}`}>
+              <p className="font-mono text-xs text-text-muted">{viewing.code}</p>
+              <Badge variant={viewing.is_active ? 'success' : 'neutral'}>
                 {viewing.is_active ? 'Active' : 'Inactive'}
-              </span>
+              </Badge>
             </div>
             {viewing.description && <p className="mt-2 text-sm text-text-secondary">{viewing.description}</p>}
             <dl className="mt-4 space-y-2 text-sm">
@@ -218,28 +246,9 @@ export default function LoanProductsPage() {
               <div className="flex justify-between"><dt className="text-text-muted">Grace / default after</dt><dd className="text-text-primary">{viewing.grace_period_days} / {viewing.default_after_days} days</dd></div>
               <div className="flex justify-between"><dt className="text-text-muted">Allocation</dt><dd className="text-right text-text-primary">{ALLOCATION_PRESETS[viewing.allocation_order as keyof typeof ALLOCATION_PRESETS] ?? viewing.allocation_order}</dd></div>
             </dl>
-            {isOwner && (
-              <div className="mt-6 flex gap-2">
-                <Link
-                  href={`/settings/loan-products/${viewing.id}/edit`}
-                  className="flex-1 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2.5 text-center text-sm font-medium text-accent-on-primary hover:bg-accent-primary-hover"
-                >
-                  Edit
-                </Link>
-                <button
-                  onClick={() => { onToggle(viewing); setViewId(null); }}
-                  className="flex-1 rounded-[var(--radius-button)] border border-border-subtle px-4 py-2.5 text-sm text-text-secondary hover:bg-surface-glass"
-                >
-                  {viewing.is_active ? 'Deactivate' : 'Activate'}
-                </button>
-              </div>
-            )}
-            <button onClick={() => setViewId(null)} className="mt-3 w-full py-2 text-center text-sm text-text-muted hover:text-text-primary">
-              Close
-            </button>
           </div>
-        </div>
-      )}
+        )}
+      </Dialog>
     </div>
   );
 }

@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Calendar, MapPin } from 'lucide-react';
 import Link from 'next/link';
 
@@ -56,31 +59,31 @@ export default function CollateralDetailPage() {
   if (loading) return <div className="py-12 text-center text-text-muted">Loading...</div>;
   if (!item) return <div className="py-12 text-center text-text-muted">Collateral not found.</div>;
 
-  const statusColor = (status: string) => {
+  const statusVariant = (status: string): 'success' | 'info' | 'warning' | 'neutral' => {
     switch (status) {
-      case 'available': return 'bg-success/10 text-success';
-      case 'pledged': return 'bg-info/10 text-info';
-      case 'repossessed': return 'bg-warning/10 text-warning';
-      default: return 'bg-text-muted/10 text-text-muted';
+      case 'available': return 'success';
+      case 'pledged': return 'info';
+      case 'repossessed': return 'warning';
+      default: return 'neutral';
     }
   };
 
   return (
     <div className="space-y-4">
-      <button onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
+      <Button variant="ghost" size="sm" onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
         <ArrowLeft size={18} />
         Back
-      </button>
+      </Button>
 
-      <div className="glass-card p-6">
+      <Surface className="p-6">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold text-text-primary">{item.description}</h1>
             <div className="mt-2 flex items-center gap-3">
               <span className="text-xs text-text-muted capitalize">{item.collateral_type.replace('_', ' ')}</span>
-              <span className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColor(item.status)}`}>
+              <Badge variant={statusVariant(item.status)} className="capitalize">
                 {item.status}
-              </span>
+              </Badge>
             </div>
           </div>
           <Link
@@ -175,11 +178,11 @@ export default function CollateralDetailPage() {
             <p className="text-sm text-text-secondary">{item.notes}</p>
           </div>
         )}
-      </div>
+      </Surface>
 
       {/* Valuations */}
       {item.collateral_valuations && item.collateral_valuations.length > 0 && (
-        <div className="glass-card p-6">
+        <Surface className="p-6">
           <h2 className="mb-4 text-lg font-semibold text-text-primary">Valuations</h2>
           <div className="space-y-2">
             {item.collateral_valuations.map((v) => (
@@ -194,12 +197,12 @@ export default function CollateralDetailPage() {
               </div>
             ))}
           </div>
-        </div>
+        </Surface>
       )}
 
       {/* Media */}
       {item.collateral_media && item.collateral_media.length > 0 && (
-        <div className="glass-card p-6">
+        <Surface className="p-6">
           <h2 className="mb-4 text-lg font-semibold text-text-primary">Photos & Documents</h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {item.collateral_media.map((m) => (
@@ -211,7 +214,7 @@ export default function CollateralDetailPage() {
               </div>
             ))}
           </div>
-        </div>
+        </Surface>
       )}
     </div>
   );

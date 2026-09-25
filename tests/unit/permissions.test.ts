@@ -54,9 +54,9 @@ describe('canAccessRoute', () => {
     expect(canAccessRoute('loan_officer', '/applications')).toBe(true);
     expect(canAccessRoute('loan_officer', '/accounting')).toBe(false);
   });
-  it('gives branch managers everything except users/audit', () => {
+  it('gives branch managers everything except users (audit allowed)', () => {
     expect(canAccessRoute('branch_manager', '/users')).toBe(false);
-    expect(canAccessRoute('branch_manager', '/audit')).toBe(false);
+    expect(canAccessRoute('branch_manager', '/audit')).toBe(true);
     expect(canAccessRoute('branch_manager', '/settings')).toBe(true);
     expect(canAccessRoute('branch_manager', '/reports/pl')).toBe(true);
   });

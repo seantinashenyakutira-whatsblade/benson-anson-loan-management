@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/auth-provider';
 import { createClient } from '@/lib/supabase/client';
 import { canAny } from '@/lib/permissions';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { ArrowLeft, Mail, Phone, UserPlus } from 'lucide-react';
 
@@ -22,11 +25,11 @@ interface Lead {
   updated_at: string;
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  new: 'bg-blue-100 text-blue-700',
-  contacted: 'bg-yellow-100 text-yellow-700',
-  converted: 'bg-green-100 text-green-700',
-  closed: 'bg-slate-100 text-slate-500',
+const STATUS_VARIANTS: Record<string, 'info' | 'warning' | 'success' | 'neutral'> = {
+  new: 'info',
+  contacted: 'warning',
+  converted: 'success',
+  closed: 'neutral',
 };
 
 export default function LeadsPage() {
@@ -85,23 +88,23 @@ export default function LeadsPage() {
         </Link>
       </div>
 
-      <div className="glass-card p-1">
+      <Surface className="p-1">
         <div className="flex gap-1 overflow-x-auto">
           {(['all', 'new', 'contacted', 'converted', 'closed'] as const).map((s) => (
-            <button
+            <Button
               key={s}
+              variant={filter === s ? 'primary' : 'secondary'}
+              size="sm"
               onClick={() => setFilter(s)}
-              className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold capitalize transition-colors ${
-                filter === s ? 'bg-accent-primary text-white' : 'text-text-secondary hover:bg-surface-glass'
-              }`}
+              className="whitespace-nowrap px-3 py-1.5 text-xs font-semibold capitalize"
             >
               {s} ({counts[s]})
-            </button>
+            </Button>
           ))}
         </div>
-      </div>
+      </Surface>
 
-      <div className="glass-card overflow-hidden">
+      <Surface className="overflow-hidden">
         {loading ? (
           <p className="p-6 text-center text-text-secondary">Loading…</p>
         ) : filtered.length === 0 ? (
@@ -113,9 +116,9 @@ export default function LeadsPage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-text-primary">{lead.full_name}</span>
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${STATUS_COLORS[lead.status] || ''}`}>
+                    <Badge variant={STATUS_VARIANTS[lead.status] ?? 'neutral'} className="uppercase">
                       {lead.status}
-                    </span>
+                    </Badge>
                     {lead.source && <span className="text-[10px] text-text-muted">via {lead.source}</span>}
                   </div>
                   <div className="mt-1 flex flex-wrap gap-3 text-xs text-text-secondary">
@@ -129,16 +132,16 @@ export default function LeadsPage() {
                 {isAdmin && (
                   <div className="flex gap-1.5">
                     {(['new', 'contacted', 'converted', 'closed'] as const).map((s) => (
-                      <button
+                      <Button
                         key={s}
+                        variant={lead.status === s ? 'primary' : 'secondary'}
+                        size="sm"
                         onClick={() => updateStatus(lead.id, s)}
                         disabled={lead.status === s}
-                        className={`rounded-lg px-2.5 py-1 text-[10px] font-bold uppercase transition-colors ${
-                          lead.status === s ? 'bg-accent-primary text-white' : 'bg-surface-glass text-text-secondary hover:bg-surface-raised'
-                        }`}
+                        className="px-2.5 py-1 text-[10px] font-bold uppercase"
                       >
                         {s}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 )}
@@ -146,7 +149,7 @@ export default function LeadsPage() {
             ))}
           </div>
         )}
-      </div>
+      </Surface>
     </div>
   );
 }

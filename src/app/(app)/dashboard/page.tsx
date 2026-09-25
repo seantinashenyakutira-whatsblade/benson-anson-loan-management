@@ -7,6 +7,9 @@ import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-quer
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth-provider';
 import { formatKwacha } from '@/lib/money';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Input, Select } from '@/components/ui/input';
 import {
   AlertTriangle,
   ArrowDownRight,
@@ -222,62 +225,64 @@ function DashboardContent() {
       </div>
 
       {/* Filter bar */}
-      <div className="glass-card flex flex-wrap items-center gap-2 p-3">
+      <Surface className="flex flex-wrap items-center gap-2 p-3">
         {PRESETS.map((p) => (
-          <button
+          <Button
             key={p}
+            variant={range === p ? 'primary' : 'secondary'}
+            size="sm"
             onClick={() => sync({ range: p, from: customFrom, to: customTo, branch, officer })}
-            className={`rounded-[var(--radius-button)] px-3 py-2 text-sm ${
-              range === p ? 'bg-accent-primary font-medium text-accent-on-primary' : 'border border-border-subtle text-text-secondary hover:bg-surface-glass'
-            }`}
           >
             {RANGE_LABELS[p]}
-          </button>
+          </Button>
         ))}
-        <button
+        <Button
+          variant={range === 'custom' ? 'primary' : 'secondary'}
+          size="sm"
           onClick={() => sync({ range: 'custom', from: customFrom || bounds.from, to: customTo || bounds.to, branch, officer })}
-          className={`rounded-[var(--radius-button)] px-3 py-2 text-sm ${
-            range === 'custom' ? 'bg-accent-primary font-medium text-accent-on-primary' : 'border border-border-subtle text-text-secondary hover:bg-surface-glass'
-          }`}
         >
           Custom Range
-        </button>
+        </Button>
         {range === 'custom' && (
           <>
-            <input type="date" value={customFrom} onChange={(e) => sync({ range, from: e.target.value, to: customTo, branch, officer })} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2 text-sm text-text-primary" aria-label="Custom from" />
-            <input type="date" value={customTo} onChange={(e) => sync({ range, from: customFrom, to: e.target.value, branch, officer })} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2 text-sm text-text-primary" aria-label="Custom to" />
+            <Input type="date" value={customFrom} onChange={(e) => sync({ range, from: e.target.value, to: customTo, branch, officer })} className="w-auto px-3 py-2" aria-label="Custom from" />
+            <Input type="date" value={customTo} onChange={(e) => sync({ range, from: customFrom, to: e.target.value, branch, officer })} className="w-auto px-3 py-2" aria-label="Custom to" />
           </>
         )}
         {showBranch && (
-          <select value={branch} onChange={(e) => sync({ range, from: customFrom, to: customTo, branch: e.target.value, officer: 'all' })} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2 text-sm text-text-primary" aria-label="Branch filter">
+          <Select value={branch} onChange={(e) => sync({ range, from: customFrom, to: customTo, branch: e.target.value, officer: 'all' })} className="w-auto px-3 py-2" aria-label="Branch filter">
             {profile?.role === 'owner' && <option value="all">All branches</option>}
             {branchOptions.map((b) => (
               <option key={b.id} value={b.id}>{b.name}</option>
             ))}
-          </select>
+          </Select>
         )}
         {showOfficer && (
-          <select value={officer} onChange={(e) => sync({ range, from: customFrom, to: customTo, branch, officer: e.target.value })} className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-3 py-2 text-sm text-text-primary" aria-label="Officer filter">
+          <Select value={officer} onChange={(e) => sync({ range, from: customFrom, to: customTo, branch, officer: e.target.value })} className="w-auto px-3 py-2" aria-label="Officer filter">
             <option value="all">All officers</option>
             {officerOptions.map((o) => (
               <option key={o.id} value={o.id}>{o.full_name}</option>
             ))}
-          </select>
+          </Select>
         )}
-        <button
+        <Button
+          variant="secondary"
+          size="sm"
           onClick={() => query.refetch()}
-          className="flex items-center gap-1 rounded-[var(--radius-button)] border border-border-subtle px-3 py-2 text-sm text-text-secondary hover:bg-surface-glass"
+          className="gap-1"
         >
           <RefreshCw size={14} /> Refresh
-        </button>
-      </div>
+        </Button>
+      </Surface>
 
       {showVerification && (
-        <Link href="/invitations?status=submitted" className="glass-card glass-card-hover flex items-center gap-3 p-4 transition-all">
-          <Inbox size={20} className="text-warning" />
-          <p className="text-sm text-text-primary">
-            <strong>{data!.pendingVerification}</strong> application{data!.pendingVerification === 1 ? '' : 's'} awaiting verification
-          </p>
+        <Link href="/invitations?status=submitted" className="block">
+          <Surface variant="glass-raised" className="flex items-center gap-3 p-4">
+            <Inbox size={20} className="text-warning" />
+            <p className="text-sm text-text-primary">
+              <strong>{data!.pendingVerification}</strong> application{data!.pendingVerification === 1 ? '' : 's'} awaiting verification
+            </p>
+          </Surface>
         </Link>
       )}
 
@@ -288,28 +293,30 @@ function DashboardContent() {
           ))}
         </div>
       ) : query.isError ? (
-        <div className="glass-card p-6 text-center">
+        <Surface className="p-6 text-center">
           <p className="text-sm text-danger">Couldn&apos;t load dashboard data.</p>
-          <button onClick={() => query.refetch()} className="mt-3 rounded-[var(--radius-button)] bg-accent-primary px-4 py-2 text-sm font-medium text-accent-on-primary">
+          <Button variant="primary" size="sm" onClick={() => query.refetch()} className="mt-3">
             Try again
-          </button>
-        </div>
+          </Button>
+        </Surface>
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3">
             {cards.map((kpi) => (
-              <Link key={kpi.label} href={kpi.link} className="glass-card glass-card-hover p-4 transition-all">
-                <div className="flex items-start justify-between">
-                  <kpi.icon size={20} className={kpi.color} />
-                </div>
-                <p className="mt-2 text-xl font-bold tabular-nums text-text-primary">{kpi.value}</p>
-                <p className="text-xs text-text-muted">{kpi.label}</p>
+              <Link key={kpi.label} href={kpi.link} className="block">
+                <Surface variant="glass-raised" className="h-full p-4">
+                  <div className="flex items-start justify-between">
+                    <kpi.icon size={20} className={kpi.color} />
+                  </div>
+                  <p className="mt-2 text-xl font-bold tabular-nums text-text-primary">{kpi.value}</p>
+                  <p className="text-xs text-text-muted">{kpi.label}</p>
+                </Surface>
               </Link>
             ))}
           </div>
 
           {/* Expected vs Actual */}
-          <div className="glass-card p-4">
+          <Surface className="p-4">
             <div className="mb-1 flex items-baseline justify-between">
               <h2 className="text-sm font-semibold text-text-secondary">Expected vs Actual</h2>
               {granularity === 'hour' && <p className="text-xs text-text-muted">Expected today: {formatKwacha(expectedTotal)}</p>}
@@ -335,10 +342,10 @@ function DashboardContent() {
                 </div>
               </>
             )}
-          </div>
+          </Surface>
 
           {/* Recent activity in range */}
-          <div className="glass-card p-4">
+          <Surface className="p-4">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-sm font-semibold text-text-secondary">Recent Payments ({bounds.label})</h2>
               <Link href="/payments" className="text-xs text-accent-primary hover:underline">View All</Link>
@@ -358,7 +365,7 @@ function DashboardContent() {
                 ))}
               </div>
             )}
-          </div>
+          </Surface>
         </>
       )}
     </div>

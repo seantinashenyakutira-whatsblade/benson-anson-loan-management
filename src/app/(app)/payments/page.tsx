@@ -4,6 +4,10 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
 import { EmptyState } from '@/components/ui/empty-state';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Input, Select } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { Search, Download, Receipt } from 'lucide-react';
 
 interface Payment {
@@ -55,12 +59,12 @@ export default function PaymentsPage() {
     );
   });
 
-  const statusColor = (status: string) => {
+  const statusVariant = (status: string): 'success' | 'warning' | 'danger' | 'neutral' => {
     switch (status) {
-      case 'verified': return 'text-success';
-      case 'pending': return 'text-warning';
-      case 'rejected': return 'text-danger';
-      default: return 'text-text-muted';
+      case 'verified': return 'success';
+      case 'pending': return 'warning';
+      case 'rejected': return 'danger';
+      default: return 'neutral';
     }
   };
 
@@ -91,35 +95,35 @@ export default function PaymentsPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-text-primary">Payments</h1>
-        <button className="flex items-center gap-2 rounded-[var(--radius-button)] border border-border-subtle px-4 py-2 text-sm text-text-secondary hover:bg-surface-glass">
+        <Button variant="secondary" size="sm" className="flex items-center gap-2">
           <Download size={16} />
           Export
-        </button>
+        </Button>
       </div>
 
       {/* Summary */}
-      <div className="glass-card p-4">
+      <Surface className="p-4">
         <div className="flex items-center justify-between">
           <span className="text-sm text-text-muted">Total ({filtered.length} payments)</span>
           <span className="text-lg font-bold text-success">{formatKwacha(totalAmount)}</span>
         </div>
-      </div>
+      </Surface>
 
       <div className="flex gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={18} />
-          <input
+          <Input
             type="text"
             placeholder="Search payments..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass py-2.5 pl-10 pr-4 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
+            className="py-2.5 pl-10 pr-4"
           />
         </div>
-        <select
+        <Select
           value={methodFilter}
           onChange={(e) => setMethodFilter(e.target.value)}
-          className="rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none"
+          className="px-4 py-2.5"
         >
           <option value="all">All Methods</option>
           <option value="cash">Cash</option>
@@ -127,7 +131,7 @@ export default function PaymentsPage() {
           <option value="mtn_mobile_money">MTN MoMo</option>
           <option value="bank_transfer">Bank Transfer</option>
           <option value="other">Other</option>
-        </select>
+        </Select>
       </div>
 
       {loading ? (
@@ -141,7 +145,7 @@ export default function PaymentsPage() {
       ) : (
         <div className="space-y-2">
           {filtered.map((payment) => (
-            <div key={payment.id} className="glass-card p-4">
+            <Surface key={payment.id} className="p-4">
               <div className="flex items-center gap-3">
                 <span className="text-xl">{methodIcon(payment.payment_method)}</span>
                 <div className="flex-1">
@@ -153,9 +157,9 @@ export default function PaymentsPage() {
                     <p className="text-sm text-text-secondary">
                       {payment.loans?.loan_number} — {payment.loans?.customers?.first_name} {payment.loans?.customers?.last_name}
                     </p>
-                    <span className={`text-xs font-medium capitalize ${statusColor(payment.status)}`}>
+                    <Badge variant={statusVariant(payment.status)} className="capitalize">
                       {payment.status}
-                    </span>
+                    </Badge>
                   </div>
                   <div className="mt-1 flex items-center gap-3 text-xs text-text-muted">
                     <span>{payment.paid_at?.split('T')[0]}</span>
@@ -164,7 +168,7 @@ export default function PaymentsPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Surface>
           ))}
         </div>
       )}

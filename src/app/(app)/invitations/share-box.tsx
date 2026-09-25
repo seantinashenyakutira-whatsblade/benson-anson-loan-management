@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Check, Copy, Download, Mail, MessageCircle, Smartphone } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   buildInviteUrl,
   mailtoLink,
@@ -47,9 +48,9 @@ export function ShareBox({ token, path, customerName }: { token: string; path: s
       )}
       {error && <p className="mt-2 text-sm text-danger">{error}</p>}
       <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
-        <button onClick={copy} className="flex items-center justify-center gap-1 rounded-[var(--radius-button)] bg-accent-primary px-3 py-2.5 font-medium text-accent-on-primary">
+        <Button variant="primary" size="sm" onClick={copy} className="flex items-center justify-center gap-1 px-3 py-2.5 font-medium">
           {copied ? <Check size={15} /> : <Copy size={15} />} {copied ? 'Copied' : 'Copy Link'}
-        </button>
+        </Button>
         {qr && (
           <a href={qr} download={`invite-${token.slice(0, 8)}.png`} className="flex items-center justify-center gap-1 rounded-[var(--radius-button)] border border-border-subtle px-3 py-2.5 text-text-secondary">
             <Download size={15} /> QR PNG

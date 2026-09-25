@@ -2,6 +2,9 @@
 
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { ArrowLeft } from 'lucide-react';
 
 export default function NewCustomerPage() {
@@ -43,101 +46,60 @@ export default function NewCustomerPage() {
 
   return (
     <div className="space-y-4">
-      <button onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
+      <Button variant="ghost" size="sm" onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
         <ArrowLeft size={18} />
         Back
-      </button>
+      </Button>
 
-      <div className="glass-card p-6">
+      <Surface className="p-6">
         <h1 className="mb-6 text-2xl font-bold text-text-primary">New Customer</h1>
 
         <form action={handleSubmit} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">First Name *</label>
-              <input name="first_name" required className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Last Name *</label>
-              <input name="last_name" required className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
+            <Input label="First Name *" name="first_name" required />
+            <Input label="Last Name *" name="last_name" required />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Phone *</label>
-              <input name="phone" required placeholder="+260 977 000000" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Alt Phone</label>
-              <input name="alt_phone" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
+            <Input label="Phone *" name="phone" required placeholder="+260 977 000000" />
+            <Input label="Alt Phone" name="alt_phone" />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Email</label>
-              <input name="email" type="email" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">NRC Number</label>
-              <input name="nrc_number" placeholder="GRM123456/10/1" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
+            <Input label="Email" name="email" type="email" />
+            <Input label="NRC Number" name="nrc_number" placeholder="GRM123456/10/1" />
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm text-text-secondary">Address</label>
-            <input name="address" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
+          <Input label="Address" name="address" />
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Input label="City" name="city" defaultValue="Lusaka" />
+            <Input label="Province" name="province" defaultValue="Lusaka" />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">City</label>
-              <input name="city" defaultValue="Lusaka" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Province</label>
-              <input name="province" defaultValue="Lusaka" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Occupation</label>
-              <input name="occupation" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Employer</label>
-              <input name="employer_name" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
+            <Input label="Occupation" name="occupation" />
+            <Input label="Employer" name="employer_name" />
           </div>
 
           <div className="border-t border-border-subtle pt-4">
             <h3 className="mb-3 text-sm font-medium text-text-secondary">Next of Kin</h3>
             <div className="grid gap-4 sm:grid-cols-3">
-              <div>
-                <label className="mb-1 block text-sm text-text-secondary">Name</label>
-                <input name="next_of_kin_name" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm text-text-secondary">Phone</label>
-                <input name="next_of_kin_phone" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm text-text-secondary">Relationship</label>
-                <input name="next_of_kin_relationship" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-              </div>
+              <Input label="Name" name="next_of_kin_name" />
+              <Input label="Phone" name="next_of_kin_phone" />
+              <Input label="Relationship" name="next_of_kin_relationship" />
             </div>
           </div>
 
-          <button
+          <Button
             type="submit"
-            className="w-full rounded-[var(--radius-button)] bg-accent-primary px-4 py-3 font-medium text-accent-on-primary hover:bg-accent-primary-hover"
+            variant="primary"
+            className="w-full px-4 py-3 font-medium"
           >
             Create Customer
-          </button>
+          </Button>
         </form>
-      </div>
+      </Surface>
     </div>
   );
 }

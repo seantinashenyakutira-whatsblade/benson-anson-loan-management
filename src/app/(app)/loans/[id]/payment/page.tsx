@@ -6,6 +6,9 @@ import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth-provider';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatKwacha } from '@/lib/money';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
+import { Input, Textarea, Select } from '@/components/ui/input';
 import { ArrowLeft } from 'lucide-react';
 
 interface LoanInfo {
@@ -125,12 +128,12 @@ export default function RecordPaymentPage() {
 
   return (
     <div className="space-y-4">
-      <button onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
+      <Button variant="ghost" size="sm" onClick={() => router.back()} className="flex items-center gap-2 text-text-secondary hover:text-text-primary">
         <ArrowLeft size={18} />
         Back
-      </button>
+      </Button>
 
-      <div className="glass-card p-6">
+      <Surface className="p-6">
         <h1 className="mb-2 text-2xl font-bold text-text-primary">Record Payment</h1>
         <p className="text-sm text-text-secondary">
           {loan.loan_number} — {loan.customers?.first_name} {loan.customers?.last_name}
@@ -166,47 +169,33 @@ export default function RecordPaymentPage() {
 
         <form action={handlePayment} className="mt-6 space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Amount (K) *</label>
-              <input name="amount" type="number" step="0.01" required min="0.01" max={loan.outstanding_balance} className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Payment Date *</label>
-              <input name="payment_date" type="date" required defaultValue={new Date().toISOString().split('T')[0]} className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
+            <Input label="Amount (K) *" name="amount" type="number" step="0.01" required min="0.01" max={loan.outstanding_balance} />
+            <Input label="Payment Date *" name="payment_date" type="date" required defaultValue={new Date().toISOString().split('T')[0]} />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Method *</label>
-              <select name="payment_method" required className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none">
-                <option value="cash">Cash</option>
-                <option value="airtel_money">Airtel Money</option>
-                <option value="mtn_mobile_money">MTN MoMo</option>
-                <option value="bank_transfer">Bank Transfer</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label className="mb-1 block text-sm text-text-secondary">Reference Number</label>
-              <input name="reference_number" className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-            </div>
+            <Select label="Method *" name="payment_method" required>
+              <option value="cash">Cash</option>
+              <option value="airtel_money">Airtel Money</option>
+              <option value="mtn_mobile_money">MTN MoMo</option>
+              <option value="bank_transfer">Bank Transfer</option>
+              <option value="other">Other</option>
+            </Select>
+            <Input label="Reference Number" name="reference_number" />
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm text-text-secondary">Notes</label>
-            <textarea name="notes" rows={2} className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass px-4 py-2.5 text-sm text-text-primary focus:border-accent-primary focus:outline-none" />
-          </div>
+          <Textarea label="Notes" name="notes" rows={2} />
 
-          <button
+          <Button
             type="submit"
+            variant="primary"
             disabled={submitting}
-            className="w-full rounded-[var(--radius-button)] bg-success px-4 py-3 font-medium text-white hover:opacity-90 disabled:opacity-50"
+            className="w-full px-4 py-3 font-medium"
           >
             {submitting ? 'Recording...' : 'Record Payment'}
-          </button>
+          </Button>
         </form>
-      </div>
+      </Surface>
     </div>
   );
 }

@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/components/auth-provider';
+import { Surface } from '@/components/ui/surface';
+import { Button } from '@/components/ui/button';
 
 interface Notification {
   id: string;
@@ -70,31 +72,33 @@ export default function NotificationsPage() {
           <h1 className="text-2xl font-bold text-text-primary">Notifications</h1>
           <p className="text-sm text-text-secondary">All your notifications</p>
         </div>
-        <button onClick={markAllRead} className="rounded-[var(--radius-button)] border border-border-subtle px-3 py-2 text-sm text-text-secondary hover:bg-surface-glass">
+        <Button variant="secondary" size="sm" onClick={markAllRead}>
           Mark all read
-        </button>
+        </Button>
       </div>
 
       <div className="flex gap-2">
         {(['all', 'unread'] as const).map((f) => (
-          <button
+          <Button
             key={f}
+            variant={filter === f ? 'primary' : 'secondary'}
+            size="sm"
             onClick={() => { setFilter(f); setPage(0); }}
-            className={`rounded-[var(--radius-button)] px-3 py-2 text-sm capitalize ${filter === f ? 'bg-accent-primary text-accent-on-primary' : 'border border-border-subtle text-text-secondary'}`}
+            className="capitalize"
           >
             {f}
-          </button>
+          </Button>
         ))}
       </div>
 
       {loading ? (
         <div className="py-12 text-center text-text-muted">Loading...</div>
       ) : items.length === 0 ? (
-        <div className="glass-card p-8 text-center text-text-muted">No notifications.</div>
+        <Surface className="p-8 text-center text-text-muted">No notifications.</Surface>
       ) : (
         <div className="space-y-2">
           {items.map((n) => (
-            <div key={n.id} className={`glass-card flex items-start gap-3 p-4 ${!n.read_at ? 'border-l-4 border-l-accent-primary' : ''}`}>
+            <Surface key={n.id} className={`flex items-start gap-3 p-4 ${!n.read_at ? 'border-l-4 border-l-accent-primary' : ''}`}>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-text-primary">{n.title}</p>
                 {n.body && <p className="mt-1 text-sm text-text-secondary">{n.body}</p>}
@@ -102,9 +106,9 @@ export default function NotificationsPage() {
               </div>
               <div className="flex shrink-0 gap-2">
                 {!n.read_at && (
-                  <button onClick={() => markRead(n.id)} className="rounded-[var(--radius-button)] bg-accent-primary px-3 py-1.5 text-xs font-medium text-accent-on-primary">
+                  <Button variant="primary" size="sm" onClick={() => markRead(n.id)} className="h-auto px-3 py-1.5 text-xs">
                     Mark read
-                  </button>
+                  </Button>
                 )}
                 {n.link && (
                   <Link href={n.link} className="rounded-[var(--radius-button)] border border-border-subtle px-3 py-1.5 text-xs text-text-secondary">
@@ -112,19 +116,19 @@ export default function NotificationsPage() {
                   </Link>
                 )}
               </div>
-            </div>
+            </Surface>
           ))}
         </div>
       )}
 
       <div className="flex items-center justify-between">
-        <button onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0} className="rounded-[var(--radius-button)] border border-border-subtle px-3 py-2 text-sm disabled:opacity-50">
+        <Button variant="secondary" size="sm" onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0}>
           Previous
-        </button>
+        </Button>
         <span className="text-sm text-text-muted">Page {page + 1}</span>
-        <button onClick={() => setPage((p) => p + 1)} disabled={items.length < 20} className="rounded-[var(--radius-button)] border border-border-subtle px-3 py-2 text-sm disabled:opacity-50">
+        <Button variant="secondary" size="sm" onClick={() => setPage((p) => p + 1)} disabled={items.length < 20}>
           Next
-        </button>
+        </Button>
       </div>
     </div>
   );

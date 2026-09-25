@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
+import { Surface } from '@/components/ui/surface';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { Search, Phone, MessageSquare } from 'lucide-react';
 
 interface Collection {
@@ -75,10 +78,16 @@ export default function CollectionsPage() {
     );
   });
 
-  const urgencyColor = (days: number) => {
-    if (days >= 90) return 'bg-danger/10 text-danger border-danger/20';
-    if (days >= 30) return 'bg-orange/10 text-orange border-orange/20';
-    return 'bg-warning/10 text-warning border-warning/20';
+  const urgencyBorder = (days: number) => {
+    if (days >= 90) return 'border-danger/20';
+    if (days >= 30) return 'border-orange/20';
+    return 'border-warning/20';
+  };
+
+  const urgencyVariant = (days: number): 'danger' | 'orange' | 'warning' => {
+    if (days >= 90) return 'danger';
+    if (days >= 30) return 'orange';
+    return 'warning';
   };
 
   const totalOverdue = filtered.reduce((sum, c) => sum + c.overdue_amount, 0);
@@ -95,12 +104,12 @@ export default function CollectionsPage() {
 
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={18} />
-        <input
+        <Input
           type="text"
           placeholder="Search collections..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-[var(--radius-button)] border border-border-subtle bg-surface-glass py-2.5 pl-10 pr-4 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-primary focus:outline-none"
+          className="py-2.5 pl-10 pr-4"
         />
       </div>
 
@@ -111,7 +120,7 @@ export default function CollectionsPage() {
       ) : (
         <div className="space-y-2">
           {filtered.map((item) => (
-            <div key={item.loan_id} className={`glass-card p-4 border ${urgencyColor(item.days_overdue)}`}>
+            <Surface key={item.loan_id} className={`p-4 ${urgencyBorder(item.days_overdue)}`}>
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="font-medium text-text-primary">{item.customer_name}</h3>
@@ -119,9 +128,9 @@ export default function CollectionsPage() {
                     {item.loan_number}
                   </Link>
                   <div className="mt-2 flex items-center gap-3">
-                    <span className="rounded-full bg-danger/10 px-2 py-0.5 text-xs font-bold text-danger">
+                    <Badge variant={urgencyVariant(item.days_overdue)}>
                       {item.days_overdue} days overdue
-                    </span>
+                    </Badge>
                     <span className="text-sm text-text-primary">{formatKwacha(item.overdue_amount)} due</span>
                   </div>
                 </div>
@@ -144,7 +153,7 @@ export default function CollectionsPage() {
                 <span>Outstanding: {formatKwacha(item.outstanding_balance)}</span>
                 {item.maturity_date && <span>Matures: {item.maturity_date}</span>}
               </div>
-            </div>
+            </Surface>
           ))}
         </div>
       )}
