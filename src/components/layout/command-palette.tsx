@@ -146,8 +146,13 @@ export function CommandPalette() {
 
   if (!open) return null;
 
-  const groups = GROUP_ORDER.filter((g) => hits.some((h) => h.group === g));
-  let flatIdx = -1;
+  const ordered: Array<Hit & { idx: number }> = [];
+  for (const g of GROUP_ORDER) {
+    for (const h of hits.filter((x) => x.group === g)) {
+      ordered.push({ ...h, idx: ordered.length });
+    }
+  }
+  const groups = GROUP_ORDER.filter((g) => ordered.some((h) => h.group === g));
 
   return (
     <div
@@ -169,11 +174,12 @@ export function CommandPalette() {
             className="min-h-11 flex-1 bg-transparent text-sm text-text-primary placeholder:text-text-muted focus:outline-none"
             role="combobox"
             aria-expanded={hits.length > 0}
+            aria-controls="palette-listbox"
             aria-activedescendant={hits[active] ? `palette-${hits[active].key}` : undefined}
           />
           <kbd className="rounded border border-border-subtle px-1.5 py-0.5 text-[10px] text-text-muted max-sm:hidden">⌘K</kbd>
         </div>
-        <div ref={listRef} className="max-h-80 flex-1 overflow-y-auto p-2 max-sm:max-h-none" role="listbox">
+        <div ref={listRef} id="palette-listbox" className="max-h-80 flex-1 overflow-y-auto p-2 max-sm:max-h-none" role="listbox">
           {searching && <p className="p-3 text-xs text-text-muted">Searching...</p>}
           {!searching && hits.length === 0 && (
             <p className="p-3 text-xs text-text-muted">
@@ -183,21 +189,19 @@ export function CommandPalette() {
           {groups.map((g) => (
             <div key={g}>
               <p className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wide text-text-muted">{g}</p>
-              {hits
+              {ordered
                 .filter((h) => h.group === g)
                 .map((h) => {
-                  flatIdx += 1;
-                  const idx = flatIdx;
-                  const isActive = idx === active;
+                  const isActive = h.idx === active;
                   return (
                     <button
                       key={h.key}
                       id={`palette-${h.key}`}
-                      data-idx={idx}
+                      data-idx={h.idx}
                       role="option"
                       aria-selected={isActive}
                       onClick={() => go(h.href)}
-                      onMouseEnter={() => setActive(idx)}
+                      onMouseEnter={() => setActive(h.idx)}
                       className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-2 text-left ${
                         isActive ? 'bg-surface-glass-2' : 'hover:bg-surface-glass'
                       }`}
