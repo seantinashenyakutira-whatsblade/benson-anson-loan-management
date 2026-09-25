@@ -29,6 +29,9 @@ export async function GET(req: Request) {
     .map((r) => ({ name: r.title, sub: r.subtitle, href: `/reports/${r.slug}` }));
   if (reports.length > 0) out.reports = reports;
 
+  // Empty query: static pages only (no DB scans).
+  if (term.length === 0) return NextResponse.json(pages.length > 0 ? { pages } : {});
+
   // Short queries: pages + reports only (avoids full-table ILIKE scans).
   if (term.length < 2) return NextResponse.json(out);
 
