@@ -54,13 +54,13 @@ export function LandingFooter({ info }: { info: BusinessInfo }) {
           <div className="mt-3 space-y-2 text-sm text-[#a0b4d0]">
             {info.phone && (
               <p className="flex items-center gap-2">
-                <Phone size={15} className="text-[#f5b300]" />
+                <Phone size={15} className="text-[#00A6E0]" />
                 <a href={`tel:${info.phone.replace(/\s/g, '')}`}>{info.phone}</a>
               </p>
             )}
             {info.email && (
               <p className="flex items-center gap-2">
-                <Mail size={15} className="text-[#f5b300]" />
+                <Mail size={15} className="text-[#00A6E0]" />
                 <a href={`mailto:${info.email}`}>{info.email}</a>
               </p>
             )}
@@ -73,7 +73,7 @@ export function LandingFooter({ info }: { info: BusinessInfo }) {
             {info.locations.length > 0 ? (
               info.locations.map((l) => (
                 <p key={l} className="flex items-center gap-2">
-                  <MapPin size={15} className="text-[#f5b300]" />
+                  <MapPin size={15} className="text-[#00A6E0]" />
                   {l}
                 </p>
               ))

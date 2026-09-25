@@ -147,7 +147,7 @@ export function HowItWorks() {
         </div>
 
         <div className="relative mt-10 grid gap-5 md:grid-cols-4">
-          <div aria-hidden className="absolute left-8 right-8 top-5 hidden h-px bg-gradient-to-r from-transparent via-[#f5b300]/40 to-transparent md:block" />
+          <div aria-hidden className="absolute left-8 right-8 top-5 hidden h-px bg-gradient-to-r from-transparent via-[#00A6E0]/40 to-transparent md:block" />
           {STEPS.map((s, i) => (
             <div key={s.title} className="lp-step-card" data-reveal style={{ transitionDelay: `${i * 60}ms` }}>
               <div className="lp-tile-img">
@@ -179,7 +179,7 @@ export function TrustStrip() {
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {TRUST.map((t, i) => (
           <div key={t.title} className="flex items-center gap-3 rounded-2xl border border-[#ffffff10] bg-[#0a2249]/50 p-4" data-reveal style={{ transitionDelay: `${i * 40}ms` }}>
-            <t.icon size={24} className="shrink-0 text-[#f5b300]" />
+            <t.icon size={24} className="shrink-0 text-[#00A6E0]" />
             <div>
               <p className="text-sm font-bold text-white">{t.title}</p>
               <p className="text-xs text-[#6b7f9e]">{t.desc}</p>
@@ -202,7 +202,7 @@ export function Testimonial() {
             Fair value, clear terms, <em className="lp-keyword">no stress</em>.”
           </p>
           <footer className="mt-4 text-sm text-[#a0b4d0]">
-            — A satisfied customer, <span className="text-[#f5b300]">Lusaka</span>
+            — A satisfied customer, <span className="text-[#00A6E0]">Lusaka</span>
           </footer>
         </blockquote>
       </div>

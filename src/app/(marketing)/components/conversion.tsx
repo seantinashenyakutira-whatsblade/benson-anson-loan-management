@@ -10,7 +10,7 @@ function ProductCard({ p }: { p: ProductInfo }) {
     <div className="lp-tile flex flex-col p-6" data-reveal>
       <h3 className="lp-display text-lg font-bold text-white">{p.name}</h3>
       {p.description && <p className="mt-1 text-sm leading-snug text-[#a0b4d0]">{p.description}</p>}
-      <p className="mt-4 text-2xl font-bold text-[#f5b300]">
+      <p className="mt-4 text-2xl font-bold text-[#00A6E0]">
         {formatK(p.min_amount)}{' '}
         <span className="text-sm font-medium text-[#6b7f9e]">– {formatK(p.max_amount)}</span>
       </p>
@@ -44,7 +44,7 @@ export function ProductCards({ initial }: { initial: ProductInfo[] }) {
             <p>Products coming soon. Call us to discuss your loan.</p>
             <a
               href={`tel:${phone.replace(/\s/g, '')}`}
-              className="mt-2 inline-flex items-center gap-1 font-medium text-[#00a6e0] hover:text-[#f5b300]"
+              className="mt-2 inline-flex items-center gap-1 font-medium text-[#00a6e0] hover:text-[#38B6EE]"
             >
               <Phone size={14} /> Call us
             </a>

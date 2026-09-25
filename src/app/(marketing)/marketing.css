@@ -1,7 +1,10 @@
 .lp-root {
   --lp-bg-primary: #061633;
   --lp-bg-secondary: #0a2249;
-  --lp-accent-gold: #f5b300;
+  --lp-accent-primary: #00A6E0;
+  --lp-accent-secondary: #005BAC;
+  --lp-accent-hover: #38B6EE;
+  --lp-gradient-cta: linear-gradient(135deg, #00A6E0 0%, #005BAC 100%);
   --lp-accent-blue: #00a6e0;
   --lp-text-primary: #ffffff;
   --lp-text-secondary: #a0b4d0;
@@ -27,14 +30,14 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--lp-accent-gold);
+  color: var(--lp-accent-primary);
 }
 .lp-eyebrow::before {
   content: '';
   width: 24px;
   height: 2px;
   border-radius: 999px;
-  background: var(--lp-accent-gold);
+  background: var(--lp-accent-primary);
 }
 
 /* ── Headings ────────────────────────────────────────────── */
@@ -58,12 +61,12 @@
   line-height: 1.65;
 }
 
-/* ── Keyword accent (Instrument Serif italic, gold) ──────── */
+/* ── Keyword accent (Instrument Serif italic, blue) ──────── */
 .lp-keyword {
   font-family: var(--lp-font-accent), Georgia, serif;
   font-style: italic;
   font-weight: 400;
-  color: var(--lp-accent-gold);
+  color: var(--lp-accent-primary);
   white-space: nowrap;
   position: relative;
 }
@@ -75,7 +78,7 @@
   bottom: -0.08em;
   height: 0.09em;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--lp-accent-gold), var(--lp-accent-blue));
+  background: var(--lp-gradient-cta);
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform 400ms ease-out;
@@ -120,17 +123,17 @@
   justify-content: center;
   gap: 0.5rem;
   border-radius: 0.875rem;
-  background: var(--lp-accent-gold);
-  color: #061633;
+  background: var(--lp-gradient-cta);
+  color: #ffffff;
   font-weight: 700;
   padding: 0.8rem 1.5rem;
   transition: filter 160ms ease-out, transform 160ms ease-out, box-shadow 160ms ease-out;
-  box-shadow: 0 8px 24px -8px rgba(245, 179, 0, 0.45);
+  box-shadow: 0 8px 24px -8px rgba(0, 166, 224, 0.45);
 }
 .lp-btn-gold:hover {
   filter: brightness(1.08);
   transform: translateY(-1px);
-  box-shadow: 0 12px 28px -8px rgba(245, 179, 0, 0.55);
+  box-shadow: 0 12px 28px -8px rgba(0, 166, 224, 0.55);
 }
 .lp-btn-outline {
   display: inline-flex;
@@ -145,8 +148,8 @@
   transition: border-color 160ms ease-out, background 160ms ease-out, transform 160ms ease-out;
 }
 .lp-btn-outline:hover {
-  border-color: var(--lp-accent-gold);
-  background: rgba(245, 179, 0, 0.08);
+  border-color: var(--lp-accent-primary);
+  background: rgba(0, 166, 224, 0.08);
   transform: translateY(-1px);
 }
 
@@ -167,7 +170,7 @@
   transition: color 150ms ease-out;
 }
 .lp-header a.lp-nav-link:hover {
-  color: var(--lp-accent-gold);
+  color: var(--lp-accent-primary);
 }
 
 /* ── Hero glow ───────────────────────────────────────────── */
@@ -182,7 +185,7 @@
   width: 720px;
   height: 720px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(245, 179, 0, 0.16), transparent 62%);
+  background: radial-gradient(circle, rgba(0, 166, 224, 0.20), transparent 62%);
   pointer-events: none;
 }
 .lp-hero-img {
@@ -202,7 +205,7 @@
   font-family: var(--lp-font-display), var(--font-inter), sans-serif;
   font-weight: 800;
   font-size: 1.5rem;
-  color: var(--lp-accent-gold);
+  color: var(--lp-accent-primary);
 }
 .lp-stat-label {
   color: var(--lp-text-muted);
@@ -221,8 +224,8 @@
 }
 .lp-tile:hover {
   transform: translateY(-2px);
-  border-color: rgba(245, 179, 0, 0.45);
-  box-shadow: 0 0 0 1px rgba(245, 179, 0, 0.28), 0 14px 34px -12px rgba(0, 0, 0, 0.5);
+  border-color: rgba(0, 166, 224, 0.45);
+  box-shadow: 0 0 0 1px rgba(0, 166, 224, 0.28), 0 14px 34px -12px rgba(0, 0, 0, 0.5);
 }
 .lp-tile-img {
   position: relative;
@@ -257,13 +260,13 @@
 }
 .lp-step-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(245, 179, 0, 0.4);
+  border-color: rgba(0, 166, 224, 0.4);
 }
 .lp-step-num {
   font-family: var(--lp-font-display), var(--font-inter), sans-serif;
   font-weight: 800;
   font-size: 1.125rem;
-  color: var(--lp-accent-gold);
+  color: var(--lp-accent-primary);
 }
 
 /* ── Testimonial ─────────────────────────────────────────── */
@@ -282,7 +285,7 @@
   position: relative;
   z-index: 1;
   border-radius: 1.5rem;
-  border: 1px solid rgba(245, 179, 0, 0.28);
+  border: 1px solid rgba(0, 166, 224, 0.28);
   background: rgba(10, 34, 73, 0.82);
   backdrop-filter: blur(8px);
   max-width: 640px;
@@ -319,7 +322,7 @@
   transition: color 150ms ease-out;
 }
 .lp-footer a:hover {
-  color: var(--lp-accent-gold);
+  color: var(--lp-accent-primary);
 }
 
 /* ── Apply modal ─────────────────────────────────────────── */
