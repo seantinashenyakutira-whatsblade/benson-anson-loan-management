@@ -8,6 +8,7 @@ import { formatKwacha } from '@/lib/money';
 import { Surface } from '@/components/ui/surface';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { PaymentMethodIcon } from '@/components/payments/payment-method-icon';
 import { ArrowLeft, Calendar } from 'lucide-react';
 import Link from 'next/link';
 
@@ -300,8 +301,9 @@ export default function LoanDetailPage() {
           ) : (
             <div className="space-y-2">
               {loan.payments.map((p) => (
-                <div key={p.id} className="flex items-center justify-between rounded-xl border border-border-subtle p-3">
-                  <div>
+                <div key={p.id} className="flex items-center gap-3 rounded-xl border border-border-subtle p-3">
+                  <PaymentMethodIcon method={p.payment_method} size={32} />
+                  <div className="flex-1">
                     <p className="text-sm font-medium text-text-primary">{p.payment_number}</p>
                     <p className="text-xs text-text-muted">{p.paid_at?.split('T')[0]} — {p.payment_method?.replace(/_/g, ' ')}</p>
                   </div>

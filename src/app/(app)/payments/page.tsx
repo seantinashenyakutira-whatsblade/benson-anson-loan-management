@@ -8,6 +8,7 @@ import { Surface } from '@/components/ui/surface';
 import { Button } from '@/components/ui/button';
 import { Input, Select } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { PaymentMethodIcon } from '@/components/payments/payment-method-icon';
 import { Search, Download, Receipt } from 'lucide-react';
 
 interface Payment {
@@ -79,16 +80,6 @@ export default function PaymentsPage() {
     }
   };
 
-  const methodIcon = (method: string) => {
-    switch (method) {
-      case 'mtn_mobile_money':
-      case 'airtel_money': return '📱';
-      case 'bank_transfer': return '🏦';
-      case 'cash': return '💵';
-      default: return '💰';
-    }
-  };
-
   const totalAmount = filtered.reduce((sum, p) => sum + p.amount, 0);
 
   return (
@@ -147,7 +138,7 @@ export default function PaymentsPage() {
           {filtered.map((payment) => (
             <Surface key={payment.id} className="p-4">
               <div className="flex items-center gap-3">
-                <span className="text-xl">{methodIcon(payment.payment_method)}</span>
+                <PaymentMethodIcon method={payment.payment_method} size={32} />
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <h3 className="font-medium text-text-primary">{payment.payment_number}</h3>

@@ -1,5 +1,6 @@
 import { Document, Page, Text, View, Image, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
 import type { ReportResult } from '@/lib/reports/types';
+import { PaymentMethodPdfIcon } from '@/components/payments/payment-method-pdf';
 
 const BRAND = '#00A6E0';
 const DARK = '#061633';
@@ -18,6 +19,8 @@ const styles = StyleSheet.create({
   tableRow: { flexDirection: 'row', paddingVertical: 4, paddingHorizontal: 4, borderBottomWidth: 0.5, borderBottomColor: '#DDDDDD' },
   tableRowAlt: { backgroundColor: '#F2F7FB' },
   tableCell: { fontSize: 8, flex: 1 },
+  methodCell: { fontSize: 8, flex: 1, flexDirection: 'row', alignItems: 'center' },
+  methodIconSpacer: { marginLeft: 4 },
   right: { textAlign: 'right' },
   totalsRow: { flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 4, borderTopWidth: 1, borderTopColor: DARK, marginTop: 2 },
   totalsCell: { fontSize: 8, fontWeight: 'bold', flex: 1 },
@@ -74,14 +77,20 @@ export function ReportDoc({ result, logoDataUri, systemName }: ReportDocProps) {
 
         {rows.map((r, i) => (
           <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : undefined]} wrap={false}>
-            {columns.map((c) => (
-              <Text key={c.key} style={[styles.tableCell, (c.kind === 'money' || c.kind === 'number') ? styles.right : undefined]}>
-                {cellText(c.kind, r[c.key] ?? null)}
-              </Text>
-            ))}
+            {columns.map((c) =>
+              c.key === 'method' ? (
+                <View key={c.key} style={styles.methodCell}>
+                  <PaymentMethodPdfIcon method={String(r[c.key] ?? '')} size={12} />
+                  <Text style={styles.methodIconSpacer}>{cellText(c.kind, r[c.key] ?? null)}</Text>
+                </View>
+              ) : (
+                <Text key={c.key} style={[styles.tableCell, (c.kind === 'money' || c.kind === 'number') ? styles.right : undefined]}>
+                  {cellText(c.kind, r[c.key] ?? null)}
+                </Text>
+              )
+            )}
           </View>
         ))}
-
         {totals ? (
           <View style={styles.totalsRow}>
             {columns.map((c) => (

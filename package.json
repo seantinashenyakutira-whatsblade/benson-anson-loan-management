@@ -33,6 +33,7 @@
     "react-dom": "19.2.8",
     "recharts": "^3.10.1",
     "resend": "^6.28.1",
+    "simple-icons": "^16.32.0",
     "tailwind-merge": "^3.7.0",
     "zod": "^4.5.0"
   },
