@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import { renderToBuffer } from '@react-pdf/renderer';
 import { renderReceiptPdf, type ReceiptDocProps } from '@/components/pdf/ReceiptDoc';
 
 const base: ReceiptDocProps = {
