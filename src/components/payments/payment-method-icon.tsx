@@ -54,11 +54,25 @@ export function PaymentMethodIcon({ method, size = 32 }: { method: string; size?
   if (m === 'mtn_mobile_money') {
     return (
       <span
-        className={tile}
+        className={`${tile} relative`}
         style={{ ...style, background: '#FFCC00', color: '#000000' }}
         title="MTN Mobile Money"
       >
-        <Smartphone size={18} color="#000000" stroke="currentColor" />
+        <img
+          src="/branding/payments/mtn.svg"
+          alt=""
+          aria-hidden="true"
+          style={{ width: Math.round(size * 0.6), height: 'auto', filter: 'brightness(0)' }}
+          onError={(e) => {
+            const img = e.currentTarget;
+            img.style.display = 'none';
+            const fb = img.nextElementSibling as HTMLElement | null;
+            if (fb) fb.style.display = 'inline-flex';
+          }}
+        />
+        <span data-mtn-fallback style={{ display: 'none' }}>
+          <Smartphone size={18} color="#000000" stroke="currentColor" />
+        </span>
       </span>
     );
   }
