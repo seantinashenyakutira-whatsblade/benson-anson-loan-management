@@ -21,7 +21,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       .select(`
         id, payment_number, amount, payment_method, reference_number, paid_at, status,
         loans (
-          id, loan_number, total_repayable, amount_paid, outstanding_balance, arrears_amount,
+          id, loan_number, total_repayable, amount_paid, outstanding_balance,
           first_due_date, maturity_date,
           loan_schedule ( due_date, due_amount, paid_amount, status )
         ),
@@ -53,10 +53,22 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     const openRows = schedule
       .filter((s) => s.status !== 'paid' && Number(s.due_amount) - Number(s.paid_amount) > 0)
       .sort((a, b) => a.due_date.localeCompare(b.due_date));
-    const nextDueDate = openRows[0]?.due_date ?? null;
 
-    // Amount due to date = arrears already tracked on the loan (scope field).
-    const amountDueToDate = Number(loan.arrears_amount ?? 0);
+    // Arrears = unpaid instalments already past due; next due date = earliest
+    // unpaid instalment that is not yet overdue (falls back to oldest unpaid).
+    const today = new Date().toISOString().slice(0, 10);
+    const overdueRows = openRows.filter((s) => s.due_date < today);
+    const upcomingRows = openRows.filter((s) => s.due_date >= today);
+    const nextDueDate = (upcomingRows[0] ?? overdueRows[0])?.due_date ?? null;
+
+    // Amount due to date = everything unpaid and already due; arrears = the
+    // overdue part of it. Derived from the schedule, not the loan columns,
+    // which are not maintained by the payment engine.
+    const arrears = overdueRows.reduce(
+      (sum, s) => sum + (Number(s.due_amount) - Number(s.paid_amount)),
+      0,
+    );
+    const amountDueToDate = arrears;
 
     const { data: settings } = await sb
       .from('settings')
@@ -85,7 +97,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       outstandingBalance: Number(loan.outstanding_balance ?? 0),
       nextDueDate,
       amountDueToDate,
-      arrears: Number(loan.arrears_amount ?? 0),
+      arrears,
       recordedByName: recorder?.full_name || '—',
       businessName: get('business_name', 'Anson Benson Cash Solutions Limited'),
       businessPhone: get('business_phone', ''),
