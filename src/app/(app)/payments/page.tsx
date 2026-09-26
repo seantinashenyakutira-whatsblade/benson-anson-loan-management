@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { formatKwacha } from '@/lib/money';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -9,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input, Select } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { PaymentMethodIcon } from '@/components/payments/payment-method-icon';
-import { Search, Download, Receipt } from 'lucide-react';
+import { Search, Download, Receipt, FileText } from 'lucide-react';
 
 interface Payment {
   id: string;
@@ -141,16 +142,32 @@ export default function PaymentsPage() {
                 <PaymentMethodIcon method={payment.payment_method} size={32} />
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-medium text-text-primary">{payment.payment_number}</h3>
+                    <h3 className="font-medium text-text-primary">
+                      <Link href={`/payments/${payment.id}`} className="hover:text-brand-bright">
+                        {payment.payment_number}
+                      </Link>
+                    </h3>
                     <span className="text-sm font-semibold text-success">{formatKwacha(payment.amount)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="text-sm text-text-secondary">
                       {payment.loans?.loan_number} — {payment.loans?.customers?.first_name} {payment.loans?.customers?.last_name}
                     </p>
-                    <Badge variant={statusVariant(payment.status)} className="capitalize">
-                      {payment.status}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={statusVariant(payment.status)} className="capitalize">
+                        {payment.status}
+                      </Badge>
+                      <a
+                        href={`/api/payments/${payment.id}/receipt`}
+                        target="_blank"
+                        rel="noreferrer"
+                        title="Download receipt"
+                        aria-label={`Download receipt ${payment.payment_number}`}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-surface-glass hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/40"
+                      >
+                        <FileText size={16} />
+                      </a>
+                    </div>
                   </div>
                   <div className="mt-1 flex items-center gap-3 text-xs text-text-muted">
                     <span>{payment.paid_at?.split('T')[0]}</span>
